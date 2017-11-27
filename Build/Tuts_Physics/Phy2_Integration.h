@@ -107,13 +107,14 @@ public:
 		// doing the integration over time. The ball (if everything works)
 		// should take 5 seconds to arc into the centre of the target.
 		m_Sphere->Physics()->SetPosition(Vector3(-7.5f, 2.0f, 0.f));
-		m_Sphere->Physics()->SetLinearVelocity(Vector3(0.f, 2.5f, 0.0f));
-		m_Sphere->Physics()->SetForce(Vector3(1.f, -1.f, 0.0f));
+		m_Sphere->Physics()->SetLinearVelocity(Vector3(2.f, 10.0f, 0.0f));
+		m_Sphere->Physics()->SetForce(Vector3(0.0f, 0.0f, 0.0f));
 
 		//Cause we can.. we will also spin the ball 1 revolution per second (5 full spins before hitting target)
 		// - Rotation is in radians (so 2PI is 360 degrees), richard has provided a DegToRad() function in <nclgl\common.h> if you want as well.
 		m_Sphere->Physics()->SetOrientation(Quaternion());
 		m_Sphere->Physics()->SetAngularVelocity(Vector3(0.f, 0.f, -2.0f * PI));
+
 	}
 
 	virtual void OnUpdateScene(float dt) override
@@ -139,6 +140,32 @@ public:
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_3))	ResetScene(1.0f / 30.0f);
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_4))	ResetScene(1.0f / 60.0f);
 	
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_J))
+		{
+			//Create a projectile
+r			RenderNode* sphereRenderSpawn = new RenderNode();
+			sphereRenderSpawn->SetMesh(CommonMeshes::Sphere());
+			sphereRenderSpawn->SetTransform(Matrix4::Scale(Vector3(0.5f, 0.5f, 0.5f))); //No position! That is now all handled in PhysicsNode
+			sphereRenderSpawn->SetColor(Vector4(0.5f, 0.2f, 0.5f, 1.0f));
+			sphereRenderSpawn->SetBoundingRadius(1.0f);
+
+			GameObject* m_SphereSpawn = new GameObject("Sphere2");
+			m_SphereSpawn->SetRender(new RenderNode());
+			m_SphereSpawn->Render()->AddChild(sphereRenderSpawn);
+			m_SphereSpawn->SetPhysics(new PhysicsNode());
+			m_SphereSpawn->Physics()->SetInverseMass(1.f);
+			//Position, vel and acceleration all set in "ResetScene()"
+			this->AddGameObject(m_SphereSpawn);
+
+			m_SphereSpawn->Physics()->SetPosition(GraphicsPipeline::Instance()->GetCamera()->GetPosition());
+			m_SphereSpawn->Physics()->SetLinearVelocity(Vector3(0.0f, 0.0f, 0.0f));
+			m_SphereSpawn->Physics()->SetForce(GraphicsPipeline::Instance()->GetCamera()->GetViewDirection().Normalise());
+
+			//Cause we can.. we will also spin the ball 1 revolution per second (5 full spins before hitting target)
+			// - Rotation is in radians (so 2PI is 360 degrees), richard has provided a DegToRad() function in <nclgl\common.h> if you want as well.
+			m_SphereSpawn->Physics()->SetOrientation(Quaternion());
+			m_SphereSpawn->Physics()->SetAngularVelocity(Vector3(0.f, 0.f, -2.0f * PI));
+		}
 
 	//Draw the trajectory:-	
 		const Vector4 cols[2] = {
@@ -170,5 +197,6 @@ public:
 private:
 	Mesh*					m_TargetMesh;
 	GameObject*				m_Sphere;
+	GameObject*				m_Sphere2;
 	std::vector<Vector3>	m_TrajectoryPoints;
 };

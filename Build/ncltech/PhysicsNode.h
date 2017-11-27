@@ -166,12 +166,14 @@ protected:
 	//<---------LINEAR-------------->
 	Vector3		position;
 	Vector3		linVelocity;
+	Vector3		linHalfVel;
 	Vector3		force;
 	float		invMass;
 
 	//<----------ANGULAR-------------->
 	Quaternion  orientation;
 	Vector3		angVelocity;
+	Vector3		angHalfVel;
 	Vector3		torque;
 	Matrix3     invInertia;
 

@@ -79,3 +79,7 @@ Matrix4 Camera::BuildViewMatrix() {
 		Matrix4::Rotation(-yaw, Vector3(0, 1, 0)) *
 		Matrix4::Translation(-position);
 };
+
+Vector3 Camera::GetViewDirection() {
+	return Matrix3::Rotation(pitch, Vector3(1, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1);
+}

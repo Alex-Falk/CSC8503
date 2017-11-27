@@ -6,7 +6,6 @@
 #include <omp.h>
 #include <algorithm>
 
-
 void PhysicsEngine::SetDefaults()
 {
 	//Variables set here /will/ be reset with each scene

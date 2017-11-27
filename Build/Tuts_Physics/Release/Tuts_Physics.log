@@ -1,0 +1,8 @@
+﻿  main.cpp
+LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
+  Generating code
+  All 4075 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+glew32.lib(glew.obj) : warning LNK4099: PDB 'glew_static.pdb' was not found with 'glew32.lib(glew.obj)' or at 'D:\Projects\CSC8503\Build\Release\glew_static.pdb'; linking object as if no debug info
+  Tuts_Physics.vcxproj -> D:\Projects\CSC8503\Build\Release\Tuts_Physics.exe
+  Tuts_Physics.vcxproj -> D:\Projects\CSC8503\Build\Release\Tuts_Physics.pdb (Full PDB)
