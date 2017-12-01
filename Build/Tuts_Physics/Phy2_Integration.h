@@ -41,6 +41,7 @@ public:
 
 	virtual void OnInitializeScene() override
 	{
+		Scene::OnInitializeScene();
 		m_TrajectoryPoints.clear();
 
 	//Set Defaults

@@ -20,7 +20,7 @@ PhysicsEngine::PhysicsEngine()
 	//Variables set here will /not/ be reset with each scene
 	isPaused = false;  
 	debugDrawFlags = DEBUGDRAW_FLAGS_MANIFOLD | DEBUGDRAW_FLAGS_CONSTRAINT;
-
+	octree = new OcTree(Vector3(-10, 0, -10), Vector3(20, 20, 20), &physicsNodes);
 	SetDefaults();
 }
 
@@ -31,9 +31,14 @@ PhysicsEngine::~PhysicsEngine()
 
 void PhysicsEngine::AddPhysicsObject(PhysicsNode* obj)
 {
-	physicsNodes.push_back(obj);
+	physicsNodes.push_back(obj);	
+}
 
-	octree = new OcTree(Vector3(-10, 0, -10), Vector3(20, 20, 20), &physicsNodes);
+void PhysicsEngine::ResetOcTree()
+{
+	delete octree;
+	octree = nullptr;
+	octree = new OcTree(Vector3(-25, 0, -25), Vector3(20, 50, 20), &physicsNodes);
 }
 
 void PhysicsEngine::RemovePhysicsObject(PhysicsNode* obj)

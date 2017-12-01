@@ -22,6 +22,7 @@ public:
 
 	virtual void OnInitializeScene() override
 	{
+
 		//Create Ground (..why not?)
 		GameObject* ground = CommonUtils::BuildCuboidObject(
 			"Ground",
@@ -100,7 +101,7 @@ public:
 				true,									//Dragable by the user
 				CommonUtils::GenColor(0.5f, 1.0f)));	//Color
 		}
-
+		Scene::OnInitializeScene();
 	}
 
 	float m_AccumTime;

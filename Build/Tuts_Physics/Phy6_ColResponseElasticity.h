@@ -67,6 +67,7 @@ public:
 				this->AddGameObject(obj);
 			}
 		}
+		Scene::OnInitializeScene();
 	}
 
 };

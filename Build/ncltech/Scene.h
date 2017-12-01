@@ -65,7 +65,7 @@ public:
 
 	// Called when scene is being activated, and will begin being rendered/updated. 
 	//	 - Initialize objects/physics here
-	virtual void OnInitializeScene()	{}		
+	virtual void OnInitializeScene()	{ PhysicsEngine::Instance()->ResetOcTree(); }
 
 	// Called when scene is being swapped and will no longer be rendered/updated 
 	//	 - Override to remove custom objects/physics here as needed

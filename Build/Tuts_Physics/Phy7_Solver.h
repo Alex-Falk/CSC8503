@@ -56,8 +56,8 @@ public:
 				this->AddGameObject(cube);
 			}
 		}
-		
 
+		Scene::OnInitializeScene();
 	}
 
 

@@ -19,6 +19,7 @@ public:
 
 	virtual void OnInitializeScene() override
 	{
+
 		PhysicsEngine::Instance()->SetDampingFactor(1.0f);
 
 		//Create Ground
@@ -76,6 +77,7 @@ public:
 				this->AddGameObject(cube);
 			}
 		}
+		Scene::OnInitializeScene();
 	}
 
 

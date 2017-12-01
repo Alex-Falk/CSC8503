@@ -51,7 +51,7 @@ public:
 protected:
 
 	int maxNumber = 5;
-	float minSize = 1.0f;
+	float minSize = 3.0f;
 
 	std::vector<PhysicsNode*> * physicsNodes;
 	std::vector<PhysicsNode*> updateList;

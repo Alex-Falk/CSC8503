@@ -1,1 +1,7 @@
-﻿
+﻿  PhysicsEngine.cpp
+  OcTree.cpp
+d:\projects\csc8503\build\ncltech\octree.cpp(19): warning C4018: '>': signed/unsigned mismatch
+d:\projects\csc8503\build\ncltech\octree.cpp(114): warning C4018: '>': signed/unsigned mismatch
+d:\projects\csc8503\build\ncltech\octree.cpp(265): warning C4018: '>': signed/unsigned mismatch
+  Generating Code...
+  ncltech.vcxproj -> D:\Projects\CSC8503\Build\Debug\ncltech.lib

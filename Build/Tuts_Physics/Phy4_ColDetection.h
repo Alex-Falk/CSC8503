@@ -102,7 +102,7 @@ public:
 				true,									//Dragable by the user
 				CommonUtils::GenColor(0.5f, 1.0f)));	//Color
 		}
-
+		Scene::OnInitializeScene();
 	}
 
 	float m_AccumTime;

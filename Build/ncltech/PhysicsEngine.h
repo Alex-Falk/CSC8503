@@ -78,6 +78,7 @@ public:
 
 	//Add/Remove Physics Objects
 	void AddPhysicsObject(PhysicsNode* obj);
+	void ResetOcTree();
 	void RemovePhysicsObject(PhysicsNode* obj);
 	void RemoveAllPhysicsObjects(); //Delete all physics entities etc and reset-physics environment for new scene to be initialized
 

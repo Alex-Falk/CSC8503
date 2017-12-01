@@ -36,6 +36,7 @@ public:
 
 	virtual void OnInitializeScene() override
 	{
+		Scene::OnInitializeScene();
 		//Create Ground
 		this->AddGameObject(CommonUtils::BuildCuboidObject(
 			"Ground",

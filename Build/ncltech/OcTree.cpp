@@ -26,6 +26,7 @@ OcTree::OcTree(Vector3 mins, Vector3 maxs, std::vector<PhysicsNode*>  * elements
 
 OcTree::~OcTree()
 {
+	TerminateTree(&root);
 }
 
 void OcTree::TerminateTree(Node ** node) {
@@ -147,7 +148,21 @@ std::vector<CollisionPair> OcTree::CreatePairs(Node * node)
 				if (node->children[i])
 				{
 					std::vector<CollisionPair> childpairs = CreatePairs(node->children[i]);
-					pairs.insert(pairs.end(), childpairs.begin(), childpairs.end());
+					//pairs.insert(pairs.end(), childpairs.begin(), childpairs.end());
+	
+					for (size_t j = 0; j < childpairs.size(); ++j) {
+						bool flag = false;
+						for (size_t k = 0; k < pairs.size(); ++k) {
+							if (childpairs[j].pObjectA == pairs[k].pObjectA
+								&& childpairs[j].pObjectB == pairs[k].pObjectB
+								) {
+								flag = true;
+								break;
+								
+							}
+						}
+						if (!flag) { pairs.push_back(childpairs[j]); }
+					}
 				}
 
 			}
@@ -184,16 +199,18 @@ std::vector<CollisionPair> OcTree::CreatePairs(Node * node)
 
 void OcTree::UpdateOcTree() {
 
-	for (size_t i = 0; i < physicsNodes->size(); ++i) {
-		if ((*physicsNodes)[i]->GetLinearVelocity().Length() > 0) {
-			updateList.push_back((*physicsNodes)[i]);
+	if (physicsNodes->size() > 0) {
+		for (size_t i = 0; i < physicsNodes->size(); ++i) {
+			if ((*physicsNodes)[i]->GetLinearVelocity().Length() > 0) {
+				updateList.push_back((*physicsNodes)[i]);
+			}
 		}
+
+		CheckElements(root);
+		UpdateNode(root);
+
+		updateList.clear();
 	}
-
-	CheckElements(root);
-	UpdateNode(root);
-
-	updateList.clear();
 }
 
 
