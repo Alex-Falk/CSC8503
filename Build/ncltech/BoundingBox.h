@@ -17,6 +17,7 @@ with graphics frustum culling by using both AABB and bounding sphere's inside Sc
 #include <nclgl\Matrix4.h>
 #include <nclgl\Vector3.h>
 #include <nclgl\common.h>
+#include <nclgl\NCLDebug.h>
 
 struct BoundingBox
 {
@@ -56,5 +57,67 @@ struct BoundingBox
 		bb.ExpandToFit(mtx * Vector3(_min.x, _max.y, _max.z));
 		bb.ExpandToFit(mtx * Vector3(_max.x, _max.y, _max.z));
 		return bb;
+	}
+
+	void DebugDraw() const {
+		float x1 = _min.x;
+		float y1 = _min.y;
+		float z1 = _min.z;
+
+		float x2 = _max.x;
+		float y2 = _max.y;
+		float z2 = _max.z;
+
+		Vector3 v[8];
+
+		v[0] = Vector3(x1, y1, z1);
+		v[1] = Vector3(x1, y2, z1);
+		v[2] = Vector3(x1, y1, z2);
+		v[3] = Vector3(x1, y2, z2);
+		v[4] = Vector3(x2, y1, z1);
+		v[5] = Vector3(x2, y2, z1);
+		v[6] = Vector3(x2, y1, z2);
+		v[7] = Vector3(x2, y2, z2);
+
+		NCLDebug::DrawThickLine(v[0], v[1], 0.2f, Vector4(0, 0, 0, 1));
+		NCLDebug::DrawThickLine(v[0], v[2], 0.2f, Vector4(0, 0, 0, 1));
+		NCLDebug::DrawThickLine(v[0], v[4], 0.2f, Vector4(0, 0, 0, 1));
+
+		NCLDebug::DrawThickLine(v[1], v[3], 0.2f, Vector4(0, 0, 0, 1));
+		NCLDebug::DrawThickLine(v[1], v[5], 0.2f, Vector4(0, 0, 0, 1));
+
+		NCLDebug::DrawThickLine(v[2], v[3], 0.2f, Vector4(0, 0, 0, 1));
+		NCLDebug::DrawThickLine(v[2], v[6], 0.2f, Vector4(0, 0, 0, 1));
+
+		NCLDebug::DrawThickLine(v[3], v[7], 0.2f, Vector4(0, 0, 0, 1));
+
+		NCLDebug::DrawThickLine(v[4], v[5], 0.2f, Vector4(0, 0, 0, 1));
+		NCLDebug::DrawThickLine(v[4], v[6], 0.2f, Vector4(0, 0, 0, 1));
+
+		NCLDebug::DrawThickLine(v[5], v[7], 0.2f, Vector4(0, 0, 0, 1));
+
+		NCLDebug::DrawThickLine(v[6], v[7], 0.2f, Vector4(0, 0, 0, 1));
+
+	}
+
+	bool CollidingWithSphere(Vector3 p, float r) {
+		Vector3 closestPt;
+		
+		if (p.x < _min.x) { closestPt.x = _min.x; }
+		else if (p.x > _max.x) { closestPt.x = _max.x; }
+		else { closestPt.x = p.x; }
+
+		if (p.y < _min.y) { closestPt.y = _min.y; }
+		else if (p.y > _max.y) { closestPt.y = _max.y; }
+		else { closestPt.y = p.y; }
+
+		if (p.z < _min.z) { closestPt.z = _min.z; }
+		else if (p.z > _max.z) { closestPt.z = _max.z; }
+		else { closestPt.z = p.z; }
+
+		Vector3 diff = p - closestPt;
+		float dsq = diff.LengthSQ();
+		
+		return dsq < r*r;
 	}
 };

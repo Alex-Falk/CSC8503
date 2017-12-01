@@ -29,7 +29,7 @@ public:
 			Vector3(20.0f, 1.0f, 20.0f),
 			false,
 			0.0f,
-			false,
+			true,
 			false,
 			Vector4(0.2f, 0.5f, 1.0f, 1.0f));
 
@@ -40,7 +40,7 @@ public:
 		{
 
 			this->AddGameObject(CommonUtils::BuildSphereObject("orbiting_sphere1",
-				ss_pos + Vector3(0.75f, 0.0f, 0.0f),	//Position leading to 0.25 meter overlap between spheres
+				ss_pos + Vector3(2.f, 0.0f, 0.0f),		//Position leading to 0.25 meter overlap between spheres
 				0.5f,									//Radius
 				true,									//Has Physics Object
 				0.0f,									//Infinite Mass
@@ -56,6 +56,8 @@ public:
 				true,									//Has Collision Shape
 				true,									//Dragable by the user
 				CommonUtils::GenColor(0.5f, 1.0f)));	//Color
+
+			//FindGameObject("orbiting_sphere1")->Physics()->SetOnCollisionCallback(&Phy4_ColDetection::CollisionCallback);
 		}
 
 		//Create Sphere-Cuboid Manifold Test
@@ -148,14 +150,26 @@ public:
 			}
 		}
 
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_J))
+		{
+			GameObject* spawnSphere = CommonUtils::BuildSphereObject("spawned_sphere",
+				GraphicsPipeline::Instance()->GetCamera()->GetPosition() + GraphicsPipeline::Instance()->GetCamera()->GetViewDirection().Normalise()*2.0f,
+				0.5f,									//Radius
+				true,									//Has Physics Object
+				1.0f,									//Inverse Mass
+				true,									//Has Collision Shape
+				false,									//Dragable by the user
+				CommonUtils::GenColor(0.1f, 0.8f));	//Color
 
+			spawnSphere->Physics()->SetForce(GraphicsPipeline::Instance()->GetCamera()->GetViewDirection().Normalise()*100.0f);
 
-
+			this->AddGameObject(spawnSphere);
+		}
 
 		uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
-
 
 		NCLDebug::AddStatusEntry(Vector4(1.0f, 0.9f, 0.8f, 1.0f), "--- Controls ---");
 		NCLDebug::AddStatusEntry(Vector4(1.0f, 0.9f, 0.8f, 1.0f), "    Hold [1] to rotate objects");
 	}
 };
+

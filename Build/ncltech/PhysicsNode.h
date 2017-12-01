@@ -35,6 +35,8 @@ Description:
 #include "CollisionShape.h"
 #include <functional>
 
+enum Integrator { ZERO, SYMPLETIC, RK2, RK4 };
+
 class PhysicsNode;
 
 //Callback function called whenever a collision is detected between two objects
@@ -58,7 +60,7 @@ class GameObject;
 class PhysicsNode
 {
 public:
-	PhysicsNode()
+	PhysicsNode(Integrator i = ZERO)
 		: position(0.0f, 0.0f, 0.0f)
 		, linVelocity(0.0f, 0.0f, 0.0f)
 		, force(0.0f, 0.0f, 0.0f)
@@ -71,6 +73,7 @@ public:
 		, friction(0.5f)
 		, elasticity(0.9f)
 	{
+		integrator = i;
 	}
 
 	virtual ~PhysicsNode()
@@ -81,9 +84,9 @@ public:
 
 	//<-------- Integration --------->
 	// Called automatically by PhysicsEngine on all physics nodes each frame
-	void IntegrateForVelocity(float dt);
+	void IntegrateForVelocity(float dt, Integrator integrator);
 	//<-- Between calling these two functions the physics engine will solve velocity to get 'true' final velocity -->
-	void IntegrateForPosition(float dt);
+	void IntegrateForPosition(float dt, Integrator integrator);
 
 
 	//<--------- GETTERS ------------->
@@ -101,6 +104,8 @@ public:
 	inline const Vector3&		GetAngularVelocity()		const { return angVelocity; }
 	inline const Vector3&		GetTorque()					const { return torque; }
 	inline const Matrix3&		GetInverseInertia()			const { return invInertia; }
+
+	inline const float			GetBoundingRadius()			const { return boundingRadius; }
 
 	inline CollisionShape*		GetCollisionShape()			const { return collisionShape; }
 
@@ -124,6 +129,10 @@ public:
 	inline void SetAngularVelocity(const Vector3& v)				{ angVelocity = v; }
 	inline void SetTorque(const Vector3& v)							{ torque = v; }
 	inline void SetInverseInertia(const Matrix3& v)					{ invInertia = v; }
+
+	inline void SetBoundingRadius(const float r)					{ boundingRadius = r; }
+
+	inline void SetIntegrator(Integrator i)							{ integrator = i; }
 
 	inline void SetCollisionShape(CollisionShape* colShape)
 	{ 
@@ -161,7 +170,12 @@ protected:
 	Matrix4					worldTransform;
 	PhysicsUpdateCallback	onUpdateCallback;
 
+	Integrator				integrator = ZERO;
 
+	Vector3					v1;
+	Vector3					v2;
+	Vector3					v3;
+	Vector3					v4;
 //Added in Tutorial 2
 	//<---------LINEAR-------------->
 	Vector3		position;
@@ -177,13 +191,12 @@ protected:
 	Vector3		torque;
 	Matrix3     invInertia;
 
-
 //Added in Tutorial 4/5
 	//<----------COLLISION------------>
 	CollisionShape*				collisionShape;
 	PhysicsCollisionCallback	onCollisionCallback;
 
-
+	float		boundingRadius = 2;
 //Added in Tutorial 5
 	//<--------MATERIAL-------------->
 	float				elasticity;		///Value from 0-1 definiing how much the object bounces off other objects

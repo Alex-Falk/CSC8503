@@ -38,11 +38,11 @@ Description:
 #include "PhysicsNode.h"
 #include "Constraint.h"
 #include "Manifold.h"
+#include "OcTree.h"
 #include <nclgl\TSingleton.h>
 #include <nclgl\PerfTimer.h>
 #include <vector>
 #include <mutex>
-
 
 //Number of jacobi iterations to apply in order to
 // assure the constraints are solved. (Last tutorial)
@@ -62,10 +62,11 @@ Description:
 #define DEBUGDRAW_FLAGS_COLLISIONVOLUMES		0x4
 #define DEBUGDRAW_FLAGS_COLLISIONNORMALS		0x8
 
-struct CollisionPair	//Forms the output of the broadphase collision detection
+struct WorldLimits
 {
-	PhysicsNode* pObjectA;
-	PhysicsNode* pObjectB;
+	Vector3 minVals;
+	Vector3 maxVals;
+
 };
 
 class PhysicsEngine : public TSingleton<PhysicsEngine>
@@ -100,7 +101,7 @@ public:
 	inline void SetDebugDrawFlags(uint flags)   { debugDrawFlags = flags; }
 	
 	inline float GetUpdateTimestep() const { return updateTimestep; }
-	inline void SetUpdateTimestep(float updateTimestep) { updateTimestep = updateTimestep; }
+	inline void SetUpdateTimestep(float updateTimestep) { this->updateTimestep = updateTimestep; }
 
 	inline const Vector3& GetGravity() const	{ return gravity; }
 	inline void SetGravity(const Vector3& g)	{ gravity = g; }
@@ -109,6 +110,8 @@ public:
 	inline void  SetDampingFactor(float d)		{ dampingFactor = d; }
 
 	inline float GetDeltaTime() const			{ return updateTimestep; }
+
+	inline void SetIntegrator(Integrator i)		{ integrator = i; }
 
 	void PrintPerformanceTimers(const Vector4& color)
 	{
@@ -151,4 +154,8 @@ protected:
 	PerfTimer perfBroadphase;
 	PerfTimer perfNarrowphase;
 	PerfTimer perfSolver;
+
+	Integrator integrator = SYMPLETIC;
+
+	OcTree * octree;
 };

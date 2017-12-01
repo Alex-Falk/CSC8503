@@ -43,6 +43,7 @@ public:
 		, physicsNode(physicsNde)
 	{
 		RegisterPhysicsToRenderTransformCallback();
+		SetPhysics(physicsNde);
 	}
 
 	virtual ~GameObject()
@@ -70,6 +71,9 @@ public:
 	inline bool  HasPhysics() const					{ return (physicsNode != NULL); }
 	inline const PhysicsNode*	Physics() const		{ return physicsNode; }
 	inline		 PhysicsNode*	Physics()			{ return physicsNode; }
+
+	inline void	 SetColliding(bool b)				{ renderNode->SetColliding(b); }
+	inline bool	 IsCollide()						{ return renderNode->IsCollide(); }
 	
 	inline void  SetPhysics(PhysicsNode* node)
 	{
@@ -147,4 +151,6 @@ protected:
 	//Components
 	RenderNode*					renderNode;
 	PhysicsNode*				physicsNode;
+
+	bool						isCollided = false;
 };

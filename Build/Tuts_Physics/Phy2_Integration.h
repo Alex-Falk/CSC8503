@@ -74,13 +74,13 @@ public:
 		RenderNode* sphereRender = new RenderNode();
 		sphereRender->SetMesh(CommonMeshes::Sphere());
 		sphereRender->SetTransform(Matrix4::Scale(Vector3(0.5f, 0.5f, 0.5f))); //No position! That is now all handled in PhysicsNode
-		sphereRender->SetColor(Vector4(1.0f, 0.2f, 0.5f, 1.0f));
+		sphereRender->SetBaseColor(Vector4(1.0f, 0.2f, 0.5f, 1.0f));
 		sphereRender->SetBoundingRadius(1.0f);
 
 		m_Sphere = new GameObject("Sphere");
 		m_Sphere->SetRender(new RenderNode());
 		m_Sphere->Render()->AddChild(sphereRender);
-		m_Sphere->SetPhysics(new PhysicsNode());
+		m_Sphere->SetPhysics(new PhysicsNode(SYMPLETIC));
 		m_Sphere->Physics()->SetInverseMass(1.f);
 		//Position, vel and acceleration all set in "ResetScene()"
 		this->AddGameObject(m_Sphere);
@@ -89,7 +89,51 @@ public:
 		m_Sphere->Physics()->SetOnUpdateCallback([&](const Matrix4& transform)
 		{
 			m_Sphere->Render()->SetTransform(transform); //Default callback for any object that has a render and physics nodes
-			UpdateTrajectory(transform.GetPositionVector()); //Our cheeky injection to store physics engine position updates
+			UpdateTrajectory(transform.GetPositionVector(), &m_TrajectoryPoints); //Our cheeky injection to store physics engine position updates
+		});
+
+		//Create a projectile
+		RenderNode* sphereRenderRK2 = new RenderNode();
+		sphereRenderRK2->SetMesh(CommonMeshes::Sphere());
+		sphereRenderRK2->SetTransform(Matrix4::Scale(Vector3(0.5f, 0.5f, 0.5f))); //No position! That is now all handled in PhysicsNode
+		sphereRenderRK2->SetBaseColor(Vector4(0.2f, 1.0f, 0.5f, 1.0f));
+		sphereRenderRK2->SetBoundingRadius(1.0f);
+
+		m_SphereRK2 = new GameObject("SphereRK2");
+		m_SphereRK2->SetRender(new RenderNode());
+		m_SphereRK2->Render()->AddChild(sphereRenderRK2);
+		m_SphereRK2->SetPhysics(new PhysicsNode(RK2));
+		m_SphereRK2->Physics()->SetInverseMass(1.f);
+		//Position, vel and acceleration all set in "ResetScene()"
+		this->AddGameObject(m_SphereRK2);
+
+		//Override the default PhysicsNode update callback (so we can see and store the trajectory over time)
+		m_SphereRK2->Physics()->SetOnUpdateCallback([&](const Matrix4& transform)
+		{
+			m_SphereRK2->Render()->SetTransform(transform); //Default callback for any object that has a render and physics nodes
+			UpdateTrajectory(transform.GetPositionVector(), &m_TrajectoryPointsRK2); //Our cheeky injection to store physics engine position updates
+		});
+
+		//Create a projectile
+		RenderNode* sphereRenderRK4 = new RenderNode();
+		sphereRenderRK4->SetMesh(CommonMeshes::Sphere());
+		sphereRenderRK4->SetTransform(Matrix4::Scale(Vector3(0.5f, 0.5f, 0.5f))); //No position! That is now all handled in PhysicsNode
+		sphereRenderRK4->SetBaseColor(Vector4(0.5f, 0.2f, 1.0f, 1.0f));
+		sphereRenderRK4->SetBoundingRadius(1.0f);
+
+		m_SphereRK4 = new GameObject("SphereRK4");
+		m_SphereRK4->SetRender(new RenderNode());
+		m_SphereRK4->Render()->AddChild(sphereRenderRK4);
+		m_SphereRK4->SetPhysics(new PhysicsNode(RK4));
+		m_SphereRK4->Physics()->SetInverseMass(1.f);
+		//Position, vel and acceleration all set in "ResetScene()"
+		this->AddGameObject(m_SphereRK4);
+
+		//Override the default PhysicsNode update callback (so we can see and store the trajectory over time)
+		m_SphereRK4->Physics()->SetOnUpdateCallback([&](const Matrix4& transform)
+		{
+			m_SphereRK4->Render()->SetTransform(transform); //Default callback for any object that has a render and physics nodes
+			UpdateTrajectory(transform.GetPositionVector(), &m_TrajectoryPointsRK4); //Our cheeky injection to store physics engine position updates
 		});
 
 	//Setup starting values
@@ -102,18 +146,32 @@ public:
 		PhysicsEngine::Instance()->SetPaused(false);
 		
 		m_TrajectoryPoints.clear();
+		m_TrajectoryPointsRK2.clear();
+		m_TrajectoryPointsRK4.clear();
 
 		//These values were worked out analytically by
 		// doing the integration over time. The ball (if everything works)
 		// should take 5 seconds to arc into the centre of the target.
-		m_Sphere->Physics()->SetPosition(Vector3(-7.5f, 2.0f, 0.f));
-		m_Sphere->Physics()->SetLinearVelocity(Vector3(2.f, 10.0f, 0.0f));
-		m_Sphere->Physics()->SetForce(Vector3(0.0f, 0.0f, 0.0f));
+		m_Sphere->Physics()->SetPosition(Vector3(-7.5f, 2.0f, -1.5f));
+		m_Sphere->Physics()->SetLinearVelocity(Vector3(3.0f, 2.0f, 0.0f));
+		m_Sphere->Physics()->SetForce(Vector3(0.0f, -1.0f, 0.0f));
 
 		//Cause we can.. we will also spin the ball 1 revolution per second (5 full spins before hitting target)
 		// - Rotation is in radians (so 2PI is 360 degrees), richard has provided a DegToRad() function in <nclgl\common.h> if you want as well.
 		m_Sphere->Physics()->SetOrientation(Quaternion());
 		m_Sphere->Physics()->SetAngularVelocity(Vector3(0.f, 0.f, -2.0f * PI));
+
+		m_SphereRK2->Physics()->SetPosition(Vector3(-7.5f, 2.0f, 0.f));
+		m_SphereRK2->Physics()->SetLinearVelocity(Vector3(3.0f, 2.0f, 0.0f));
+		m_SphereRK2->Physics()->SetForce(Vector3(0.0f, -1.0f, 0.0f));
+		m_SphereRK2->Physics()->SetOrientation(Quaternion());
+		m_SphereRK2->Physics()->SetAngularVelocity(Vector3(0.f, 0.f, -2.0f * PI));
+
+		m_SphereRK4->Physics()->SetPosition(Vector3(-7.5f, 2.0f, 1.5f));
+		m_SphereRK4->Physics()->SetLinearVelocity(Vector3(3.0f, 2.0f, 0.0f));
+		m_SphereRK4->Physics()->SetForce(Vector3(0.0f, -1.0f, 0.0f));
+		m_SphereRK4->Physics()->SetOrientation(Quaternion());
+		m_SphereRK4->Physics()->SetAngularVelocity(Vector3(0.f, 0.f, -2.0f * PI));
 
 	}
 
@@ -140,10 +198,14 @@ public:
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_3))	ResetScene(1.0f / 30.0f);
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_4))	ResetScene(1.0f / 60.0f);
 	
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_NUMPAD1))	PhysicsEngine::Instance()->SetIntegrator(SYMPLETIC);
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_NUMPAD2))	PhysicsEngine::Instance()->SetIntegrator(RK2);
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_NUMPAD3))	PhysicsEngine::Instance()->SetIntegrator(RK4);
+
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_J))
 		{
 			//Create a projectile
-r			RenderNode* sphereRenderSpawn = new RenderNode();
+			RenderNode* sphereRenderSpawn = new RenderNode();
 			sphereRenderSpawn->SetMesh(CommonMeshes::Sphere());
 			sphereRenderSpawn->SetTransform(Matrix4::Scale(Vector3(0.5f, 0.5f, 0.5f))); //No position! That is now all handled in PhysicsNode
 			sphereRenderSpawn->SetColor(Vector4(0.5f, 0.2f, 0.5f, 1.0f));
@@ -181,22 +243,38 @@ r			RenderNode* sphereRenderSpawn = new RenderNode();
 				cols[i % 2]
 			);
 		}
+		for (size_t i = 1; i < m_TrajectoryPointsRK2.size(); i++)
+		{
+			NCLDebug::DrawThickLine(
+				m_TrajectoryPointsRK2[i - 1],
+				m_TrajectoryPointsRK2[i],
+				0.01f,
+				cols[i % 2]
+			);
+		}
+		for (size_t i = 1; i < m_TrajectoryPointsRK4.size(); i++)
+		{
+			NCLDebug::DrawThickLine(
+				m_TrajectoryPointsRK4[i - 1],
+				m_TrajectoryPointsRK4[i],
+				0.01f,
+				cols[i % 2]
+			);
+		}
 
 	}
 
-	void UpdateTrajectory(const Vector3& pos)
+	void UpdateTrajectory(const Vector3& pos, vector<Vector3> * trajPoints)
 	{
-		m_TrajectoryPoints.push_back(pos);
-		
-		if (m_Sphere->Physics()->GetPosition().y < 0.0f)
-		{
-			PhysicsEngine::Instance()->SetPaused(true);
-		}
+		trajPoints->push_back(pos);
 	}
 
 private:
 	Mesh*					m_TargetMesh;
 	GameObject*				m_Sphere;
-	GameObject*				m_Sphere2;
+	GameObject*				m_SphereRK2;
+	GameObject*				m_SphereRK4;
 	std::vector<Vector3>	m_TrajectoryPoints;
+	std::vector<Vector3>	m_TrajectoryPointsRK2;
+	std::vector<Vector3>	m_TrajectoryPointsRK4;
 };

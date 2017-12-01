@@ -1,0 +1,6 @@
+﻿  TestScene.cpp
+d:\projects\csc8503\build\gametech coursework\testscene.cpp(41): warning C4129: 'p': unrecognized character escape sequence
+  main.cpp
+  Generating Code...
+LINK : warning LNK4075: ignoring '/INCREMENTAL' due to '/LTCG' specification
+LINK : fatal error LNK1181: cannot open input file 'ncltech.lib'

@@ -125,6 +125,7 @@ GameObject* CommonUtils::BuildSphereObject(
 		pnode = new PhysicsNode();
 		pnode->SetPosition(pos);
 		pnode->SetInverseMass(inverse_mass);
+		pnode->SetBoundingRadius(radius);
 
 		if (!collidable)
 		{
@@ -179,6 +180,15 @@ GameObject* CommonUtils::BuildCuboidObject(
 		pnode = new PhysicsNode();
 		pnode->SetPosition(pos);
 		pnode->SetInverseMass(inverse_mass);
+		float x = halfdims.x*2.0f;
+		float y = halfdims.y*2.0f;
+		float z = halfdims.z*2.0f;
+		float a;
+		if (x >= y && x >= z) { a = x; }
+		else if (y > x && y >= z) { a = y; }
+		else { a = z; }
+
+		pnode->SetBoundingRadius(a * sqrt(3.0f) / 2.0f);
 
 		if (!collidable)
 		{

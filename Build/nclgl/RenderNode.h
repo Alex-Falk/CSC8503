@@ -36,7 +36,15 @@ public:
 	virtual void	Update(float msec);
 
 	const Vector4&	GetColor()		const				{return color;}
-	void			SetColor(const Vector4 &c)			{color = c;}
+	void			SetColor(const Vector4 &c)			{ color = c;}
+
+	const Vector4&	GetBaseColor()const					{ return baseColor; }
+	void			SetBaseColor(const Vector4 &c)		{ baseColor = c; }
+
+	const Vector4&  GetChildColor()	const				{ return children[0]->color; }
+	void			SetChildColor(const Vector4 &c)		{ children[0]->color = c; }
+
+	const Vector4&	GetchildBaseColor() const			{ return children[0]->baseColor; }
 
 	const Vector3&	GetModelScale()		const			{return modelScale;}
 	void			SetModelScale(const Vector3 &s)		{modelScale = s;}
@@ -63,6 +71,14 @@ public:
 	static bool		CompareByCameraDistance(RenderNode*a,RenderNode*b) ;
 	static bool		CompareByZ(RenderNode*a,RenderNode*b) ;
 
+	void	 SetColliding(bool b) { 
+		isCollided = b; 
+		for (vector<RenderNode*>::iterator i = children.begin(); i != children.end(); ++i) {
+				(*i)->SetColliding(b);
+		}
+	}
+	bool 	 IsCollide() { return isCollided; }
+
 protected:
 	Matrix4		worldTransform;
 	Matrix4		transform;
@@ -70,9 +86,12 @@ protected:
 	float		distanceFromCamera;
 	float		boundingRadius;
 	Vector4		color;
+	Vector4		baseColor;
+	Vector4		collideColor;
 	Vector3		modelScale;
 	Mesh*		mesh;
 	bool		awake;
+	bool		isCollided = false;
 	std::vector<RenderNode*>		children;
 };
 

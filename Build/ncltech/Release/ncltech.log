@@ -1,15 +1,40 @@
-﻿  CollisionDetectionSAT.cpp
-  CommonMeshes.cpp
-  CommonUtils.cpp
-  CuboidCollisionShape.cpp
-  GeometryUtils.cpp
-  GraphicsPipeline.cpp
-  Hull.cpp
+﻿  CommonUtils.cpp
   Manifold.cpp
-  NetworkBase.cpp
+  OcTree.cpp
+OcTree.cpp(18): warning C4018: '>': signed/unsigned mismatch
+OcTree.cpp(110): warning C4018: '>': signed/unsigned mismatch
+OcTree.cpp(230): warning C4018: '>': signed/unsigned mismatch
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Tools\MSVC\14.10.25017\include\algorithm(1386): error C2679: binary '==': no operator found which takes a right-hand operand of type 'const std::_Vector_iterator<std::_Vector_val<std::_Simple_types<PhysicsNode *>>>' (or there is no acceptable conversion)
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Tools\MSVC\14.10.25017\include\thread(213): note: could be 'bool std::operator ==(std::thread::id,std::thread::id) noexcept'
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Tools\MSVC\14.10.25017\include\system_error(386): note: or       'bool std::operator ==(const std::error_condition &,const std::error_condition &) noexcept'
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Tools\MSVC\14.10.25017\include\system_error(378): note: or       'bool std::operator ==(const std::error_condition &,const std::error_code &) noexcept'
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Tools\MSVC\14.10.25017\include\system_error(370): note: or       'bool std::operator ==(const std::error_code &,const std::error_condition &) noexcept'
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Tools\MSVC\14.10.25017\include\system_error(362): note: or       'bool std::operator ==(const std::error_code &,const std::error_code &) noexcept'
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Tools\MSVC\14.10.25017\include\exception(346): note: or       'bool std::operator ==(const std::exception_ptr &,std::nullptr_t) throw()'
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Tools\MSVC\14.10.25017\include\exception(341): note: or       'bool std::operator ==(std::nullptr_t,const std::exception_ptr &) throw()'
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Tools\MSVC\14.10.25017\include\exception(336): note: or       'bool std::operator ==(const std::exception_ptr &,const std::exception_ptr &) throw()'
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.15063.0\shared\guiddef.h(192): note: or       'bool operator ==(const GUID &,const GUID &)' [found using argument-dependent lookup]
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Tools\MSVC\14.10.25017\include\algorithm(1386): note: or       'built-in C++ operator==(PhysicsNode *, PhysicsNode *)'
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Tools\MSVC\14.10.25017\include\algorithm(1386): note: while trying to match the argument list '(PhysicsNode *, const std::_Vector_iterator<std::_Vector_val<std::_Simple_types<PhysicsNode *>>>)'
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Tools\MSVC\14.10.25017\include\algorithm(1399): note: see reference to function template instantiation '_FwdIt std::_Remove_unchecked<PhysicsNode**,_Ty>(_FwdIt,_FwdIt,const _Ty &)' being compiled
+          with
+          [
+              _FwdIt=PhysicsNode **,
+              _Ty=std::_Vector_iterator<std::_Vector_val<std::_Simple_types<PhysicsNode *>>>
+          ]
+  OcTree.cpp(209): note: see reference to function template instantiation '_FwdIt std::remove<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<PhysicsNode *>>>,_InIt>(_FwdIt,_FwdIt,const _Ty &)' being compiled
+          with
+          [
+              _FwdIt=std::_Vector_iterator<std::_Vector_val<std::_Simple_types<PhysicsNode *>>>,
+              _InIt=std::_Vector_iterator<std::_Vector_val<std::_Simple_types<PhysicsNode *>>>,
+              _Ty=std::_Vector_iterator<std::_Vector_val<std::_Simple_types<PhysicsNode *>>>
+          ]
   PhysicsEngine.cpp
+PhysicsEngine.cpp(179): error C2664: 'OcTree::OcTree(const OcTree &)': cannot convert argument 3 from 'std::vector<PhysicsNode *,std::allocator<_Ty>>' to 'std::vector<PhysicsNode *,std::allocator<_Ty>> *'
+          with
+          [
+              _Ty=PhysicsNode *
+          ]
+  PhysicsEngine.cpp(179): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
   PhysicsNode.cpp
   SceneManager.cpp
-  ScreenPicker.cpp
-  SphereCollisionShape.cpp
-  ncltech.vcxproj -> D:\Projects\CSC8503\Build\Release\ncltech.lib

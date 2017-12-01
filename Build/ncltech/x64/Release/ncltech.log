@@ -1,0 +1,29 @@
+﻿  CollisionDetectionSAT.cpp
+d:\projects\csc8503\build\nclgl\OGLRenderer.h(29): fatal error C1083: Cannot open include file: 'GL\glew.h': No such file or directory
+  CommonMeshes.cpp
+d:\projects\csc8503\build\nclgl\OGLRenderer.h(29): fatal error C1083: Cannot open include file: 'GL\glew.h': No such file or directory
+  CommonUtils.cpp
+d:\projects\csc8503\build\nclgl\OGLRenderer.h(29): fatal error C1083: Cannot open include file: 'GL\glew.h': No such file or directory
+  CuboidCollisionShape.cpp
+CuboidCollisionShape.cpp(72): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  GeometryUtils.cpp
+  GraphicsPipeline.cpp
+D:\Projects\CSC8503\Build\nclgl\OGLRenderer.h(29): fatal error C1083: Cannot open include file: 'GL\glew.h': No such file or directory
+  Hull.cpp
+d:\projects\csc8503\build\nclgl\OGLRenderer.h(29): fatal error C1083: Cannot open include file: 'GL\glew.h': No such file or directory
+  Manifold.cpp
+d:\projects\csc8503\build\nclgl\OGLRenderer.h(29): fatal error C1083: Cannot open include file: 'GL\glew.h': No such file or directory
+  NetworkBase.cpp
+d:\projects\csc8503\build\ncltech\NetworkBase.h(41): fatal error C1083: Cannot open include file: 'enet\enet.h': No such file or directory
+  OcTree.cpp
+d:\projects\csc8503\build\nclgl\OGLRenderer.h(29): fatal error C1083: Cannot open include file: 'GL\glew.h': No such file or directory
+  PhysicsEngine.cpp
+d:\projects\csc8503\build\nclgl\OGLRenderer.h(29): fatal error C1083: Cannot open include file: 'GL\glew.h': No such file or directory
+  PhysicsNode.cpp
+d:\projects\csc8503\build\nclgl\OGLRenderer.h(29): fatal error C1083: Cannot open include file: 'GL\glew.h': No such file or directory
+  SceneManager.cpp
+d:\projects\csc8503\build\nclgl\OGLRenderer.h(29): fatal error C1083: Cannot open include file: 'GL\glew.h': No such file or directory
+  ScreenPicker.cpp
+d:\projects\csc8503\build\nclgl\OGLRenderer.h(29): fatal error C1083: Cannot open include file: 'GL\glew.h': No such file or directory
+  SphereCollisionShape.cpp
+d:\projects\csc8503\build\nclgl\OGLRenderer.h(29): fatal error C1083: Cannot open include file: 'GL\glew.h': No such file or directory

@@ -123,6 +123,7 @@ public:
 	static bool ExampleCallbackFunction1(PhysicsNode* self, PhysicsNode* collidingObject)
 	{
 		NCLDebug::Log(Vector3(0.3f, 1.0f, 0.3f), "Player is inside the Yellow City! - Static callback");
+		self->GetParent()->Render()->SetColor(Vector4(1, 0, 0, 1));
 
 		//Return true to enable collision resolution, for AI test's just return false so we can drop the collision pair from the system
 		return false; 

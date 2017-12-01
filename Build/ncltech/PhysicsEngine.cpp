@@ -12,7 +12,7 @@ void PhysicsEngine::SetDefaults()
 	updateTimestep = 1.0f / 60.f;
 	updateRealTimeAccum = 0.0f;
 	gravity = Vector3(0.0f, -9.81f, 0.0f);
-	dampingFactor = 0.999f;
+	dampingFactor = 0.998f;
 }
 
 PhysicsEngine::PhysicsEngine()
@@ -32,6 +32,8 @@ PhysicsEngine::~PhysicsEngine()
 void PhysicsEngine::AddPhysicsObject(PhysicsNode* obj)
 {
 	physicsNodes.push_back(obj);
+
+	octree = new OcTree(Vector3(-10, 0, -10), Vector3(20, 20, 20), &physicsNodes);
 }
 
 void PhysicsEngine::RemovePhysicsObject(PhysicsNode* obj)
@@ -133,27 +135,33 @@ void PhysicsEngine::UpdatePhysics()
 	NarrowPhaseCollisions();
 	perfNarrowphase.EndTimingSection();
 
-
+	std::random_shuffle(manifolds.begin(), manifolds.end());
+	std::random_shuffle(constraints.begin(), constraints.end());
+	
 //3. Initialize Constraint Params (precompute elasticity/baumgarte factor etc)
 	//Optional step to allow constraints to 
 	// precompute values based off current velocities 
 	// before they are updated loop below.
-	for (Constraint* c : constraints) c->PreSolverStep(updateTimestep);
-
+	for (Manifold * m : manifolds) m->PreSolverStep(updateTimestep);
+	for (Constraint * c : constraints) c->PreSolverStep(updateTimestep);
 
 //4. Update Velocities
 	perfUpdate.BeginTimingSection();
-	for (PhysicsNode* obj : physicsNodes) obj->IntegrateForVelocity(updateTimestep);
+	for (PhysicsNode* obj : physicsNodes) obj->IntegrateForVelocity(updateTimestep, integrator);
 	perfUpdate.EndTimingSection();
 
 //5. Constraint Solver
 	perfSolver.BeginTimingSection();
-	for (Constraint* c : constraints) c->ApplyImpulse();
+	for (size_t i = 0; i < SOLVER_ITERATIONS; ++i)
+	{
+		for (Manifold * m : manifolds) m->ApplyImpulse();
+		for (Constraint* c : constraints) c->ApplyImpulse();
+	}
 	perfSolver.EndTimingSection();
 
 //6. Update Positions (with final 'real' velocities)
 	perfUpdate.BeginTimingSection();
-	for (PhysicsNode* obj : physicsNodes) obj->IntegrateForPosition(updateTimestep);
+	for (PhysicsNode* obj : physicsNodes) obj->IntegrateForPosition(updateTimestep, integrator);
 	perfUpdate.EndTimingSection();
 }
 
@@ -161,37 +169,26 @@ void PhysicsEngine::BroadPhaseCollisions()
 {
 	broadphaseColPairs.clear();
 
-	PhysicsNode *pnodeA, *pnodeB;
+	//PhysicsNode *pnodeA, *pnodeB;
 	//	The broadphase needs to build a list of all potentially colliding objects in the world,
 	//	which then get accurately assesed in narrowphase. If this is too coarse then the system slows down with
 	//	the complexity of narrowphase collision checking, if this is too fine then collisions may be missed.
+	
+	//octree = new OcTree(Vector3(-20, 0, -20), Vector3(20, 20, 20), physicsNodes);
+	octree->UpdateOcTree();
 
-
+	broadphaseColPairs = octree->CreatePairs();
 	//	Brute force approach.
 	//  - For every object A, assume it could collide with every other object.. 
 	//    even if they are on the opposite sides of the world.
-	if (physicsNodes.size() > 0)
-	{
-		for (size_t i = 0; i < physicsNodes.size() - 1; ++i)
-		{
-			for (size_t j = i + 1; j < physicsNodes.size(); ++j)
-			{
-				pnodeA = physicsNodes[i];
-				pnodeB = physicsNodes[j];
+	//if (physicsNodes.size() > 0)
+	//{
+	//	for (size_t i = 0; i < physicsNodes.size(); ++i) {
+	//		if (physicsNodes[i]->GetParent())
+	//			physicsNodes[i]->GetParent()->SetColliding(false);
+	//	}
+	//}
 
-				//Check they both atleast have collision shapes
-				if (pnodeA->GetCollisionShape() != NULL
-					&& pnodeB->GetCollisionShape() != NULL)
-				{
-					CollisionPair cp;
-					cp.pObjectA = pnodeA;
-					cp.pObjectB = pnodeB;
-					broadphaseColPairs.push_back(cp);
-				}
-
-			}
-		}
-	}
 }
 
 
@@ -221,6 +218,7 @@ void PhysicsEngine::NarrowPhaseCollisions()
 
 			//--TUTORIAL 4 CODE--
 			// Detects if the objects are colliding
+
 			if (colDetect.AreColliding(&colData))
 			{
 				//Note: As at the end of tutorial 4 we have very little to do, this is a bit messier
@@ -240,10 +238,33 @@ void PhysicsEngine::NarrowPhaseCollisions()
 				bool okA = cp.pObjectA->FireOnCollisionEvent(cp.pObjectA, cp.pObjectB);
 				bool okB = cp.pObjectB->FireOnCollisionEvent(cp.pObjectB, cp.pObjectA);
 
+				//cp.pObjectA->GetParent()->SetColliding(true);
+				//cp.pObjectB->GetParent()->SetColliding(true);
+
 				if (okA && okB)
 				{
-					/* TUTORIAL 5 CODE */
+					// Build full collision manifold that will also handle the
+					// collision response between the two objects in the solver
+					// stage
+
+					Manifold * manifold = new Manifold();
+
+					manifold->Initiate(cp.pObjectA, cp.pObjectB);
+
+					// Construct contact points that form the perimeter of the
+					// collision manifold
+
+					colDetect.GenContactPoints(manifold);
+
+					if (manifold->contactPoints.size() > 0)
+					{
+						// Add to list of manifolds that need solving
+						manifolds.push_back(manifold);
+					}
+					else
+						delete manifold;
 				}
+
 			}
 		}
 
@@ -253,6 +274,7 @@ void PhysicsEngine::NarrowPhaseCollisions()
 
 void PhysicsEngine::DebugRender()
 {
+	if(octree)	octree->DebugDraw();
 	// Draw all collision manifolds
 	if (debugDrawFlags & DEBUGDRAW_FLAGS_MANIFOLD)
 	{

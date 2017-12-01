@@ -60,6 +60,18 @@ public:
 		return *this;
 	}
 
+	bool operator==(const Vector4& rhs) const
+	{
+		if (
+			x == rhs.x &&
+			y == rhs.y &&
+			z == rhs.z &&
+			w == rhs.w
+			) 
+		{return true; }
+		else { return false; }
+	}
+
 	float x;
 	float y;
 	float z;

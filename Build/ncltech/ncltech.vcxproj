@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{AB4196E5-2488-4514-B4C2-00EAFC468A1D}</ProjectGuid>
     <RootNamespace>ncltech</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -46,7 +46,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -141,6 +141,7 @@
     <ClCompile Include="Hull.cpp" />
     <ClCompile Include="Manifold.cpp" />
     <ClCompile Include="NetworkBase.cpp" />
+    <ClCompile Include="OcTree.cpp" />
     <ClCompile Include="PhysicsEngine.cpp" />
     <ClCompile Include="PhysicsNode.cpp" />
     <ClCompile Include="SceneManager.cpp" />
@@ -162,6 +163,7 @@
     <ClInclude Include="Hull.h" />
     <ClInclude Include="Manifold.h" />
     <ClInclude Include="NetworkBase.h" />
+    <ClInclude Include="OcTree.h" />
     <ClInclude Include="PhysicsEngine.h" />
     <ClInclude Include="PhysicsNode.h" />
     <ClInclude Include="Scene.h" />

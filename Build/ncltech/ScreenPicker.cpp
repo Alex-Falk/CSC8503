@@ -289,7 +289,7 @@ void ScreenPicker::HandleObjectMouseHover(PickerNode* target)
 			HandleObjectMouseLeave();
 
 		m_pCurrentlyHoverObject = target;
-		m_CurrentObjectBaseColor = target->_renderNode->GetColor();
+		m_CurrentObjectBaseColor = target->_renderNode->GetBaseColor();
 
 		//Set color to highlight color
 		target->_renderNode->SetColor(m_CurrentObjectBaseColor + Vector4(0.1f, 0.1f, 0.1f, 0.0f));
