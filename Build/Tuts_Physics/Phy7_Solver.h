@@ -81,5 +81,21 @@ public:
 			m_StackHeight = max(m_StackHeight - 1, 1);
 			SceneManager::Instance()->JumpToScene(SceneManager::Instance()->GetCurrentSceneIndex());
 		}
+
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_J))
+		{
+			GameObject* spawnSphere = CommonUtils::BuildSphereObject("spawned_sphere",
+				GraphicsPipeline::Instance()->GetCamera()->GetPosition() + GraphicsPipeline::Instance()->GetCamera()->GetViewDirection().Normalise()*2.0f,
+				0.5f,									//Radius
+				true,									//Has Physics Object
+				1.0f/4.0f,								//Inverse Mass
+				true,									//Has Collision Shape
+				true,									//Dragable by the user
+				CommonUtils::GenColor(0.1f, 0.8f));	//Color
+
+			spawnSphere->Physics()->SetLinearVelocity(GraphicsPipeline::Instance()->GetCamera()->GetViewDirection().Normalise()*50.0f);
+
+			this->AddGameObject(spawnSphere);
+		}
 	}
 };

@@ -1,5 +1,5 @@
 ﻿  OcTree.cpp
 d:\projects\csc8503\build\ncltech\octree.cpp(19): warning C4018: '>': signed/unsigned mismatch
-d:\projects\csc8503\build\ncltech\octree.cpp(111): warning C4018: '>': signed/unsigned mismatch
-d:\projects\csc8503\build\ncltech\octree.cpp(252): warning C4018: '>': signed/unsigned mismatch
+d:\projects\csc8503\build\ncltech\octree.cpp(115): warning C4018: '>': signed/unsigned mismatch
+d:\projects\csc8503\build\ncltech\octree.cpp(271): warning C4018: '>': signed/unsigned mismatch
   ncltech.vcxproj -> D:\Projects\CSC8503\Build\Debug\ncltech.lib

@@ -279,7 +279,10 @@ void PhysicsEngine::NarrowPhaseCollisions()
 
 void PhysicsEngine::DebugRender()
 {
-	if(octree)	octree->DebugDraw();
+	if (debugDrawFlags & DEBUGDRAW_FLAGS_OCTREE)
+	{
+		octree->DebugDraw();
+	}
 	// Draw all collision manifolds
 	if (debugDrawFlags & DEBUGDRAW_FLAGS_MANIFOLD)
 	{

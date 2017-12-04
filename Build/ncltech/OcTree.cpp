@@ -115,9 +115,9 @@ for (int i = 0; i < 8; ++i) {
 	if (childphysnodes.size() > maxNumber && abs(half.x) >= minSize && abs(half.y) >= minSize && abs(half.z) >= minSize) {
 		SplitBox(node->children[i], childphysnodes);
 	}
-	else if (childphysnodes.size() == 0) {
-		node->children[i] = nullptr;
-	}
+	//else if (childphysnodes.size() == 0) {
+	//	node->children[i] = nullptr;
+	//}
 	else {
 		node->children[i]->elements = childphysnodes;
 	}
@@ -216,25 +216,28 @@ void OcTree::UpdateOcTree() {
 
 void OcTree::CheckElements(Node * node)
 {
-	if (node->children) {
-		for (int i = 0; i < 8; ++i) {
-			CheckElements(node->children[i]);
-		}
-	}
-	else {
-		// For each updating object check if the current node contains it
-		for (size_t i = 0; i < updateList.size(); ++i) {
-			// if it does contain it, check if the object is still in the node and remove it if it doesnt
-			std::vector<PhysicsNode*>::iterator it = std::find(node->elements.begin(), node->elements.end(), updateList[i]);
-			if (it != node->elements.end()) {
-				if (!(node->AABB->CollidingWithSphere(updateList[i]->GetPosition(), updateList[i]->GetBoundingRadius()))) {
-					node->elements.erase(std::remove(node->elements.begin(), node->elements.end(), *it), node->elements.end());
-				}
+	if (node)
+	{
+		if (node->children) {
+			for (int i = 0; i < 8; ++i) {
+				CheckElements(node->children[i]);
 			}
-			//if it doesnt already contain it, check if the object is now in the node and if so, add it to the list 
-			else {
-				if (node->AABB->CollidingWithSphere(updateList[i]->GetPosition(), updateList[i]->GetBoundingRadius())) {
-					node->elements.push_back(updateList[i]);
+		}
+		else {
+			// For each updating object check if the current node contains it
+			for (size_t i = 0; i < updateList.size(); ++i) {
+				// if it does contain it, check if the object is still in the node and remove it if it doesnt
+				std::vector<PhysicsNode*>::iterator it = std::find(node->elements.begin(), node->elements.end(), updateList[i]);
+				if (it != node->elements.end()) {
+					if (!(node->AABB->CollidingWithSphere(updateList[i]->GetPosition(), updateList[i]->GetBoundingRadius()))) {
+						node->elements.erase(std::remove(node->elements.begin(), node->elements.end(), *it), node->elements.end());
+					}
+				}
+				//if it doesnt already contain it, check if the object is now in the node and if so, add it to the list 
+				else {
+					if (node->AABB->CollidingWithSphere(updateList[i]->GetPosition(), updateList[i]->GetBoundingRadius())) {
+						node->elements.push_back(updateList[i]);
+					}
 				}
 			}
 		}
@@ -243,29 +246,32 @@ void OcTree::CheckElements(Node * node)
 
 // Update a given node
 void OcTree::UpdateNode(Node * node) {
-	if (node->children) {
-		int totalElems = 0;
-		vector<PhysicsNode*> totalnodes = GetElemsInChildren(node);
-		totalElems = totalnodes.size();
-		// if the total elements is less than the limit combine all the children into one parent node
-		if (totalElems < maxNumber) {
-			CombineNode(node);
-		}
-		else {
-			// if the total is still over the limit then go into children and run update node again
-			for (int i = 0; i < 8; ++i) {
-				if (node->children)
-					UpdateNode(node->children[i]);
+	if (node)
+	{
+		if (node->children) {
+			int totalElems = 0;
+			vector<PhysicsNode*> totalnodes = GetElemsInChildren(node);
+			totalElems = totalnodes.size();
+			// if the total elements is less than the limit combine all the children into one parent node
+			if (totalElems < maxNumber) {
+				CombineNode(node);
 			}
-		}	
-	}
-	// if there are no children, check if node needs to be split into more children after the update
-	else {
-		// if the node now has more than the max number of elements split it
-		Vector3 half = (node->AABB->_max + node->AABB->_min) * 0.5f;
-		if (node->elements.size() > maxNumber  && abs(half.x) >= minSize && abs(half.y) >= minSize && abs(half.z) >= minSize) {
-			SplitBox(node, node->elements);
-			node->elements.clear();
+			else {
+				// if the total is still over the limit then go into children and run update node again
+				for (int i = 0; i < 8; ++i) {
+					if (node->children)
+						UpdateNode(node->children[i]);
+				}
+			}
+		}
+		// if there are no children, check if node needs to be split into more children after the update
+		else {
+			// if the node now has more than the max number of elements split it
+			Vector3 half = (node->AABB->_max + node->AABB->_min) * 0.5f;
+			if (node->elements.size() > maxNumber  && abs(half.x) >= minSize && abs(half.y) >= minSize && abs(half.z) >= minSize) {
+				SplitBox(node, node->elements);
+				node->elements.clear();
+			}
 		}
 	}
 }
@@ -294,12 +300,14 @@ std::vector<PhysicsNode*> OcTree::GetElemsInChildren(Node * node) {
 void OcTree::CombineNode(Node * parent) {
 	for (int i = 0; i < 8; ++i) {
 		// Combine All children's Nodes
-		for (size_t j = 0; j < parent->children[i]->elements.size(); ++j) {
-			if (std::find(parent->elements.begin(), parent->elements.end(), parent->children[i]->elements[j]) == parent->elements.end()) {
-				parent->elements.push_back(parent->children[i]->elements[j]);
+		if (parent->children[i]) {
+			for (size_t j = 0; j < parent->children[i]->elements.size(); ++j) {
+				if (std::find(parent->elements.begin(), parent->elements.end(), parent->children[i]->elements[j]) == parent->elements.end()) {
+					parent->elements.push_back(parent->children[i]->elements[j]);
+				}
 			}
+			delete parent->children[i];
 		}
-		delete parent->children[i];
 	}
 	parent->children = nullptr;
 }

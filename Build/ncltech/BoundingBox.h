@@ -79,24 +79,24 @@ struct BoundingBox
 		v[6] = Vector3(x2, y1, z2);
 		v[7] = Vector3(x2, y2, z2);
 
-		NCLDebug::DrawThickLine(v[0], v[1], 0.2f, Vector4(0, 0, 0, 1));
-		NCLDebug::DrawThickLine(v[0], v[2], 0.2f, Vector4(0, 0, 0, 1));
-		NCLDebug::DrawThickLine(v[0], v[4], 0.2f, Vector4(0, 0, 0, 1));
+		NCLDebug::DrawThickLine(v[0], v[1], 0.05f, Vector4(1, 0, 0, 0.2f));
+		NCLDebug::DrawThickLine(v[0], v[2], 0.05f, Vector4(1, 0, 0, 0.2f));
+		NCLDebug::DrawThickLine(v[0], v[4], 0.05f, Vector4(1, 0, 0, 0.2f));
 
-		NCLDebug::DrawThickLine(v[1], v[3], 0.2f, Vector4(0, 0, 0, 1));
-		NCLDebug::DrawThickLine(v[1], v[5], 0.2f, Vector4(0, 0, 0, 1));
+		NCLDebug::DrawThickLine(v[1], v[3], 0.05f, Vector4(1, 0, 0, 0.2f));
+		NCLDebug::DrawThickLine(v[1], v[5], 0.05f, Vector4(1, 0, 0, 0.2f));
 
-		NCLDebug::DrawThickLine(v[2], v[3], 0.2f, Vector4(0, 0, 0, 1));
-		NCLDebug::DrawThickLine(v[2], v[6], 0.2f, Vector4(0, 0, 0, 1));
+		NCLDebug::DrawThickLine(v[2], v[3], 0.05f, Vector4(1, 0, 0, 0.2f));
+		NCLDebug::DrawThickLine(v[2], v[6], 0.05f, Vector4(1, 0, 0, 0.2f));
 
-		NCLDebug::DrawThickLine(v[3], v[7], 0.2f, Vector4(0, 0, 0, 1));
+		NCLDebug::DrawThickLine(v[3], v[7], 0.05f, Vector4(1, 0, 0, 0.2f));
 
-		NCLDebug::DrawThickLine(v[4], v[5], 0.2f, Vector4(0, 0, 0, 1));
-		NCLDebug::DrawThickLine(v[4], v[6], 0.2f, Vector4(0, 0, 0, 1));
+		NCLDebug::DrawThickLine(v[4], v[5], 0.05f, Vector4(1, 0, 0, 0.2f));
+		NCLDebug::DrawThickLine(v[4], v[6], 0.05f, Vector4(1, 0, 0, 0.2f));
 
-		NCLDebug::DrawThickLine(v[5], v[7], 0.2f, Vector4(0, 0, 0, 1));
+		NCLDebug::DrawThickLine(v[5], v[7], 0.05f, Vector4(1, 0, 0, 0.2f));
 
-		NCLDebug::DrawThickLine(v[6], v[7], 0.2f, Vector4(0, 0, 0, 1));
+		NCLDebug::DrawThickLine(v[6], v[7], 0.05f, Vector4(1, 0, 0, 0.2f));
 
 	}
 
