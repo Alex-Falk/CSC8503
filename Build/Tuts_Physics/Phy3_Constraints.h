@@ -5,6 +5,7 @@
 #include <ncltech\SceneManager.h>
 #include <ncltech\PhysicsEngine.h>
 #include <ncltech\DistanceConstraint.h>
+#include <ncltech\SpringConstraint.h>
 #include <ncltech\CommonUtils.h>
 #include <nclgl\NCLDebug.h>
 
@@ -44,7 +45,7 @@ public:
 				CommonUtils::GenColor(0.45f, 0.5f));	//Color
 
 			ball = CommonUtils::BuildSphereObject("ball",
-				Vector3(-4.f, 7.f, -5.0f),				//Position
+				Vector3(-7.f, 4.f, -5.0f),				//Position
 				0.5f,									//Radius
 				true,									//Has Physics Object
 				1.0f,									// Inverse Mass = 1 / 1kg mass
@@ -56,7 +57,7 @@ public:
 			this->AddGameObject(ball);
 
 			//Add distance constraint between the two objects
-			DistanceConstraint* constraint = new DistanceConstraint(
+			SpringConstraint* constraint = new SpringConstraint(
 				handle->Physics(),					//Physics Object A
 				ball->Physics(),					//Physics Object B
 				handle->Physics()->GetPosition(),	//Attachment Position on Object A	-> Currently the centre

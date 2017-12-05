@@ -42,6 +42,16 @@ namespace CommonUtils
 		bool dragable = true,
 		const Vector4& color = Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
+	GameObject* BuildPlaneObject(
+		const std::string& name,
+		const Vector3& pos,
+		const Vector3& halfdims,
+		bool physics_enabled = false,
+		float inverse_mass = 0.0f,			//requires physics_enabled = true
+		bool collidable = true,				//requires physics_enabled = true
+		bool dragable = true,
+		const Vector4& color = Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+
 	//Generates a default Cuboid object with the parameters specified
 	GameObject* BuildCuboidObject(
 		const std::string& name,
@@ -51,5 +61,6 @@ namespace CommonUtils
 		float inverse_mass = 0.0f,			//requires physics_enabled = true
 		bool collidable = true,				//requires physics_enabled = true
 		bool dragable = true,
-		const Vector4& color = Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+		const Vector4& color = Vector4(1.0f, 1.0f, 1.0f, 1.0f),
+		GLuint tex = NULL);
 };

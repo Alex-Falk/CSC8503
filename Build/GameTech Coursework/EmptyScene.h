@@ -2,6 +2,7 @@
 
 #include <ncltech\Scene.h>
 #include <ncltech\CommonUtils.h>
+#include <ncltech\SoftBody.h>
 
 //Fully striped back scene to use as a template for new scenes.
 class EmptyScene : public Scene
@@ -30,6 +31,16 @@ public:
 			false,
 			false,
 			Vector4(0.2f, 0.5f, 1.0f, 1.0f)));
+	
+		SoftBody * cloth = new SoftBody(10,10,0.5,Vector3(0, 10, 0));
+
+		std::vector<GameObject*> * gos = cloth->GetGameObjects();
+		
+		for (std::vector<GameObject*>::iterator it = gos->begin(); it != gos->end(); ++it) {
+			this->AddGameObject(*it);
+		}
 	}
+
+
 
 };

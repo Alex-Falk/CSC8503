@@ -111,6 +111,8 @@ public:
 
 	const Matrix4&				GetWorldSpaceTransform()    const { return worldTransform; }
 
+	inline bool					IsGood()					const { return isGood; }
+
 
 
 
@@ -133,6 +135,8 @@ public:
 	inline void SetBoundingRadius(const float r)					{ boundingRadius = r; }
 
 	inline void SetIntegrator(Integrator i)							{ integrator = i; }
+
+	inline void SetGood(bool b)										{ isGood = b; }
 
 	inline void SetCollisionShape(CollisionShape* colShape)
 	{ 
@@ -202,4 +206,6 @@ protected:
 	float				elasticity;		///Value from 0-1 definiing how much the object bounces off other objects
 	float				friction;		///Value from 0-1 defining how much the object can slide off other objects
 
+
+	bool				isGood = false;
 };

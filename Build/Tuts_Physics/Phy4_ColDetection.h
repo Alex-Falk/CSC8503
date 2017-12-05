@@ -8,10 +8,10 @@
 #include <ncltech\DistanceConstraint.h>
 #include <ncltech\CommonUtils.h>
 
-class Phy4_ColDetection : public Scene
+class CollisionsScene : public Scene
 {
 public:
-	Phy4_ColDetection(const std::string& friendly_name)
+	CollisionsScene(const std::string& friendly_name)
 		: Scene(friendly_name)
 	{
 	}

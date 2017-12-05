@@ -1,11 +1,2 @@
-﻿  CommonUtils.cpp
-  Manifold.cpp
-  OcTree.cpp
-OcTree.cpp(19): warning C4018: '>': signed/unsigned mismatch
-OcTree.cpp(119): warning C4018: '>': signed/unsigned mismatch
-OcTree.cpp(278): warning C4018: '>': signed/unsigned mismatch
-OcTree.cpp(281): warning C4018: '>': signed/unsigned mismatch
-  PhysicsEngine.cpp
-  PhysicsNode.cpp
-  SceneManager.cpp
+﻿  SoftBody.cpp
   ncltech.vcxproj -> D:\Projects\CSC8503\Build\Release\ncltech.lib

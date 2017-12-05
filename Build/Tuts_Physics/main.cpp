@@ -35,9 +35,9 @@ void Initialize()
 
 								//Enqueue All Scenes
 								// - Add any new scenes you want here =D
-	SceneManager::Instance()->EnqueueScene(new Phy2_Integration("Physics Tut #2 - Integration"));
+	SceneManager::Instance()->EnqueueScene(new IntegratorScene("Physics Tut #2 - Integration"));
 	SceneManager::Instance()->EnqueueScene(new Phy3_Constraints("Physics Tut #3 - Distance Constraints"));
-	SceneManager::Instance()->EnqueueScene(new Phy4_ColDetection("Physics Tut #4 - Collision Detection"));
+	SceneManager::Instance()->EnqueueScene(new CollisionsScene("Physics Tut #4 - Collision Detection"));
 	SceneManager::Instance()->EnqueueScene(new Phy4_AiCallbacks("Physics Tut #4 - Collision Detection [Bonus]"));
 	SceneManager::Instance()->EnqueueScene(new Phy5_ColManifolds("Physics Tut #5 - Collision Manifolds"));
 	SceneManager::Instance()->EnqueueScene(new Phy6_ColResponseElasticity("Physics Tut #6 - Collision Response [Elasticity]"));

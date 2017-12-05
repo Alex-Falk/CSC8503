@@ -80,6 +80,8 @@ void TestScene::OnInitializeScene()
 					true,					// Physically Collidable (has collision shape)
 					true,					// Dragable by user?
 					color);					// Render color
+
+				cube->Physics()->SetGood(true);
 				this->AddGameObject(cube);
 			}
 		}
