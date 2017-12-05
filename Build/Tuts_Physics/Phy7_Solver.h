@@ -6,6 +6,7 @@
 #include <ncltech\SceneManager.h>
 #include <ncltech\CommonUtils.h>
 #include <ncltech\PhysicsEngine.h>
+#include <ncltech\DistanceConstraint.h>
 
 class Phy7_Solver : public Scene
 {
@@ -42,7 +43,7 @@ public:
 			{
 				Vector4 color = CommonUtils::GenColor(y * 0.2f, 1.0f);
 				GameObject* cube = CommonUtils::BuildCuboidObject(
-					"",
+					to_string(y) + "_" + to_string(x),
 					Vector3((x * 1.1f - y * 0.5f) * width_scalar, (0.5f + float(m_StackHeight - 1) - y) * height_scalar, -0.5f),
 					Vector3(width_scalar * 0.5f, height_scalar * 0.5f, 0.5f),
 					true,
@@ -58,6 +59,8 @@ public:
 		}
 
 		Scene::OnInitializeScene();
+
+		PhysicsEngine::Instance()->SetLimits(Vector3(-30, -5, -30), Vector3(30, 55, 30));
 	}
 
 
@@ -86,12 +89,28 @@ public:
 		{
 			GameObject* spawnSphere = CommonUtils::BuildSphereObject("spawned_sphere",
 				GraphicsPipeline::Instance()->GetCamera()->GetPosition() + GraphicsPipeline::Instance()->GetCamera()->GetViewDirection().Normalise()*2.0f,
-				0.5f,									//Radius
+				1.0f,									//Radius
 				true,									//Has Physics Object
 				1.0f/4.0f,								//Inverse Mass
 				true,									//Has Collision Shape
 				true,									//Dragable by the user
 				CommonUtils::GenColor(0.1f, 0.8f));	//Color
+
+			spawnSphere->Physics()->SetLinearVelocity(GraphicsPipeline::Instance()->GetCamera()->GetViewDirection().Normalise()*50.0f);
+
+			this->AddGameObject(spawnSphere);
+		}
+
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_K))
+		{
+			GameObject* spawnSphere = CommonUtils::BuildCuboidObject("spawned_cube",
+				GraphicsPipeline::Instance()->GetCamera()->GetPosition() + GraphicsPipeline::Instance()->GetCamera()->GetViewDirection().Normalise()*2.0f,
+				Vector3(.2f, .2f, .2f),
+				true,									//Has Physics Object
+				1.0f/4.0f,								//Inverse Mass
+				true,									//Has Collision Shape
+				true,									//Dragable by the user
+				CommonUtils::GenColor(0.4f, 0.5f));	//Color
 
 			spawnSphere->Physics()->SetLinearVelocity(GraphicsPipeline::Instance()->GetCamera()->GetViewDirection().Normalise()*50.0f);
 

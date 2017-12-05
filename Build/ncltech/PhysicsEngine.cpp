@@ -13,6 +13,8 @@ void PhysicsEngine::SetDefaults()
 	updateRealTimeAccum = 0.0f;
 	gravity = Vector3(0.0f, -9.81f, 0.0f);
 	dampingFactor = 0.998f;
+	limits.minVals = Vector3(-30, 0, -30);
+	limits.maxVals = Vector3(30, 60, 30);
 }
 
 PhysicsEngine::PhysicsEngine()
@@ -20,7 +22,7 @@ PhysicsEngine::PhysicsEngine()
 	//Variables set here will /not/ be reset with each scene
 	isPaused = false;  
 	debugDrawFlags = DEBUGDRAW_FLAGS_MANIFOLD | DEBUGDRAW_FLAGS_CONSTRAINT;
-	octree = new OcTree(Vector3(-10, 0, -10), Vector3(20, 20, 20), &physicsNodes);
+	octree = new OcTree(limits.minVals, limits.maxVals, &physicsNodes);
 	SetDefaults();
 }
 
@@ -38,7 +40,7 @@ void PhysicsEngine::ResetOcTree()
 {
 	delete octree;
 	octree = nullptr;
-	octree = new OcTree(Vector3(-25, 0, -25), Vector3(20, 50, 20), &physicsNodes);
+	octree = new OcTree(limits.minVals, limits.maxVals, &physicsNodes);
 }
 
 void PhysicsEngine::RemovePhysicsObject(PhysicsNode* obj)

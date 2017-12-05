@@ -109,10 +109,14 @@ void OcTree::SplitBox(Node * node, std::vector<PhysicsNode*> parentElements)
 	node->children[7]->AABB->ExpandToFit(half);
 	node->children[7]->AABB->ExpandToFit(max);
 
+	Vector3 halfsize = (max - min) * 0.25f;
+
 for (int i = 0; i < 8; ++i) {
 	std::vector<PhysicsNode*> childphysnodes = FindElementsInNode(node->children[i], parentElements);
 
-	if (childphysnodes.size() > maxNumber && abs(half.x) >= minSize && abs(half.y) >= minSize && abs(half.z) >= minSize) {
+	
+
+	if (childphysnodes.size() > maxNumber && abs(halfsize.x) >= minSize && abs(halfsize.y) >= minSize && abs(halfsize.z) >= minSize) {
 		SplitBox(node->children[i], childphysnodes);
 	}
 	//else if (childphysnodes.size() == 0) {
@@ -206,8 +210,11 @@ void OcTree::UpdateOcTree() {
 			}
 		}
 
-		CheckElements(root);
-		UpdateNode(root);
+		if (updateList.size() > 0) {
+			CheckElements(root);
+			UpdateNode(root);
+		}
+
 
 		updateList.clear();
 	}
@@ -253,7 +260,7 @@ void OcTree::UpdateNode(Node * node) {
 			vector<PhysicsNode*> totalnodes = GetElemsInChildren(node);
 			totalElems = totalnodes.size();
 			// if the total elements is less than the limit combine all the children into one parent node
-			if (totalElems < maxNumber) {
+			if (totalElems <= maxNumber) {
 				CombineNode(node);
 			}
 			else {
@@ -267,11 +274,15 @@ void OcTree::UpdateNode(Node * node) {
 		// if there are no children, check if node needs to be split into more children after the update
 		else {
 			// if the node now has more than the max number of elements split it
-			Vector3 half = (node->AABB->_max + node->AABB->_min) * 0.5f;
+			Vector3 half = (node->AABB->_max - node->AABB->_min) * 0.5f;
+			if (node->elements.size() > maxNumber) {
+				bool flag = true;
+			}
 			if (node->elements.size() > maxNumber  && abs(half.x) >= minSize && abs(half.y) >= minSize && abs(half.z) >= minSize) {
 				SplitBox(node, node->elements);
 				node->elements.clear();
 			}
+
 		}
 	}
 }

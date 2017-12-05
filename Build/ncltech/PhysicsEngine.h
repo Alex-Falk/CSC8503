@@ -115,6 +115,11 @@ public:
 
 	inline void SetIntegrator(Integrator i)		{ integrator = i; }
 
+	inline void SetLimits(Vector3 minvals, Vector3 maxvals) { 
+		limits.minVals = minvals; 
+		limits.maxVals = maxvals; 
+	}
+
 	void PrintPerformanceTimers(const Vector4& color)
 	{
 		perfUpdate.PrintOutputToStatusEntry(color,		"    Integration :");
@@ -141,6 +146,7 @@ protected:
 	float		updateTimestep, updateRealTimeAccum;
 	uint		debugDrawFlags;
 
+	WorldLimits limits;
 	Vector3		gravity;
 	float		dampingFactor;
 

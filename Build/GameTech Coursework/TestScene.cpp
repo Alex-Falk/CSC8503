@@ -121,6 +121,11 @@ void TestScene::OnInitializeScene()
 	create_ball_cube(Vector3(8.0f, 0.5f, 12.0f), Vector3(0.3f, 0.3f, 0.3f), 0.1f);
 	create_ball_cube(Vector3(-8.0f, 0.5f, -12.0f), Vector3(0.2f, 0.2f, 0.2f), 0.1f);
 	create_ball_cube(Vector3(8.0f, 0.5f, -12.0f), Vector3(0.5f, 0.5f, 0.5f), 0.1f);
+
+
+	Scene::OnInitializeScene();
+	PhysicsEngine::Instance()->SetLimits(Vector3(-30, -10, -30), Vector3(30, 50, 30));
+
 }
 
 void TestScene::OnCleanupScene()

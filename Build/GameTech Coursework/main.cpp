@@ -7,6 +7,9 @@
 #include "TestScene.h"
 #include "EmptyScene.h"
 
+bool draw_debug = true;
+bool draw_performance = false;
+
 const Vector4 status_colour = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 const Vector4 status_colour_header = Vector4(0.8f, 0.9f, 1.0f, 1.0f);
 
@@ -84,8 +87,26 @@ void PrintStatusEntries()
 		timer_physics.PrintOutputToStatusEntry(status_colour, "          Physics Update :");
 		timer_render.PrintOutputToStatusEntry(status_colour, "          Render Scene   :");
 	}
+
+	const Vector4 status_color_debug = Vector4(1.0f, 0.6f, 1.0f, 1.0f);
+
+	//Physics Debug Drawing options
+	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
+	NCLDebug::AddStatusEntry(status_color_debug, "--- Debug Draw  [G] ---");
+	if (draw_debug)
+	{
+		NCLDebug::AddStatusEntry(status_color_debug, "Constraints       : %s [Z] - Tut 3+", (drawFlags & DEBUGDRAW_FLAGS_CONSTRAINT) ? "Enabled " : "Disabled");
+		NCLDebug::AddStatusEntry(status_color_debug, "Collision Normals : %s [X] - Tut 4", (drawFlags & DEBUGDRAW_FLAGS_COLLISIONNORMALS) ? "Enabled " : "Disabled");
+		NCLDebug::AddStatusEntry(status_color_debug, "Collision Volumes : %s [C] - Tut 4+", (drawFlags & DEBUGDRAW_FLAGS_COLLISIONVOLUMES) ? "Enabled " : "Disabled");
+		NCLDebug::AddStatusEntry(status_color_debug, "Manifolds         : %s [V] - Tut 5+", (drawFlags & DEBUGDRAW_FLAGS_MANIFOLD) ? "Enabled " : "Disabled");
+		NCLDebug::AddStatusEntry(status_color_debug, "OCtree            : %s [B]", (drawFlags & DEBUGDRAW_FLAGS_OCTREE) ? "Enabled " : "Disabled");
+		NCLDebug::AddStatusEntry(status_color_debug, "");
+	}
 	NCLDebug::AddStatusEntry(status_colour, "");
+
 }
+
+
 
 
 // Process Input
@@ -113,6 +134,25 @@ void HandleKeyboardInputs()
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_G))
 		show_perf_metrics = !show_perf_metrics;
+
+
+	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Z))
+		drawFlags ^= DEBUGDRAW_FLAGS_CONSTRAINT;
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_X))
+		drawFlags ^= DEBUGDRAW_FLAGS_COLLISIONNORMALS;
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_C))
+		drawFlags ^= DEBUGDRAW_FLAGS_COLLISIONVOLUMES;
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_V))
+		drawFlags ^= DEBUGDRAW_FLAGS_MANIFOLD;
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_B))
+		drawFlags ^= DEBUGDRAW_FLAGS_OCTREE;
+
+	PhysicsEngine::Instance()->SetDebugDrawFlags(drawFlags);
 }
 
 
@@ -154,6 +194,7 @@ int main()
 		timer_physics.BeginTimingSection();
 		PhysicsEngine::Instance()->Update(dt);
 		timer_physics.EndTimingSection();
+		PhysicsEngine::Instance()->DebugRender();
 
 		//Render Scene
 		timer_render.BeginTimingSection();
