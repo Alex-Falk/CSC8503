@@ -72,6 +72,9 @@
     <ClCompile Include="OcTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SoftBody.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommonMeshes.h">
@@ -137,5 +140,14 @@
     <ClInclude Include="OcTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SoftBody.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SpringConstraint.h">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CUDAUpdate.cu" />
   </ItemGroup>
 </Project>

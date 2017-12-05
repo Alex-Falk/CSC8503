@@ -6,6 +6,8 @@
 
 #include "TestScene.h"
 #include "EmptyScene.h"
+#include "IntegratorScene.h"
+#include "CollisionsScene.h"
 
 bool draw_debug = true;
 bool draw_performance = false;
@@ -55,7 +57,8 @@ void Initialize()
 
 	//Enqueue All Scenes
 	SceneManager::Instance()->EnqueueScene(new TestScene("GameTech #1 - Framework Sandbox!"));
-	SceneManager::Instance()->EnqueueScene(new EmptyScene("GameTech #2 - Peace and quiet"));
+	SceneManager::Instance()->EnqueueScene(new IntegratorScene("GameTech #2 - Different Integration Methods"));
+	SceneManager::Instance()->EnqueueScene(new CollisionsScene("GameTech #3 - Collision Scenarios"));
 	SceneManager::Instance()->EnqueueScene(new EmptyScene("GameTech #3 - More peace and quiet"));
 }
 
@@ -91,6 +94,9 @@ void PrintStatusEntries()
 	const Vector4 status_color_debug = Vector4(1.0f, 0.6f, 1.0f, 1.0f);
 
 	//Physics Debug Drawing options
+	NCLDebug::AddStatusEntry(status_colour_header, "Score");
+	NCLDebug::AddStatusEntry(status_colour, "     Score = " + to_string(SceneManager::Instance()->GetCurrentScene()->GetScore()));
+
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 	NCLDebug::AddStatusEntry(status_color_debug, "--- Debug Draw  [G] ---");
 	if (draw_debug)
@@ -107,7 +113,16 @@ void PrintStatusEntries()
 }
 
 
+static bool ScoreCallbackFunction(PhysicsNode * self, PhysicsNode* collidingObject) {
+	if (collidingObject->IsGood()) {
+		SceneManager::Instance()->GetCurrentScene()->AddToScore(100);
+	}
+	else {
+		SceneManager::Instance()->GetCurrentScene()->AddToScore(-50);
+	}
 
+	return true;
+}
 
 // Process Input
 //  - Handles all program wide keyboard inputs for
@@ -152,9 +167,28 @@ void HandleKeyboardInputs()
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_B))
 		drawFlags ^= DEBUGDRAW_FLAGS_OCTREE;
 
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_J))
+	{
+		GameObject* spawnSphere = CommonUtils::BuildSphereObject("spawned_sphere",
+			GraphicsPipeline::Instance()->GetCamera()->GetPosition() + GraphicsPipeline::Instance()->GetCamera()->GetViewDirection().Normalise()*2.0f,
+			0.5f,									//Radius
+			true,									//Has Physics Object
+			1.0f / 4.0f,							//Inverse Mass
+			true,									//Has Collision Shape
+			true,									//Dragable by the user
+			CommonUtils::GenColor(0.1f, 0.8f));		//Color
+
+		spawnSphere->Physics()->SetLinearVelocity(GraphicsPipeline::Instance()->GetCamera()->GetViewDirection().Normalise()*50.0f);
+
+		spawnSphere->Physics()->SetOnCollisionCallback(&ScoreCallbackFunction);
+
+
+		SceneManager::Instance()->GetCurrentScene()->AddGameObject(spawnSphere);
+
+	}
+
 	PhysicsEngine::Instance()->SetDebugDrawFlags(drawFlags);
 }
-
 
 // Program Entry Point
 int main()

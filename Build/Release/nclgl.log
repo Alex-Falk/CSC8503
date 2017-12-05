@@ -1,20 +1,5 @@
-﻿  Camera.cpp
-  CubeRobot.cpp
+﻿  CubeRobot.cpp
   Frustum.cpp
-  HeightMap.cpp
-  MD5Anim.cpp
-  MD5FileData.cpp
-  MD5Mesh.cpp
   MD5Node.cpp
-  Matrix3.cpp
-  Matrix4.cpp
-  Mesh.cpp
-  NCLDebug.cpp
-  OBJMesh.cpp
-  OGLRenderer.cpp
-  Plane.cpp
-  Quaternion.cpp
   RenderNode.cpp
-  Shader.cpp
-  Window.cpp
   nclgl.vcxproj -> D:\Projects\CSC8503\Build\Release\nclgl.lib

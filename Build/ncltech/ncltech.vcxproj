@@ -146,6 +146,7 @@
     <ClCompile Include="PhysicsNode.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="ScreenPicker.cpp" />
+    <ClCompile Include="SoftBody.cpp" />
     <ClCompile Include="SphereCollisionShape.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -169,7 +170,12 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="ScreenPicker.h" />
+    <ClInclude Include="SoftBody.h" />
     <ClInclude Include="SphereCollisionShape.h" />
+    <ClInclude Include="SpringConstraint.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CUDAUpdate.cu" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
