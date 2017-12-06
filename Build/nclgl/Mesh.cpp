@@ -351,6 +351,47 @@ Mesh* Mesh::GenerateQuadAlt()	{
 	return m;
 }
 
+Mesh* Mesh::GenerateMesh(int w, int h, float s) {
+	Mesh* m = new Mesh();
+	if (w == 0) { w = h; }
+	m->numVertices = 4 * w * h;
+	m->type = GL_TRIANGLE_STRIP;
+
+	m->vertices = new Vector3[m->numVertices];
+	m->textureCoords = new Vector2[m->numVertices];
+	m->colours = new Vector4[m->numVertices];
+	m->normals = new Vector3[m->numVertices];
+	m->tangents = new Vector3[m->numVertices];
+
+	int c = 0;
+
+	for (int i = 0; i < w; ++i) {
+		for (int j = 0; j < h; ++j) {
+			m->vertices[c] = Vector3(s*i,s*j, 0.0f);
+			m->vertices[c + 1] = Vector3(s*i,s*(j+1), 0.0f);
+			m->vertices[c + 2] = Vector3(s*(i+1),s*j, 0.0f);
+			m->vertices[c + 3] = Vector3(s*(i+1),s*(j+1), 0.0f);
+
+			m->textureCoords[c] = Vector2(0.0f, 1.0f);
+			m->textureCoords[c + 1] = Vector2(0.0f, 0.0f);
+			m->textureCoords[c + 2] = Vector2(1.0f, 1.0f);
+			m->textureCoords[c + 3] = Vector2(1.0f, 0.0f);
+
+			c += 4;
+		}
+	}
+
+	for (int i = 0; i < m->numVertices; ++i) {
+		m->colours[i] = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+		m->normals[i] = Vector3(0.0f, 0.0f, -1.0f);
+		m->tangents[i] = Vector3(1.0f, 0.0f, 0.0f);
+	}
+
+	m->BufferData();
+
+	return m;
+}
+
 void	Mesh::BufferData()	{
 	//GenerateNormals();
 	//GenerateTangents();
@@ -501,6 +542,8 @@ void Mesh::GenerateTangents() {
 		tangents[i].Normalise();
 	}
 }
+
+
 
 Vector3 Mesh::GenerateTangent(const Vector3 &a,const Vector3 &b,const Vector3 &c,const Vector2 &ta,const Vector2 &tb,const Vector2 &tc)	 {
 	Vector2 coord1  = tb-ta;

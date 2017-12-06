@@ -1,15 +1,3 @@
-﻿  CommonUtils.cpp
-  Generating Code...
-  Compiling...
-  OcTree.cpp
-d:\projects\csc8503\build\ncltech\octree.cpp(19): warning C4018: '>': signed/unsigned mismatch
-d:\projects\csc8503\build\ncltech\octree.cpp(119): warning C4018: '>': signed/unsigned mismatch
-d:\projects\csc8503\build\ncltech\octree.cpp(278): warning C4018: '>': signed/unsigned mismatch
-d:\projects\csc8503\build\ncltech\octree.cpp(281): warning C4018: '>': signed/unsigned mismatch
-  Generating Code...
-  Skipping... (no relevant changes detected)
-  SceneManager.cpp
-  PhysicsNode.cpp
-  PhysicsEngine.cpp
-  Manifold.cpp
+﻿  SoftBody.cpp
+d:\projects\csc8503\build\ncltech\multigameobject.h(29): warning C4018: '<': signed/unsigned mismatch
   ncltech.vcxproj -> D:\Projects\CSC8503\Build\Debug\ncltech.lib

@@ -8,6 +8,7 @@
 #include "EmptyScene.h"
 #include "IntegratorScene.h"
 #include "CollisionsScene.h"
+#include "BallPoolScene.h"
 
 bool draw_debug = true;
 bool draw_performance = false;
@@ -59,7 +60,8 @@ void Initialize()
 	SceneManager::Instance()->EnqueueScene(new TestScene("GameTech #1 - Framework Sandbox!"));
 	SceneManager::Instance()->EnqueueScene(new IntegratorScene("GameTech #2 - Different Integration Methods"));
 	SceneManager::Instance()->EnqueueScene(new CollisionsScene("GameTech #3 - Collision Scenarios"));
-	SceneManager::Instance()->EnqueueScene(new EmptyScene("GameTech #3 - More peace and quiet"));
+	SceneManager::Instance()->EnqueueScene(new EmptyScene("GameTech #4 - Soft Body Physics"));
+	SceneManager::Instance()->EnqueueScene(new BallPoolScene("GameTech #5 - Ball Pool!"));
 }
 
 // Print Debug Info
@@ -88,6 +90,7 @@ void PrintStatusEntries()
 		timer_total.PrintOutputToStatusEntry(status_colour, "          Total Time     :");
 		timer_update.PrintOutputToStatusEntry(status_colour, "          Scene Update   :");
 		timer_physics.PrintOutputToStatusEntry(status_colour, "          Physics Update :");
+		PhysicsEngine::Instance()->PrintPerformanceTimers(status_colour);
 		timer_render.PrintOutputToStatusEntry(status_colour, "          Render Scene   :");
 	}
 

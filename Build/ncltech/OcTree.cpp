@@ -1,5 +1,6 @@
 #include "OcTree.h"
 #include <algorithm>
+#include "MultiGameObject.h"
 
 OcTree::OcTree(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax, std::vector<PhysicsNode*> * elements)
 {
@@ -184,7 +185,7 @@ std::vector<CollisionPair> OcTree::CreatePairs(Node * node)
 						if (pnodeA->GetCollisionShape() != NULL
 							&& pnodeB->GetCollisionShape() != NULL
 							&& (pnodeA->GetPosition() - pnodeB->GetPosition()).Length() <= pnodeA->GetBoundingRadius() + pnodeB->GetBoundingRadius()
-
+							&& (pnodeA->GetParent() != pnodeB->GetParent() || (pnodeA->GetParent() == pnodeB->GetParent() && pnodeA->GetParent()->SiblingsCollide()))
 							)
 						{
 							CollisionPair cp;

@@ -4,7 +4,6 @@
 #include "CollisionShape.h"
 #include "BoundingBox.h"
 
-
 struct CollisionPair	//Forms the output of the broadphase collision detection
 {
 	PhysicsNode* pObjectA;
@@ -30,7 +29,7 @@ public:
 	OcTree(Vector3 mins, Vector3 maxs, std::vector<PhysicsNode*>  * elements);
 	~OcTree();
 
-
+	void SetMinSize(float m) { minSize = m; }
 
 	void TerminateTree(Node ** node);
 
@@ -50,7 +49,7 @@ public:
 
 protected:
 
-	int maxNumber = 5;
+	int maxNumber = 8;
 	float minSize = 2.0f;
 
 	std::vector<PhysicsNode*> * physicsNodes;
