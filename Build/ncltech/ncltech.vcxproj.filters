@@ -146,6 +146,9 @@
     <ClInclude Include="SpringConstraint.h">
       <Filter>Header Files\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="MultiGameObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="CUDAUpdate.cu" />

@@ -11,6 +11,18 @@ public:
 	EmptyScene(const std::string& friendly_name) 
 		: Scene(friendly_name)
 	{
+		tex = SOIL_load_OGL_texture(
+			TEXTUREDIR"target.tga",
+			SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,
+			SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
+
+		glBindTexture(GL_TEXTURE_2D, tex);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glGenerateMipmap(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	virtual ~EmptyScene()
@@ -20,6 +32,7 @@ public:
 	virtual void OnInitializeScene() override
 	{
 		Scene::OnInitializeScene();
+		PhysicsEngine::Instance()->SetOctreeMinSize(1);
 
 		//Who doesn't love finding some common ground?
 		this->AddGameObject(CommonUtils::BuildCuboidObject(
@@ -32,15 +45,12 @@ public:
 			false,
 			Vector4(0.2f, 0.5f, 1.0f, 1.0f)));
 	
-		SoftBody * cloth = new SoftBody(10,10,0.5,Vector3(0, 10, 0));
+		SoftBody * cloth = new SoftBody(20,20,1,Vector3(0, 10, 0), tex);
 
-		std::vector<GameObject*> * gos = cloth->GetGameObjects();
-		
-		for (std::vector<GameObject*>::iterator it = gos->begin(); it != gos->end(); ++it) {
-			this->AddGameObject(*it);
-		}
+		this->AddMultiGameObject(cloth->GetGameObject());
 	}
 
-
+private:
+	GLuint					tex;
 
 };

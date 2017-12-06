@@ -144,9 +144,6 @@ public:
 		collisionShape = colShape;
 		if (collisionShape) collisionShape->SetParent(this);
 	}
-	
-
-
 
 	//<---------- CALLBACKS ------------>
 	inline void SetOnCollisionCallback(PhysicsCollisionCallback callback) { onCollisionCallback = callback; }

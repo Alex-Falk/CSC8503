@@ -114,6 +114,7 @@ public:
 	inline float GetDeltaTime() const			{ return updateTimestep; }
 
 	inline void SetIntegrator(Integrator i)		{ integrator = i; }
+	inline void SetOctreeMinSize(float s)		{ octree->SetMinSize(s); }
 
 	inline void SetLimits(Vector3 minvals, Vector3 maxvals) { 
 		limits.minVals = minvals; 
@@ -122,10 +123,10 @@ public:
 
 	void PrintPerformanceTimers(const Vector4& color)
 	{
-		perfUpdate.PrintOutputToStatusEntry(color,		"    Integration :");
-		perfBroadphase.PrintOutputToStatusEntry(color,	"    Broadphase  :");
-		perfNarrowphase.PrintOutputToStatusEntry(color,	"    Narrowphase :");
-		perfSolver.PrintOutputToStatusEntry(color,		"    Solver      :");
+		perfUpdate.PrintOutputToStatusEntry(color,		"            Integration :");
+		perfBroadphase.PrintOutputToStatusEntry(color,	"            Broadphase  :");
+		perfNarrowphase.PrintOutputToStatusEntry(color,	"            Narrowphase :");
+		perfSolver.PrintOutputToStatusEntry(color,		"            Solver      :");
 	}
 
 protected:

@@ -1,5 +1,3 @@
-﻿  CubeRobot.cpp
-  Frustum.cpp
-  MD5Node.cpp
-  RenderNode.cpp
+﻿  Mesh.cpp
+Mesh.cpp(384): warning C4018: '<': signed/unsigned mismatch
   nclgl.vcxproj -> D:\Projects\CSC8503\Build\Release\nclgl.lib

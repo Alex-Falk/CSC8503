@@ -138,6 +138,7 @@
     <ClCompile Include="TestScene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BallPoolScene.h" />
     <ClInclude Include="CollisionsScene.h" />
     <ClInclude Include="EmptyScene.h" />
     <ClInclude Include="IntegratorScene.h" />

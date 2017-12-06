@@ -35,5 +35,8 @@
     <ClInclude Include="CollisionsScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BallPoolScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

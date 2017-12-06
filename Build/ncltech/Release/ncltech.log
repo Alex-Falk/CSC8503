@@ -1,2 +1,16 @@
-﻿  SoftBody.cpp
+﻿  CommonUtils.cpp
+  Manifold.cpp
+  OcTree.cpp
+d:\projects\csc8503\build\ncltech\MultiGameObject.h(36): warning C4018: '<': signed/unsigned mismatch
+OcTree.cpp(20): warning C4018: '>': signed/unsigned mismatch
+OcTree.cpp(120): warning C4018: '>': signed/unsigned mismatch
+OcTree.cpp(279): warning C4018: '>': signed/unsigned mismatch
+OcTree.cpp(282): warning C4018: '>': signed/unsigned mismatch
+  PhysicsEngine.cpp
+  PhysicsNode.cpp
+  SceneManager.cpp
+d:\projects\csc8503\build\ncltech\MultiGameObject.h(36): warning C4018: '<': signed/unsigned mismatch
+  SoftBody.cpp
+d:\projects\csc8503\build\ncltech\MultiGameObject.h(36): warning C4018: '<': signed/unsigned mismatch
+SoftBody.cpp(27): warning C4305: 'argument': truncation from 'double' to 'const float'
   ncltech.vcxproj -> D:\Projects\CSC8503\Build\Release\ncltech.lib

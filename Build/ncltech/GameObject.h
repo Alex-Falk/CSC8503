@@ -68,12 +68,15 @@ public:
 
 
 	//<---------- PHYSICS ------------>
-	inline bool  HasPhysics() const					{ return (physicsNode != NULL); }
-	inline const PhysicsNode*	Physics() const		{ return physicsNode; }
-	inline		 PhysicsNode*	Physics()			{ return physicsNode; }
+	virtual inline bool  HasPhysics() const					{ return (physicsNode != NULL); }
+	virtual inline const PhysicsNode*	Physics() const		{ return physicsNode; }
+	virtual inline		 PhysicsNode*	Physics()			{ return physicsNode; }
 
 	inline void	 SetColliding(bool b)				{ renderNode->SetColliding(b); }
 	inline bool	 IsCollide()						{ return renderNode->IsCollide(); }
+
+	inline bool	 SiblingsCollide() const			{ return siblingsCollide; }
+	inline void	 SetSiblingsCollide(bool b)			{ siblingsCollide = b; }
 	
 	inline void  SetPhysics(PhysicsNode* node)
 	{
@@ -118,7 +121,7 @@ public:
 
 
 	//<---------- UTILS ------------>
-	inline void RegisterPhysicsToRenderTransformCallback()
+	virtual inline void RegisterPhysicsToRenderTransformCallback()
 	{
 		if (physicsNode && renderNode)
 		{
@@ -153,4 +156,5 @@ protected:
 	PhysicsNode*				physicsNode;
 
 	bool						isCollided = false;
+	bool						siblingsCollide = false;
 };
