@@ -1,5 +1,12 @@
-﻿  CommonUtils.cpp
+﻿  CollisionDetectionSAT.cpp
+  CommonMeshes.cpp
+  CommonUtils.cpp
+  CuboidCollisionShape.cpp
+  GeometryUtils.cpp
+  GraphicsPipeline.cpp
+  Hull.cpp
   Manifold.cpp
+  NetworkBase.cpp
   OcTree.cpp
 d:\projects\csc8503\build\ncltech\MultiGameObject.h(36): warning C4018: '<': signed/unsigned mismatch
 OcTree.cpp(20): warning C4018: '>': signed/unsigned mismatch
@@ -10,7 +17,9 @@ OcTree.cpp(282): warning C4018: '>': signed/unsigned mismatch
   PhysicsNode.cpp
   SceneManager.cpp
 d:\projects\csc8503\build\ncltech\MultiGameObject.h(36): warning C4018: '<': signed/unsigned mismatch
+  ScreenPicker.cpp
   SoftBody.cpp
 d:\projects\csc8503\build\ncltech\MultiGameObject.h(36): warning C4018: '<': signed/unsigned mismatch
 SoftBody.cpp(27): warning C4305: 'argument': truncation from 'double' to 'const float'
+  SphereCollisionShape.cpp
   ncltech.vcxproj -> D:\Projects\CSC8503\Build\Release\ncltech.lib

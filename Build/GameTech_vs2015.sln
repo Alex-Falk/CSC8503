@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C4DEACDB-D3BF-44F9-8968-69A2F0597D10}"
 	ProjectSection(SolutionItems) = preProject
@@ -46,6 +46,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tuts_GameLogic", "Tuts_Game
 		{98D6B51B-CB0A-4389-ADC6-24082B967C3F} = {98D6B51B-CB0A-4389-ADC6-24082B967C3F}
 		{AB4196E5-2488-4514-B4C2-00EAFC468A1D} = {AB4196E5-2488-4514-B4C2-00EAFC468A1D}
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CUDA", "CUDA\CUDA.vcxproj", "{F038E325-27A9-4486-BA9C-87DB2FA215CC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -105,6 +107,12 @@ Global
 		{D31CAB03-BDC8-4369-AAF6-AB90FFB02079}.Release|x64.Build.0 = Release|x64
 		{D31CAB03-BDC8-4369-AAF6-AB90FFB02079}.Release|x86.ActiveCfg = Release|Win32
 		{D31CAB03-BDC8-4369-AAF6-AB90FFB02079}.Release|x86.Build.0 = Release|Win32
+		{F038E325-27A9-4486-BA9C-87DB2FA215CC}.Debug|x64.ActiveCfg = Debug|x64
+		{F038E325-27A9-4486-BA9C-87DB2FA215CC}.Debug|x64.Build.0 = Debug|x64
+		{F038E325-27A9-4486-BA9C-87DB2FA215CC}.Debug|x86.ActiveCfg = Debug|x64
+		{F038E325-27A9-4486-BA9C-87DB2FA215CC}.Release|x64.ActiveCfg = Release|x64
+		{F038E325-27A9-4486-BA9C-87DB2FA215CC}.Release|x64.Build.0 = Release|x64
+		{F038E325-27A9-4486-BA9C-87DB2FA215CC}.Release|x86.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
