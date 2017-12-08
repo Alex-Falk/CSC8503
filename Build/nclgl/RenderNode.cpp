@@ -4,8 +4,8 @@ RenderNode::RenderNode(Mesh*mesh, Vector4 colour)	{
 	awake				= true;
 	this->mesh			= mesh;
 	this->color			= colour;
-	baseColor			= colour;
-	collideColor		= Vector4(1, 0, 0, 0.8f);
+	baseColor = colour;
+	collideColor = Vector4(1, 0, 0, 0.8f);
 	parent				= NULL;
 	boundingRadius		= 100.0f;
 	distanceFromCamera	= 0.0f;
@@ -40,10 +40,11 @@ void	RenderNode::Update(float msec)	 {
 		worldTransform = transform;
 	}
 
-	if (isCollided) { 
-		color = collideColor; 
+	if (isCollided) {
+		color = collideColor;
 	}
 	else { color = baseColor; }
+
 
 	for(vector<RenderNode*>::iterator i = children.begin(); i != children.end(); ++i) {
 		(*i)->Update(msec);

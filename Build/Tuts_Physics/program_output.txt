@@ -1,77 +1,174 @@
-[10:24:38] Loading Shader:
-[10:24:38]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechVertexBasic.glsl
-[10:24:38]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechFragSuperSample.glsl
-[10:24:39]     -> Linking Shader: Success!
-[10:24:39] 
-[10:24:39] Loading Shader:
-[10:24:39]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechVertexShadow.glsl
-[10:24:39]     -> Compiling Shader: ../../Data/Shaders/Common/EmptyFragment.glsl
-[10:24:39]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechGeomShadow.glsl
-[10:24:39]     -> Linking Shader: Success!
-[10:24:39] 
-[10:24:39] Loading Shader:
-[10:24:39]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechVertexFull.glsl
-[10:24:39]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechFragForwardRender.glsl
-[10:24:39]     -> Linking Shader: Success!
-[10:24:39] 
-[10:24:39] Loading Shader:
-[10:24:39]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/PointVertex.glsl
-[10:24:39]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/PointFragment.glsl
-[10:24:39]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/PointGeometry.glsl
-[10:24:39]     -> Linking Shader: Success!
-[10:24:39] 
-[10:24:39] Loading Shader:
-[10:24:39]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/Vertex.glsl
-[10:24:39]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/Fragment.glsl
-[10:24:39]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/LineGeometry.glsl
-[10:24:39]     -> Linking Shader: Success!
-[10:24:39] 
-[10:24:39] Loading Shader:
-[10:24:39]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/VertexColOnly.glsl
-[10:24:39]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/Fragment.glsl
-[10:24:39]     -> Linking Shader: Success!
-[10:24:39] 
-[10:24:39] Loading Shader:
-[10:24:39]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/TextVertex.glsl
-[10:24:39]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/TextFragment.glsl
-[10:24:39]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/TextGeometry.glsl
-[10:24:39]     -> Linking Shader: Success!
-[10:24:39] 
-[10:24:39] Loading Shader:
-[10:24:39]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechVertexPicker.glsl
-[10:24:39]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechFragScreenPicker_nsightfix.glsl
-[10:24:39]     -> Linking Shader: Success!
-[10:24:39] 
-[10:24:39] Loading Mesh: ../../Data/Meshes/cube.obj
-[10:24:39] 
-[10:24:39] Loading Mesh: ../../Data/Meshes/sphere.obj
-[10:24:39] 
-[10:24:39] [SceneManager] - Enqueued scene: "Physics Tut #2 - Integration"
-[10:24:39] 
-[10:24:39] [SceneManager] - Scene switched to: "Physics Tut #2 - Integration"
-[10:24:39] [SceneManager] - Enqueued scene: "Physics Tut #3 - Distance Constraints"
-[10:24:39] [SceneManager] - Enqueued scene: "Physics Tut #4 - Collision Detection"
-[10:24:39] Loading Mesh: ../../Data/Meshes/raptor.obj
-[10:24:39]     -> Loading Texture: ../../Data/Textures/raptor.jpg
-[10:24:39] 
-[10:24:39] [SceneManager] - Enqueued scene: "Physics Tut #4 - Collision Detection [Bonus]"
-[10:24:39] [SceneManager] - Enqueued scene: "Physics Tut #5 - Collision Manifolds"
-[10:24:39] [SceneManager] - Enqueued scene: "Physics Tut #6 - Collision Response [Elasticity]"
-[10:24:39] [SceneManager] - Enqueued scene: "Physics Tut #6 - Collision Response [Friction]"
-[10:24:39] [SceneManager] - Enqueued scene: "Physics Tut #7 - Global Solver"
-[10:24:39] [SceneManager] - Exiting scene -
-[10:24:39] 
-[10:24:39] [SceneManager] - Scene switched to: "Physics Tut #3 - Distance Constraints"
-[10:24:52] [SceneManager] - Exiting scene -
-[10:24:52] 
-[10:24:52] [SceneManager] - Scene switched to: "Physics Tut #2 - Integration"
-[10:24:52] [SceneManager] - Exiting scene -
-[10:24:52] 
-[10:24:52] [SceneManager] - Scene switched to: "Physics Tut #3 - Distance Constraints"
-[10:25:15] [SceneManager] - Exiting scene -
-[10:25:15] 
-[10:25:15] [SceneManager] - Scene switched to: "Physics Tut #3 - Distance Constraints"
-[10:26:00] [SceneManager] - Exiting scene -
-[10:26:00] 
-[10:26:00] [SceneManager] - Scene switched to: "Physics Tut #3 - Distance Constraints"
-[10:26:02] [SceneManager] Closing scene manager
+[17:18:27] Loading Shader:
+[17:18:27]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechVertexBasic.glsl
+[17:18:27]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechFragSuperSample.glsl
+[17:18:27]     -> Linking Shader: Success!
+[17:18:27] 
+[17:18:27] Loading Shader:
+[17:18:27]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechVertexShadow.glsl
+[17:18:27]     -> Compiling Shader: ../../Data/Shaders/Common/EmptyFragment.glsl
+[17:18:27]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechGeomShadow.glsl
+[17:18:27]     -> Linking Shader: Success!
+[17:18:27] 
+[17:18:27] Loading Shader:
+[17:18:27]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechVertexFull.glsl
+[17:18:27]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechFragForwardRender.glsl
+[17:18:27]     -> Linking Shader: Success!
+[17:18:27] 
+[17:18:27] Loading Shader:
+[17:18:27]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/PointVertex.glsl
+[17:18:27]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/PointFragment.glsl
+[17:18:27]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/PointGeometry.glsl
+[17:18:27]     -> Linking Shader: Success!
+[17:18:27] 
+[17:18:27] Loading Shader:
+[17:18:27]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/Vertex.glsl
+[17:18:27]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/Fragment.glsl
+[17:18:27]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/LineGeometry.glsl
+[17:18:27]     -> Linking Shader: Success!
+[17:18:27] 
+[17:18:27] Loading Shader:
+[17:18:27]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/VertexColOnly.glsl
+[17:18:27]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/Fragment.glsl
+[17:18:27]     -> Linking Shader: Success!
+[17:18:27] 
+[17:18:27] Loading Shader:
+[17:18:27]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/TextVertex.glsl
+[17:18:27]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/TextFragment.glsl
+[17:18:27]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/TextGeometry.glsl
+[17:18:27]     -> Linking Shader: Success!
+[17:18:27] 
+[17:18:27] Loading Shader:
+[17:18:27]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechVertexPicker.glsl
+[17:18:27]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechFragScreenPicker_nsightfix.glsl
+[17:18:27]     -> Linking Shader: Success!
+[17:18:27] 
+[17:18:28] Loading Mesh: ../../Data/Meshes/cube.obj
+[17:18:28] 
+[17:18:28] Loading Mesh: ../../Data/Meshes/sphere.obj
+[17:18:28] 
+[17:18:28] [SceneManager] - Enqueued scene: "Physics Tut #2 - Integration"
+[17:18:28] 
+[17:18:28] [SceneManager] - Scene switched to: "Physics Tut #2 - Integration"
+[17:18:28] [SceneManager] - Enqueued scene: "Physics Tut #3 - Distance Constraints"
+[17:18:28] [SceneManager] - Enqueued scene: "Physics Tut #4 - Collision Detection"
+[17:18:28] Loading Mesh: ../../Data/Meshes/raptor.obj
+[17:18:28]     -> Loading Texture: ../../Data/Textures/raptor.jpg
+[17:18:28] 
+[17:18:28] [SceneManager] - Enqueued scene: "Physics Tut #4 - Collision Detection [Bonus]"
+[17:18:28] [SceneManager] - Enqueued scene: "Physics Tut #5 - Collision Manifolds"
+[17:18:28] [SceneManager] - Enqueued scene: "Physics Tut #6 - Collision Response [Elasticity]"
+[17:18:28] [SceneManager] - Enqueued scene: "Physics Tut #6 - Collision Response [Friction]"
+[17:18:28] [SceneManager] - Enqueued scene: "Physics Tut #7 - Global Solver"
+[17:18:32] [SceneManager] - Exiting scene -
+[17:18:32] 
+[17:18:32] [SceneManager] - Scene switched to: "Physics Tut #3 - Distance Constraints"
+[17:18:44] [SceneManager] - Exiting scene -
+[17:18:44] 
+[17:18:44] [SceneManager] - Scene switched to: "Physics Tut #3 - Distance Constraints"
+[17:18:47] [SceneManager] - Exiting scene -
+[17:18:47] 
+[17:18:47] [SceneManager] - Scene switched to: "Physics Tut #4 - Collision Detection"
+[17:18:51] [SceneManager] - Exiting scene -
+[17:18:51] 
+[17:18:51] [SceneManager] - Scene switched to: "Physics Tut #4 - Collision Detection [Bonus]"
+[17:18:53] [SceneManager] - Exiting scene -
+[17:18:53] 
+[17:18:53] [SceneManager] - Scene switched to: "Physics Tut #5 - Collision Manifolds"
+[17:18:54] [SceneManager] - Exiting scene -
+[17:18:54] 
+[17:18:54] [SceneManager] - Scene switched to: "Physics Tut #6 - Collision Response [Elasticity]"
+[17:18:54] [SceneManager] - Exiting scene -
+[17:18:54] 
+[17:18:54] [SceneManager] - Scene switched to: "Physics Tut #6 - Collision Response [Friction]"
+[17:18:55] [SceneManager] - Exiting scene -
+[17:18:55] 
+[17:18:55] [SceneManager] - Scene switched to: "Physics Tut #7 - Global Solver"
+[17:18:56] [SceneManager] - Exiting scene -
+[17:18:56] 
+[17:18:56] [SceneManager] - Scene switched to: "Physics Tut #7 - Global Solver"
+[17:18:56] [SceneManager] - Exiting scene -
+[17:18:56] 
+[17:18:56] [SceneManager] - Scene switched to: "Physics Tut #7 - Global Solver"
+[17:18:56] [SceneManager] - Exiting scene -
+[17:18:56] 
+[17:18:56] [SceneManager] - Scene switched to: "Physics Tut #7 - Global Solver"
+[17:19:02] [SceneManager] - Exiting scene -
+[17:19:02] 
+[17:19:02] [SceneManager] - Scene switched to: "Physics Tut #7 - Global Solver"
+[17:19:02] [SceneManager] - Exiting scene -
+[17:19:02] 
+[17:19:02] [SceneManager] - Scene switched to: "Physics Tut #7 - Global Solver"
+[17:19:03] [SceneManager] - Exiting scene -
+[17:19:03] 
+[17:19:03] [SceneManager] - Scene switched to: "Physics Tut #7 - Global Solver"
+[17:19:03] [SceneManager] - Exiting scene -
+[17:19:03] 
+[17:19:03] [SceneManager] - Scene switched to: "Physics Tut #7 - Global Solver"
+[17:19:04] [SceneManager] - Exiting scene -
+[17:19:04] 
+[17:19:04] [SceneManager] - Scene switched to: "Physics Tut #7 - Global Solver"
+[17:19:06] [SceneManager] - Exiting scene -
+[17:19:06] 
+[17:19:06] [SceneManager] - Scene switched to: "Physics Tut #7 - Global Solver"
+[17:19:06] [SceneManager] - Exiting scene -
+[17:19:06] 
+[17:19:06] [SceneManager] - Scene switched to: "Physics Tut #7 - Global Solver"
+[17:19:11] [SceneManager] - Exiting scene -
+[17:19:11] 
+[17:19:11] [SceneManager] - Scene switched to: "Physics Tut #7 - Global Solver"
+[17:19:12] [SceneManager] - Exiting scene -
+[17:19:12] 
+[17:19:12] [SceneManager] - Scene switched to: "Physics Tut #7 - Global Solver"
+[17:19:12] [SceneManager] - Exiting scene -
+[17:19:12] 
+[17:19:12] [SceneManager] - Scene switched to: "Physics Tut #7 - Global Solver"
+[17:19:12] [SceneManager] - Exiting scene -
+[17:19:12] 
+[17:19:12] [SceneManager] - Scene switched to: "Physics Tut #7 - Global Solver"
+[17:19:13] Physics too slow to run in real time!
+[17:19:13] Physics too slow to run in real time!
+[17:19:13] Physics too slow to run in real time!
+[17:19:13] Physics too slow to run in real time!
+[17:19:13] Physics too slow to run in real time!
+[17:19:13] Physics too slow to run in real time!
+[17:19:14] Physics too slow to run in real time!
+[17:19:14] Physics too slow to run in real time!
+[17:19:14] Physics too slow to run in real time!
+[17:19:14] Physics too slow to run in real time!
+[17:19:14] Physics too slow to run in real time!
+[17:19:24] [SceneManager] - Exiting scene -
+[17:19:24] 
+[17:19:24] [SceneManager] - Scene switched to: "Physics Tut #7 - Global Solver"
+[17:19:25] Physics too slow to run in real time!
+[17:19:25] Physics too slow to run in real time!
+[17:19:25] Physics too slow to run in real time!
+[17:19:25] Physics too slow to run in real time!
+[17:19:25] Physics too slow to run in real time!
+[17:19:25] Physics too slow to run in real time!
+[17:19:26] Physics too slow to run in real time!
+[17:19:26] Physics too slow to run in real time!
+[17:19:26] Physics too slow to run in real time!
+[17:19:26] Physics too slow to run in real time!
+[17:19:26] Physics too slow to run in real time!
+[17:19:26] Physics too slow to run in real time!
+[17:19:26] Physics too slow to run in real time!
+[17:19:26] [SceneManager] - Exiting scene -
+[17:19:26] 
+[17:19:26] [SceneManager] - Scene switched to: "Physics Tut #7 - Global Solver"
+[17:19:26] Physics too slow to run in real time!
+[17:19:27] [SceneManager] - Exiting scene -
+[17:19:27] 
+[17:19:27] [SceneManager] - Scene switched to: "Physics Tut #7 - Global Solver"
+[17:19:27] [SceneManager] - Exiting scene -
+[17:19:27] 
+[17:19:27] [SceneManager] - Scene switched to: "Physics Tut #7 - Global Solver"
+[17:19:28] [SceneManager] - Exiting scene -
+[17:19:28] 
+[17:19:28] [SceneManager] - Scene switched to: "Physics Tut #7 - Global Solver"
+[17:19:35] [SceneManager] - Exiting scene -
+[17:19:35] 
+[17:19:35] [SceneManager] - Scene switched to: "Physics Tut #7 - Global Solver"
+[17:20:41] [SceneManager] - Exiting scene -
+[17:20:41] 
+[17:20:41] [SceneManager] - Scene switched to: "Physics Tut #7 - Global Solver"
+[17:20:43] [SceneManager] Closing scene manager

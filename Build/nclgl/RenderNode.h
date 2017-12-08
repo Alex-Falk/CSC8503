@@ -27,7 +27,20 @@ _-_-_-_-_-_-_-""  ""
 class RenderNode	{
 public:
 	 RenderNode(Mesh*m = NULL, Vector4 colour = Vector4(1,1,1,1));
-	~RenderNode(void);
+	virtual ~RenderNode(void);
+
+	virtual bool IsRenderable()
+	{
+		return (this->mesh != NULL);
+	}
+
+	virtual void DrawOpenGL(bool isShadowPass)
+	{
+		if (this->mesh)
+			this->mesh->Draw();
+	}
+
+
 
 	void			SetTransform(const Matrix4 &matrix) { transform = matrix;}
 	const Matrix4&	GetTransform() const				{ return transform;}
@@ -36,17 +49,17 @@ public:
 	virtual void	Update(float msec);
 
 	const Vector4&	GetColor()		const				{return color;}
-	void			SetColor(const Vector4 &c)			{ color = c;}
+	void			SetColor(const Vector4 &c)			{color = c;}
 
-	const Vector4&	GetBaseColor()const					{ return baseColor; }
-	void			SetBaseColor(const Vector4 &c)		{ baseColor = c; }
+	const Vector4&	GetBaseColor()const { return baseColor; }
+	void			SetBaseColor(const Vector4 &c) { baseColor = c; }
 
-	RenderNode *	GetChild()								{ return children[0]; }
+	RenderNode *	GetChild() { return children[0]; }
 
-	const Vector4&  GetChildColor()	const				{ return children[0]->color; }
-	void			SetChildColor(const Vector4 &c)		{ children[0]->color = c; }
+	const Vector4&  GetChildColor()	const { return children[0]->color; }
+	void			SetChildColor(const Vector4 &c) { children[0]->color = c; }
 
-	const Vector4&	GetchildBaseColor() const			{ return children[0]->baseColor; }
+	const Vector4&	GetchildBaseColor() const { return children[0]->baseColor; }
 
 	const Vector3&	GetModelScale()		const			{return modelScale;}
 	void			SetModelScale(const Vector3 &s)		{modelScale = s;}
@@ -63,6 +76,9 @@ public:
 	void			SetMesh(Mesh*m)				{mesh = m;}
 	Mesh*			GetMesh()					{return mesh;}
 
+	void			SetCulling(bool b) { cullFaces = b; }
+	bool			IsCulling() { return cullFaces; }
+
 	bool	IsAwake()	{return awake;}
 	void	Wake()		{awake = true;}
 	void	Sleep()		{awake = false;} 
@@ -73,10 +89,10 @@ public:
 	static bool		CompareByCameraDistance(RenderNode*a,RenderNode*b) ;
 	static bool		CompareByZ(RenderNode*a,RenderNode*b) ;
 
-	void	 SetColliding(bool b) { 
-		isCollided = b; 
+	void	 SetColliding(bool b) {
+		isCollided = b;
 		for (vector<RenderNode*>::iterator i = children.begin(); i != children.end(); ++i) {
-				(*i)->SetColliding(b);
+			(*i)->SetColliding(b);
 		}
 	}
 	bool 	 IsCollide() { return isCollided; }
@@ -94,6 +110,7 @@ protected:
 	Mesh*		mesh;
 	bool		awake;
 	bool		isCollided = false;
+	bool		cullFaces = true;
 	std::vector<RenderNode*>		children;
 };
 

@@ -9,6 +9,7 @@
 #include "ScreenPicker.h"
 #include "CommonUtils.h"
 #include <nclgl\Mesh.h>
+#include <nclgl\Matrix4.h>
 
 class SoftBody
 {
@@ -17,12 +18,17 @@ public:
 	~SoftBody();
 
 	MultiGameObject * GetGameObject() { return mgo; };
+	void UpdateMesh(const Matrix4 &matrix);
 	GameObject* test;
 
 protected:
 	std::vector<PhysicsNode *> physicsnodes;
 	//PhysicsNode *** physicsnodes;
 	MultiGameObject* mgo;
+	Vector3 * pos;
+	Mesh * m;
+	int w;
+	int h;
 	
 };
 

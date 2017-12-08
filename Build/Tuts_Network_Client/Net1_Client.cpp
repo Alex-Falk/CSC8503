@@ -103,7 +103,6 @@ void Net1_Client::OnInitializeScene()
 	if (network.Initialize(0))
 	{
 		NCLDebug::Log("Network: Initialized!");
-
 		//Attempt to connect to the server on localhost:1234
 		serverConnection = network.ConnectPeer(127, 0, 0, 1, 1234);
 		NCLDebug::Log("Network: Attempting to connect to server.");

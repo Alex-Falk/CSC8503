@@ -1,3 +1,2 @@
-﻿  SoftBody.cpp
-d:\projects\csc8503\build\ncltech\multigameobject.h(29): warning C4018: '<': signed/unsigned mismatch
-  ncltech.vcxproj -> D:\Projects\CSC8503\Build\Debug\ncltech.lib
+﻿  NetworkBase.cpp
+  ncltech.vcxproj -> D:\Projects\CSC8503CUDA\Build\Debug\ncltech.lib

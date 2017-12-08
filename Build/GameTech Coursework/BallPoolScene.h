@@ -95,7 +95,7 @@ public:
 		for (int i = 0; i < NUM_BALLS; ++i) {
 			this->AddGameObject(CommonUtils::BuildSphereObject("spawned_sphere",
 				Vector3(RAND*20.0f-10.0f,RAND*2.0f+3.0f,RAND*20.0f-10.0f),
-				0.75f,									//Radius
+				0.5f,									//Radius
 				true,									//Has Physics Object
 				1.0f / 4.0f,							//Inverse Mass
 				true,									//Has Collision Shape

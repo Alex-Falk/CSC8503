@@ -55,6 +55,8 @@ public:
 
 	static Mesh*	GenerateMesh(int w, int h, float s);
 
+	void ClearBuffers();
+
 	//Sets the Mesh's diffuse map. Takes an OpenGL texture 'name'
 	void	SetTexture(GLuint tex)	{texture = tex;}
 	//Gets the Mesh's diffuse map. Returns an OpenGL texture 'name'
@@ -79,6 +81,8 @@ public:
 
 	//Generates tangents for all facets. Assumes geometry type is GL_TRIANGLES...
 	void	GenerateTangents();
+
+	void GenerateSquareTangents();
 
 	//Helper function for GenerateTangents
 	Vector3 GenerateTangent(const Vector3 &a,const Vector3 &b,const Vector3 &c,const Vector2 &ta,const Vector2 &tb,const Vector2 &tc);

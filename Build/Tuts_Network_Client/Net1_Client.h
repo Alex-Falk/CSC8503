@@ -14,7 +14,7 @@ public:
 	virtual void OnInitializeScene() override;
 	virtual void OnCleanupScene() override;
 	virtual void OnUpdateScene(float dt) override;
-
+	virtual bool foundServer() { return (serverConnection != NULL); }
 
 	void ProcessNetworkEvent(const ENetEvent& evnt);
 

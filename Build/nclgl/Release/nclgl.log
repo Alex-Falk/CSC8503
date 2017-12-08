@@ -1,1 +1,25 @@
-﻿  nclgl.vcxproj -> D:\Projects\CSC8503\Build\Release\nclgl.lib
+﻿  Camera.cpp
+  CubeRobot.cpp
+  Frustum.cpp
+  GameTimer.cpp
+  HeightMap.cpp
+  Keyboard.cpp
+  Matrix3.cpp
+  Matrix4.cpp
+  MD5Anim.cpp
+  MD5FileData.cpp
+  MD5Mesh.cpp
+  MD5Node.cpp
+  Mesh.cpp
+Mesh.cpp(406): warning C4018: '<': signed/unsigned mismatch
+  Mouse.cpp
+  OBJMesh.cpp
+  OGLRenderer.cpp
+  Plane.cpp
+  Quaternion.cpp
+  RenderNode.cpp
+  Shader.cpp
+  Compiling...
+  Window.cpp
+  NCLDebug.cpp
+  nclgl.vcxproj -> D:\Projects\CSC8503CUDA\Build\Release\nclgl.lib

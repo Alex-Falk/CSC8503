@@ -45,7 +45,7 @@ public:
 			false,
 			Vector4(0.2f, 0.5f, 1.0f, 1.0f)));
 	
-		SoftBody * cloth = new SoftBody(20,20,1,Vector3(0, 10, 0), tex);
+		SoftBody * cloth = new SoftBody(15,20,.25,Vector3(0, 10, -10), tex);
 
 		this->AddMultiGameObject(cloth->GetGameObject());
 	}

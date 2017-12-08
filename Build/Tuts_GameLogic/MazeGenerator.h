@@ -23,6 +23,8 @@ public:
 	//Used as a hack for the MazeRenderer to generate the walls more effeciently
 	GraphNode* GetAllNodesArr() { return allNodes; }
 
+	vector<string> CreateEdgesString();
+
 protected:
 	void GetRandomStartEndNodes();
 

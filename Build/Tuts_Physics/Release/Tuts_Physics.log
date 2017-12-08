@@ -1,8 +1,8 @@
-﻿LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
+﻿  main.cpp
+d:\projects\csc8503cuda\build\ncltech\MultiGameObject.h(37): warning C4018: '<': signed/unsigned mismatch
+LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
   Generating code
-  0 of 4655 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
+  All 4607 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Finished generating code
-glew32.lib(glew.obj) : warning LNK4099: PDB 'glew_static.pdb' was not found with 'glew32.lib(glew.obj)' or at 'D:\Projects\CSC8503\Build\Release\glew_static.pdb'; linking object as if no debug info
-  Tuts_Physics.vcxproj -> D:\Projects\CSC8503\Build\Release\Tuts_Physics.exe
+glew32.lib(glew.obj) : warning LNK4099: PDB 'glew_static.pdb' was not found with 'glew32.lib(glew.obj)' or at 'D:\Projects\CSC8503CUDA\Build\Release\glew_static.pdb'; linking object as if no debug info
+  Tuts_Physics.vcxproj -> D:\Projects\CSC8503CUDA\Build\Release\Tuts_Physics.exe

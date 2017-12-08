@@ -1,4 +1,25 @@
-﻿  SoftBody.cpp
+﻿  SphereCollisionShape.cpp
+  SoftBody.cpp
+d:\projects\csc8503cuda\build\ncltech\multigameobject.h(37): warning C4018: '<': signed/unsigned mismatch
+  ScreenPicker.cpp
+  SceneManager.cpp
+d:\projects\csc8503cuda\build\ncltech\multigameobject.h(37): warning C4018: '<': signed/unsigned mismatch
+  PhysicsNode.cpp
+  PhysicsEngine.cpp
+  OcTree.cpp
+d:\projects\csc8503cuda\build\ncltech\multigameobject.h(37): warning C4018: '<': signed/unsigned mismatch
+d:\projects\csc8503cuda\build\ncltech\octree.cpp(20): warning C4018: '>': signed/unsigned mismatch
+d:\projects\csc8503cuda\build\ncltech\octree.cpp(120): warning C4018: '>': signed/unsigned mismatch
+d:\projects\csc8503cuda\build\ncltech\octree.cpp(279): warning C4018: '>': signed/unsigned mismatch
+d:\projects\csc8503cuda\build\ncltech\octree.cpp(282): warning C4018: '>': signed/unsigned mismatch
+  NetworkBase.cpp
+  Manifold.cpp
+  Hull.cpp
+  GraphicsPipeline.cpp
+  GeometryUtils.cpp
+  CuboidCollisionShape.cpp
   CommonUtils.cpp
+  CommonMeshes.cpp
+  CollisionDetectionSAT.cpp
   Generating Code...
-  ncltech.vcxproj -> D:\Projects\CSC8503\Build\Debug\ncltech.lib
+  ncltech.vcxproj -> D:\Projects\CSC8503CUDA\Build\Debug\ncltech.lib

@@ -79,18 +79,20 @@ public:
 			float b = 0.0f;
 
 			float distance_offset = ab.Length() - restLength;
-			float baumgarte_scalar = 0.99f;
+			float baumgarte_scalar = 0.97f;
 			b = -(baumgarte_scalar
 				/ PhysicsEngine::Instance()->GetDeltaTime())
 				* distance_offset;
 
-			float jn = (abnVel + b) / constraintMass;
+			//float jn = 0.01 * (distance_offset / (PhysicsEngine::Instance()->GetDeltaTime() * constraintMass));
 
+			float jn = (distance_offset * 0.01f) / (constraintMass * PhysicsEngine::Instance()->GetDeltaTime()) - (0.01f * abnVel);
+			 
 			pnodeA->SetLinearVelocity(pnodeA->GetLinearVelocity()
-				+ abn * (distance_offset*sqrt(k*pnodeA->GetInverseMass())));
+				+ abn * ( jn * pnodeA->GetInverseMass()));
 
 			pnodeB->SetLinearVelocity(pnodeB->GetLinearVelocity()
-				- abn * (distance_offset*sqrt(k*pnodeB->GetInverseMass())));
+				- abn * (jn * pnodeB->GetInverseMass()));
 
 			pnodeA->SetAngularVelocity(pnodeA->GetAngularVelocity()
 				+ pnodeA->GetInverseInertia()
@@ -99,7 +101,6 @@ public:
 			pnodeB->SetAngularVelocity(pnodeB->GetAngularVelocity()
 				- pnodeB->GetInverseInertia()
 				* Vector3::Cross(r2, abn * jn));
-
 
 		}
 	}
