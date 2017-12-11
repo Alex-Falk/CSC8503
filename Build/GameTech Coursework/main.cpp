@@ -4,11 +4,15 @@
 #include <nclgl\NCLDebug.h>
 #include <nclgl\PerfTimer.h>
 
+#include <cuda_gl_interop.h>
+#include <cuda_runtime.h>
+
 #include "TestScene.h"
 #include "EmptyScene.h"
 #include "IntegratorScene.h"
 #include "CollisionsScene.h"
 #include "BallPoolScene.h"
+#include "GPUBallPoolScene.h"
 
 bool draw_debug = true;
 bool draw_performance = false;
@@ -62,6 +66,7 @@ void Initialize()
 	SceneManager::Instance()->EnqueueScene(new CollisionsScene("GameTech #3 - Collision Scenarios"));
 	SceneManager::Instance()->EnqueueScene(new EmptyScene("GameTech #4 - Soft Body Physics"));
 	SceneManager::Instance()->EnqueueScene(new BallPoolScene("GameTech #5 - Ball Pool!"));
+	SceneManager::Instance()->EnqueueScene(new GPUBallPoolScene("GameTech #6 - Ball Pool on the GPU!"));
 }
 
 // Print Debug Info

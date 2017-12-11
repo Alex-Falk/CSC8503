@@ -177,7 +177,8 @@ void CollisionDetectionSAT::GenContactPoints(Manifold* out_manifold)
 		bestColData._normal, polygon1, normal1, adjPlanes1);
 
 	cshapeB->GetIncidentReferencePolygon(
-		- bestColData._normal, polygon2, normal2, adjPlanes2);
+		- bestColData._normal, polygon2, normal2, adjPlanes2);
+
 	// If either shape1 or shape2 returned a single point , then it must
 	// be on a curve and thus the only contact point to generate is
 	// already availble

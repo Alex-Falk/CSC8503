@@ -1,13 +1,15 @@
-﻿  main.cpp
-d:\projects\csc8503\build\ncltech\multigameobject.h(37): warning C4018: '<': signed/unsigned mismatch
+﻿  TestScene.cpp
+d:\projects\csc8503cuda\build\ncltech\multigameobject.h(37): warning C4018: '<': signed/unsigned mismatch
+d:\projects\csc8503cuda\build\gametech coursework\testscene.cpp(41): warning C4129: 'p': unrecognized character escape sequence
+  main.cpp
+d:\projects\csc8503cuda\build\ncltech\multigameobject.h(37): warning C4018: '<': signed/unsigned mismatch
+  Generating Code...
 LINK : warning LNK4075: ignoring '/INCREMENTAL' due to '/LTCG' specification
 LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
 LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
   Generating code
-  0 of 126 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
+  All 126 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Finished generating code
-glew32.lib(glew.obj) : warning LNK4099: PDB 'glew_static.pdb' was not found with 'glew32.lib(glew.obj)' or at 'D:\Projects\CSC8503\Build\Debug\glew_static.pdb'; linking object as if no debug info
-  GameTech Coursework.vcxproj -> D:\Projects\CSC8503\Build\Debug\GameTech Coursework.exe
-  GameTech Coursework.vcxproj -> D:\Projects\CSC8503\Build\Debug\GameTech Coursework.pdb (Partial PDB)
+glew32.lib(glew.obj) : warning LNK4099: PDB 'glew_static.pdb' was not found with 'glew32.lib(glew.obj)' or at 'D:\Projects\CSC8503CUDA\Build\Debug\glew_static.pdb'; linking object as if no debug info
+  GameTech Coursework.vcxproj -> D:\Projects\CSC8503CUDA\Build\Debug\GameTech Coursework.exe
+  GameTech Coursework.vcxproj -> D:\Projects\CSC8503CUDA\Build\Debug\GameTech Coursework.pdb (Partial PDB)

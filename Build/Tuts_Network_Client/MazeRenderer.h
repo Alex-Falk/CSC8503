@@ -4,6 +4,7 @@
 #include <ncltech\CommonMeshes.h>
 #include "MazeGenerator.h"
 #include "SearchAlgorithm.h"
+#include <ncltech\ScreenPicker.h>
 
 
 struct WallDescriptor
@@ -26,8 +27,8 @@ public:
 	//The search history draws from edges because they already store the 'to'
 	// and 'from' of GraphNodes.
 	void DrawSearchHistory(const SearchHistory& history, float line_width);
-
-
+	virtual void UpdateRenderer();
+	void DrawFinalPath(std::list<const GraphNode*> path,float line_width, int size);
 protected:
 	//Turn MazeGenerator data into flat 2D map (3 size x 3 size) of boolean's
 	// - True for wall

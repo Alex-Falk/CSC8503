@@ -20,7 +20,7 @@ struct GraphNode
 	// - for maze generator this is x,y grid cell
 	// - for nav-mesh this is world space position of the node
 	Vector3 _pos;	
-
+	int _idx;
 	//--- Used only by generation algorithm and debug drawing ---
 	bool _visited;		//Just used for generation algorithm
 };

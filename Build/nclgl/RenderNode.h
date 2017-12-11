@@ -79,6 +79,11 @@ public:
 	void			SetCulling(bool b) { cullFaces = b; }
 	bool			IsCulling() { return cullFaces; }
 
+	RenderNode*		GetChildWithName(string s);
+
+	void			SetName(string s) { name = s; }
+	string			GetName() { return name; }
+
 	bool	IsAwake()	{return awake;}
 	void	Wake()		{awake = true;}
 	void	Sleep()		{awake = false;} 
@@ -111,6 +116,7 @@ protected:
 	bool		awake;
 	bool		isCollided = false;
 	bool		cullFaces = true;
+	string		name;
 	std::vector<RenderNode*>		children;
 };
 

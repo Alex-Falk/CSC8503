@@ -22,6 +22,7 @@
     <ProjectGuid>{FF74C3EC-6B06-4054-8829-81E6866DF745}</ProjectGuid>
     <RootNamespace>Examples_Cuda</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>Coursework A</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -142,19 +143,28 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="TestScene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BallPoolScene.h" />
+    <ClInclude Include="CollisionsScene.h" />
     <ClInclude Include="CudaCollidingParticles.cuh" />
     <ClInclude Include="CudaCommon.cuh" />
     <ClInclude Include="CudaParticles.cuh" />
+    <ClInclude Include="CudaSoftBody.cuh" />
+    <ClInclude Include="EmptyScene.h" />
+    <ClInclude Include="GPUBallPoolScene.h" />
     <ClInclude Include="helper_math.h" />
+    <ClInclude Include="IntegratorScene.h" />
     <ClInclude Include="RenderNodeParticles.h" />
     <ClInclude Include="Scene_CollisionHandling.h" />
     <ClInclude Include="Scene_Particles.h" />
+    <ClInclude Include="TestScene.h" />
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="CudaCollidingParticles.cu" />
     <CudaCompile Include="CudaParticles.cu" />
+    <CudaCompile Include="CudaSoftBody.cu" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

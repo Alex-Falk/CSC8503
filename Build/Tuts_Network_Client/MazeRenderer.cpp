@@ -6,7 +6,7 @@ const Vector4 wall_color = Vector4(1.f, 0.8f, 0.3f, 1);
 
 
 MazeRenderer::MazeRenderer(MazeGenerator* gen, Mesh* wallmesh)
-	: GameObject("")
+	: GameObject("maze")
 	, mesh(wallmesh)
 	, maze(gen)
 	, flat_maze(NULL)
@@ -61,6 +61,32 @@ void MazeRenderer::DrawSearchHistory(const SearchHistory& history, float line_wi
 
 		NCLDebug::DrawThickLine(start, end, line_width, CommonUtils::GenColor(0.8f + index * col_factor));
 		index += 1.0f;
+	}
+}
+
+void MazeRenderer::DrawFinalPath(std::list<const GraphNode*> path, float line_width,int size)
+{
+	float grid_scalar = 1.0f / (float)size;
+
+	Matrix4 transform = this->Render()->GetWorldTransform();
+
+	for (std::list<const GraphNode*>::iterator it = path.begin(); it != path.end();) {
+		Vector3 pos1 = (*it)->_pos;
+		++it;
+		if (it == path.end()) { break; }
+		Vector3 pos2 = (*it)->_pos;
+		
+		Vector3 start = transform * Vector3(
+			(pos1.x + 0.5f) * grid_scalar,
+			0.1f,
+			(pos1.y + 0.5f) * grid_scalar);
+
+		Vector3 end = transform * Vector3(
+			(pos2.x + 0.5f) * grid_scalar,
+			0.1f,
+			(pos2.y + 0.5f) * grid_scalar);
+
+		NCLDebug::DrawThickLine(start, end, line_width, CommonUtils::GenColor(0.8f));
 	}
 }
 
@@ -188,6 +214,34 @@ void MazeRenderer::Generate_ConstructWalls()
 
 }
 
+void MazeRenderer::UpdateRenderer() {
+	GraphNode* start = maze->GetStartNode();
+	GraphNode* end = maze->GetGoalNode();
+
+	const float scalar = 1.f / (float)flat_maze_size;
+
+	Vector3 cellpos = Vector3(
+		start->_pos.x * 3,
+		0.0f,
+		start->_pos.y * 3
+	) * scalar;
+	Vector3 cellsize = Vector3(
+		scalar * 2,
+		1.0f,
+		scalar * 2
+	);
+
+	Render()->GetChildWithName("start")->SetTransform(Matrix4::Translation(cellpos + cellsize * 0.5f) * Matrix4::Scale(cellsize * 0.5f));
+
+	cellpos = Vector3(
+		end->_pos.x * 3,
+		0.0f,
+		end->_pos.y * 3
+	) * scalar;
+
+	Render()->GetChildWithName("end")->SetTransform(Matrix4::Translation(cellpos + cellsize * 0.5f) * Matrix4::Scale(cellsize * 0.5f));
+}
+
 void MazeRenderer::Generate_BuildRenderNodes()
 {
 	//Turn compacted walls into RenderNodes
@@ -256,8 +310,16 @@ void MazeRenderer::Generate_BuildRenderNodes()
 	);
 
 	cube = new RenderNode(mesh, Vector4(0.0f, 1.0f, 0.0f, 1.0f));
+	cube->SetName("start");
 	cube->SetTransform(Matrix4::Translation(cellpos + cellsize * 0.5f) * Matrix4::Scale(cellsize * 0.5f));
 	root->AddChild(cube);
+
+	//GameObject * startObj = new GameObject("Start", cube);
+
+	//ScreenPicker::Instance()->RegisterNodeForMouseCallback(
+	//	cube, //Dummy is the rendernode that actually contains the drawable mesh, and the one we can to 'drag'
+	//	std::bind(&CommonUtils::DragableObjectCallback, startObj, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4)
+	//);
 
 	cellpos = Vector3(
 		end->_pos.x * 3,
@@ -265,6 +327,7 @@ void MazeRenderer::Generate_BuildRenderNodes()
 		end->_pos.y * 3
 	) * scalar;
 	cube = new RenderNode(mesh, Vector4(1.0f, 0.0f, 0.0f, 1.0f));
+	cube->SetName("end");
 	cube->SetTransform(Matrix4::Translation(cellpos + cellsize * 0.5f) * Matrix4::Scale(cellsize * 0.5f));
 	root->AddChild(cube);
 

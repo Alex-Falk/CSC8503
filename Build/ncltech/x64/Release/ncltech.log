@@ -1,27 +1,2 @@
-﻿  CollisionDetectionSAT.cpp
-CollisionDetectionSAT.cpp(230): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-  CommonMeshes.cpp
-  CommonUtils.cpp
-  CuboidCollisionShape.cpp
-CuboidCollisionShape.cpp(72): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-  GeometryUtils.cpp
-  GraphicsPipeline.cpp
-  Hull.cpp
-Hull.cpp(25): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-Hull.cpp(55): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-Hull.cpp(58): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-Hull.cpp(90): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-Hull.cpp(205): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-Hull.cpp(211): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-  Manifold.cpp
-  NetworkBase.cpp
-  OcTree.cpp
-OcTree.cpp(262): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-  PhysicsEngine.cpp
-  PhysicsNode.cpp
-  SceneManager.cpp
-d:\projects\csc8503cuda\build\ncltech\SceneManager.h(53): warning C4267: 'return': conversion from 'size_t' to 'uint', possible loss of data
-  ScreenPicker.cpp
-  SoftBody.cpp
-  SphereCollisionShape.cpp
+﻿  NetworkBase.cpp
   ncltech.vcxproj -> D:\Projects\CSC8503CUDA\Build\x64\Release\ncltech.lib

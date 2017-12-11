@@ -88,19 +88,14 @@ void MazeGenerator::Generate(int grid_size, float maze_density)
 	GetRandomStartEndNodes();
 }
 
-vector<string> MazeGenerator::CreateEdgesString()
-{
-	vector<string> walls;
+std::string MazeGenerator::AllWalls() {
+	string walls = to_string(size) + ":";
 
 	uint base_offset = size * (size - 1);
 
-	for (int i = 0; i < base_offset * 2; ++i) {
+	for (uint i = 0; i < base_offset * 2; ++i) {
 		if (allEdges[i]._iswall) {
-			Vector3 pos1 = allEdges[i]._a->_pos;
-			Vector3 pos2 = allEdges[i]._b->_pos;
-
-			string wall = to_string(i) + ":" + to_string((base_offset*2) - 1) + ":" + to_string(pos1.x) + "_" + to_string(pos1.y) + "_" + to_string(pos1.z) + "_" + to_string(pos2.x) + "_" + to_string(pos2.y) + "_" + to_string(pos2.z);
-			walls.push_back(wall);
+			walls += to_string(i) + " ";
 		}
 	}
 
@@ -136,6 +131,7 @@ void MazeGenerator::Initiate_Arrays()
 		{
 			allNodes[y * size + x]._pos = Vector3((float)x, (float)y, 0.0f);
 			allNodes[y * size + x]._visited = false;
+			allNodes[y * size + x]._idx = y * size + x;
 		}
 	}
 

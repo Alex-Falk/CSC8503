@@ -84,8 +84,6 @@ public:
 				/ PhysicsEngine::Instance()->GetDeltaTime())
 				* distance_offset;
 
-			//float jn = 0.01 * (distance_offset / (PhysicsEngine::Instance()->GetDeltaTime() * constraintMass));
-
 			float jn = (distance_offset * 0.01f) / (constraintMass * PhysicsEngine::Instance()->GetDeltaTime()) - (0.01f * abnVel);
 			 
 			pnodeA->SetLinearVelocity(pnodeA->GetLinearVelocity()

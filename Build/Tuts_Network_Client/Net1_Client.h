@@ -3,6 +3,10 @@
 
 #include <ncltech\Scene.h>
 #include <ncltech\NetworkBase.h>
+#include "MazeGenerator.h"
+#include "ClientFunctions.h"
+#include "MazeRenderer.h"
+#include <nclgl\OBJMesh.h>
 
 //Basic Network Example
 
@@ -18,9 +22,22 @@ public:
 
 	void ProcessNetworkEvent(const ENetEvent& evnt);
 
+	void ApplyMaze(MazeStruct m);
+
+	void SendStartPosition();
+	void SendEndPosition();
+	void RequestNewMaze();
+	ENetPeer* getPeer() { return serverConnection; }
+
 protected:
 	GameObject* box;
 
 	NetworkBase network;
 	ENetPeer*	serverConnection;
+	MazeGenerator* generator;
+	MazeRenderer* maze;
+
+	Mesh* wallmesh;
+	int size;
+	std::list<const GraphNode*> path;
 };

@@ -51,8 +51,7 @@ SoftBody::SoftBody(int w, int h, float s, Vector3 pos,GLuint tex)
 			std::placeholders::_1)
 	);
 
-	// Adding Constraints to Each of the physicsnodes
-	// TODO: Create spring constraint and use this instead of SpringConstraint
+	 //Adding Constraints to Each of the physicsnodes
 	for (int i = 0; i < h; ++i) {
 		for (int j = 0; j < w; ++j) {
 		

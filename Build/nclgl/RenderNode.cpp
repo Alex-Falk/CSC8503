@@ -24,6 +24,17 @@ void RenderNode::AddChild( RenderNode* s )	{
 	s->parent = this;
 }
 
+RenderNode * RenderNode::GetChildWithName(string s)
+{
+	for (vector<RenderNode*>::iterator i = children.begin(); i != children.end(); ++i) {
+		if ((*i)->GetName() == s) {
+			return (*i);
+		}
+	}
+
+	return nullptr;
+}
+
 bool	RenderNode::CompareByCameraDistance(RenderNode*a,RenderNode*b)  {
 	return (a->distanceFromCamera < b->distanceFromCamera) ? true : false;
 }

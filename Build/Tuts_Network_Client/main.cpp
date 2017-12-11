@@ -7,7 +7,7 @@
 #include <nclgl\NCLDebug.h>
 #include <nclgl\PerfTimer.h>
 #include "Server.h"
-#include "Client.h"
+#include "ClientFunctions.h"
 #include "Net1_Client.h"
 
 enum Type {SERVER,CLIENT};
@@ -15,7 +15,6 @@ Type thisType = SERVER;
 
 void Quit(bool error = false, const string &reason = "");
 
-Client * c = nullptr;
 Server * s = nullptr;
 
 void Initialize()
@@ -72,33 +71,6 @@ void Quit(bool error, const string &reason) {
 // For an example on how to set up your test Scene's,
 // see one of the PhyX_xxxx tutorial scenes. =]
 
-
-void PrintStatusEntries()
-{
-	const Vector4 status_color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-
-	//Print Current Scene Name
-	NCLDebug::AddStatusEntry(status_color, "[%d/%d]: %s ([T]/[Y] to cycle or [R] to reload)",
-		SceneManager::Instance()->GetCurrentSceneIndex() + 1,
-		SceneManager::Instance()->SceneCount(),
-		SceneManager::Instance()->GetCurrentScene()->GetSceneName().c_str()
-	);
-}
-
-void HandleKeyboardInputs()
-{
-	uint sceneIdx = SceneManager::Instance()->GetCurrentSceneIndex();
-	uint sceneMax = SceneManager::Instance()->SceneCount();
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Y))
-		SceneManager::Instance()->JumpToScene((sceneIdx + 1) % sceneMax);
-
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_T))
-		SceneManager::Instance()->JumpToScene((sceneIdx == 0 ? sceneMax : sceneIdx) - 1);
-
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_R))
-		SceneManager::Instance()->JumpToScene(sceneIdx);
-}
-
 int main()
 {
 	if (enet_initialize() != 0)
@@ -114,7 +86,6 @@ int main()
 		fprintf(stderr, "An error occurred while trying to create an ENet server host.\n");
 		//onExit(EXIT_FAILURE);
 		thisType = CLIENT;
-		c = new Client();
 		//Initialize our Window, Physics, Scenes etc
 		Initialize();
 	}
@@ -125,7 +96,7 @@ int main()
 		break;
 
 	case CLIENT:
-		int i = c->ClientLoop();
+		int i = ClientLoop();
 		enet_deinitialize(); 
 		return 0;
 		break;

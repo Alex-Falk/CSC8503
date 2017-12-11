@@ -141,6 +141,8 @@ typedef void (ENET_CALLBACK * ENetPacketFreeCallback) (struct _ENetPacket *);
  
    @sa ENetPacketFlag
  */
+enum Packet_Type { EMPTY, START_POS, END_POS, MAZE_WALLS, PATH, TEXT, NEW_MAZE };
+
 typedef struct _ENetPacket
 {
    size_t                   referenceCount;  /**< internal use only */
@@ -148,7 +150,7 @@ typedef struct _ENetPacket
    enet_uint8 *             data;            /**< allocated data for packet */
    size_t                   dataLength;      /**< length of data */
    ENetPacketFreeCallback   freeCallback;    /**< function to be called when the packet is no longer in use */
-   void *                   userData;        /**< application private data, may be freely modified */
+  void *                    userData;        /**< application private data, may be freely modified */
 } ENetPacket;
 
 typedef struct _ENetAcknowledgement

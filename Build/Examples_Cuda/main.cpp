@@ -1,66 +1,39 @@
-#include <nclgl\Window.h>
 #include <ncltech\PhysicsEngine.h>
 #include <ncltech\SceneManager.h>
+#include <nclgl\Window.h>
 #include <nclgl\NCLDebug.h>
 #include <nclgl\PerfTimer.h>
 
 #include <cuda_gl_interop.h>
 #include <cuda_runtime.h>
 
-#include "Scene_Particles.h"
-#include "Scene_CollisionHandling.h"
+#include "TestScene.h"
+#include "EmptyScene.h"
+#include "IntegratorScene.h"
+#include "CollisionsScene.h"
+#include "BallPoolScene.h"
+#include "GPUBallPoolScene.h"
 
-PerfTimer timer_total;
+bool draw_debug = true;
+bool draw_performance = false;
 
-void Quit(bool error = false, const string &reason = "");
+const Vector4 status_colour = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+const Vector4 status_colour_header = Vector4(0.8f, 0.9f, 1.0f, 1.0f);
 
-void Initialize()
-{
-	//Initialise the Window
-	if (!Window::Initialise("Game Technologies - Collision Resolution", 1280, 800, false))
-		Quit(true, "Window failed to initialise!");
-
-	//Initialise the PhysicsEngine
-	PhysicsEngine::Instance();
-
-	//Initialize Renderer
-	GraphicsPipeline::Instance();
-	SceneManager::Instance();	//Loads CommonMeshes in here (So everything after this can use them globally e.g. our scenes)
-
-								//Enqueue All Scenes
-								// - Add any new scenes you want here =D
-	SceneManager::Instance()->EnqueueScene(new Scene_Particles("Cuda Particle - Test/Example"));
-	SceneManager::Instance()->EnqueueScene(new Scene_CollisionHandling("Cuda Collision - Test/Example"));
-}
+bool show_perf_metrics = false;
+PerfTimer timer_total, timer_physics, timer_update, timer_render;
+uint shadowCycleKey = 4;
 
 
-
-
-
-
-
-
-
-//------------------------------------
-//---------Default main loop----------
-//------------------------------------
-// With GameTech, everything is put into 
-// little "Scene" class's which are self contained
-// programs with their own game objects/logic.
-//
-// So everything you want to do in renderer/main.cpp
-// should now be able to be done inside a class object.
-//
-// For an example on how to set up your test Scene's,
-// see one of the PhyX_xxxx tutorial scenes. =]
-
-
-
-void Quit(bool error, const string &reason) {
+// Program Deconstructor
+//  - Releases all global components and memory
+//  - Optionally prints out an error message and
+//    stalls the runtime if requested.
+void Quit(bool error = false, const std::string &reason = "") {
 	//Release Singletons
 	SceneManager::Release();
-	GraphicsPipeline::Release();
 	PhysicsEngine::Release();
+	GraphicsPipeline::Release();
 	Window::Destroy();
 
 	//Show console reason before exit
@@ -71,25 +44,106 @@ void Quit(bool error, const string &reason) {
 	}
 }
 
+
+// Program Initialise
+//  - Generates all program wide components and enqueues all scenes
+//    for the SceneManager to display
+void Initialize()
+{
+	//Initialise the Window
+	if (!Window::Initialise("Game Technologies", 1280, 800, false))
+		Quit(true, "Window failed to initialise!");
+
+	//Initialize Renderer
+	GraphicsPipeline::Instance();
+
+	//Initialise the PhysicsEngine
+	PhysicsEngine::Instance();
+
+	//Enqueue All Scenes
+	SceneManager::Instance()->EnqueueScene(new TestScene("GameTech #1 - Framework Sandbox!"));
+	SceneManager::Instance()->EnqueueScene(new IntegratorScene("GameTech #2 - Different Integration Methods"));
+	SceneManager::Instance()->EnqueueScene(new CollisionsScene("GameTech #3 - Collision Scenarios"));
+	SceneManager::Instance()->EnqueueScene(new EmptyScene("GameTech #4 - Soft Body Physics"));
+	SceneManager::Instance()->EnqueueScene(new BallPoolScene("GameTech #5 - Ball Pool!"));
+	SceneManager::Instance()->EnqueueScene(new GPUBallPoolScene("GameTech #6 - Ball Pool on the GPU!"));
+}
+
+// Print Debug Info
+//  - Prints a list of status entries to the top left
+//    hand corner of the screen each frame.
 void PrintStatusEntries()
 {
-	const Vector4 status_color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	const Vector4 status_color_debug = Vector4(1.0f, 0.6f, 1.0f, 1.0f);
-	const Vector4 status_color_performance = Vector4(1.0f, 0.6f, 0.6f, 1.0f);
+	//Print Engine Options
+	NCLDebug::AddStatusEntry(status_colour_header, "NCLTech Settings");
+	NCLDebug::AddStatusEntry(status_colour, "     Physics Engine: %s (Press P to toggle)", PhysicsEngine::Instance()->IsPaused() ? "Paused  " : "Enabled ");
+	NCLDebug::AddStatusEntry(status_colour, "     Monitor V-Sync: %s (Press V to toggle)", GraphicsPipeline::Instance()->GetVsyncEnabled() ? "Enabled " : "Disabled");
+	NCLDebug::AddStatusEntry(status_colour, "");
 
 	//Print Current Scene Name
-	NCLDebug::AddStatusEntry(status_color, "[%d/%d]: %s ([T]/[Y] to cycle or [R] to reload)",
+	NCLDebug::AddStatusEntry(status_colour_header, "[%d/%d]: %s",
 		SceneManager::Instance()->GetCurrentSceneIndex() + 1,
 		SceneManager::Instance()->SceneCount(),
 		SceneManager::Instance()->GetCurrentScene()->GetSceneName().c_str()
-	);
+		);
+	NCLDebug::AddStatusEntry(status_colour, "     \x01 T/Y to cycle or R to reload scene");
 
-	timer_total.PrintOutputToStatusEntry(status_color, "Frame Time: ");
+	//Print Performance Timers
+	NCLDebug::AddStatusEntry(status_colour, "     FPS: %5.2f  (Press G for %s info)", 1000.f / timer_total.GetAvg(), show_perf_metrics ? "less" : "more");
+	if (show_perf_metrics)
+	{
+		timer_total.PrintOutputToStatusEntry(status_colour, "          Total Time     :");
+		timer_update.PrintOutputToStatusEntry(status_colour, "          Scene Update   :");
+		timer_physics.PrintOutputToStatusEntry(status_colour, "          Physics Update :");
+		PhysicsEngine::Instance()->PrintPerformanceTimers(status_colour);
+		timer_render.PrintOutputToStatusEntry(status_colour, "          Render Scene   :");
+	}
+
+	const Vector4 status_color_debug = Vector4(1.0f, 0.6f, 1.0f, 1.0f);
+
+	//Physics Debug Drawing options
+	NCLDebug::AddStatusEntry(status_colour_header, "Score");
+	NCLDebug::AddStatusEntry(status_colour, "     Score = " + to_string(SceneManager::Instance()->GetCurrentScene()->GetScore()));
+
+	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
+	NCLDebug::AddStatusEntry(status_color_debug, "--- Debug Draw  [G] ---");
+	if (draw_debug)
+	{
+		NCLDebug::AddStatusEntry(status_color_debug, "Constraints       : %s [Z] - Tut 3+", (drawFlags & DEBUGDRAW_FLAGS_CONSTRAINT) ? "Enabled " : "Disabled");
+		NCLDebug::AddStatusEntry(status_color_debug, "Collision Normals : %s [X] - Tut 4", (drawFlags & DEBUGDRAW_FLAGS_COLLISIONNORMALS) ? "Enabled " : "Disabled");
+		NCLDebug::AddStatusEntry(status_color_debug, "Collision Volumes : %s [C] - Tut 4+", (drawFlags & DEBUGDRAW_FLAGS_COLLISIONVOLUMES) ? "Enabled " : "Disabled");
+		NCLDebug::AddStatusEntry(status_color_debug, "Manifolds         : %s [V] - Tut 5+", (drawFlags & DEBUGDRAW_FLAGS_MANIFOLD) ? "Enabled " : "Disabled");
+		NCLDebug::AddStatusEntry(status_color_debug, "OCtree            : %s [B]", (drawFlags & DEBUGDRAW_FLAGS_OCTREE) ? "Enabled " : "Disabled");
+		NCLDebug::AddStatusEntry(status_color_debug, "");
+	}
+	NCLDebug::AddStatusEntry(status_colour, "");
+
 }
 
 
+static bool ScoreCallbackFunction(PhysicsNode * self, PhysicsNode* collidingObject) {
+	if (collidingObject->IsGood()) {
+		SceneManager::Instance()->GetCurrentScene()->AddToScore(100);
+	}
+	else {
+		SceneManager::Instance()->GetCurrentScene()->AddToScore(-50);
+	}
+
+	return true;
+}
+
+// Process Input
+//  - Handles all program wide keyboard inputs for
+//    things such toggling the physics engine and 
+//    cycling through scenes.
 void HandleKeyboardInputs()
 {
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_P))
+		PhysicsEngine::Instance()->SetPaused(!PhysicsEngine::Instance()->IsPaused());
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_V))
+		GraphicsPipeline::Instance()->SetVsyncEnabled(!GraphicsPipeline::Instance()->GetVsyncEnabled());
+
 	uint sceneIdx = SceneManager::Instance()->GetCurrentSceneIndex();
 	uint sceneMax = SceneManager::Instance()->SceneCount();
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Y))
@@ -100,6 +154,26 @@ void HandleKeyboardInputs()
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_R))
 		SceneManager::Instance()->JumpToScene(sceneIdx);
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_G))
+		show_perf_metrics = !show_perf_metrics;
+
+
+	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Z))
+		drawFlags ^= DEBUGDRAW_FLAGS_CONSTRAINT;
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_X))
+		drawFlags ^= DEBUGDRAW_FLAGS_COLLISIONNORMALS;
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_C))
+		drawFlags ^= DEBUGDRAW_FLAGS_COLLISIONVOLUMES;
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_V))
+		drawFlags ^= DEBUGDRAW_FLAGS_MANIFOLD;
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_B))
+		drawFlags ^= DEBUGDRAW_FLAGS_OCTREE;
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_J))
 	{
@@ -114,45 +188,72 @@ void HandleKeyboardInputs()
 
 		spawnSphere->Physics()->SetLinearVelocity(GraphicsPipeline::Instance()->GetCamera()->GetViewDirection().Normalise()*50.0f);
 
+		spawnSphere->Physics()->SetOnCollisionCallback(&ScoreCallbackFunction);
+
+
 		SceneManager::Instance()->GetCurrentScene()->AddGameObject(spawnSphere);
 
 	}
+
+	PhysicsEngine::Instance()->SetDebugDrawFlags(drawFlags);
 }
 
-
-
+// Program Entry Point
 int main()
 {
 	//Initialize our Window, Physics, Scenes etc
 	Initialize();
+	GraphicsPipeline::Instance()->SetVsyncEnabled(false);
 
 	Window::GetWindow().GetTimer()->GetTimedMS();
 
 	//Create main game-loop
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE)) {
 		//Start Timing
+		
 		float dt = Window::GetWindow().GetTimer()->GetTimedMS() * 0.001f;	//How many milliseconds since last update?
+																		//Update Performance Timers (Show results every second)
 		timer_total.UpdateRealElapsedTime(dt);
+		timer_physics.UpdateRealElapsedTime(dt);
+		timer_update.UpdateRealElapsedTime(dt);
+		timer_render.UpdateRealElapsedTime(dt);
 
-		timer_total.BeginTimingSection();
 		//Print Status Entries
 		PrintStatusEntries();
 
 		//Handle Keyboard Inputs
 		HandleKeyboardInputs();
 
-		//Update Scene
-		SceneManager::Instance()->GetCurrentScene()->FireOnSceneUpdate(dt);
+		
+		timer_total.BeginTimingSection();
 
-		//Update Physics
+		//Update Scene
+		timer_update.BeginTimingSection();
+		SceneManager::Instance()->GetCurrentScene()->OnUpdateScene(dt);
+		timer_update.EndTimingSection();
+
+		//Update Physics	
+		timer_physics.BeginTimingSection();
 		PhysicsEngine::Instance()->Update(dt);
+		timer_physics.EndTimingSection();
 		PhysicsEngine::Instance()->DebugRender();
 
 		//Render Scene
-
+		timer_render.BeginTimingSection();
 		GraphicsPipeline::Instance()->UpdateScene(dt);
 		GraphicsPipeline::Instance()->RenderScene();
-		timer_total.EndTimingSection();
+		{
+			//Forces synchronisation if vsync is disabled
+			// - This is solely to allow accurate estimation of render time
+			// - We should NEVER normally lock our render or game loop!		
+		//	glClientWaitSync(glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, NULL), GL_SYNC_FLUSH_COMMANDS_BIT, 1000000);
+		}
+		timer_render.EndTimingSection();
+
+		
+
+		//Finish Timing
+		timer_total.EndTimingSection();		
 	}
 
 	//Cleanup

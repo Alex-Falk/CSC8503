@@ -17,13 +17,17 @@ public:
 	// so any two nodes picked randomly /will/ have a path between them
 	GraphNode* GetStartNode() const { return start; }
 	GraphNode* GetGoalNode()  const { return end; }
+	
+	void SetStartNode(int i)		{ start = &(allNodes[i]); }
+	void SetEndNode(int i)			{ end = &(allNodes[i]); }
+
 	uint GetSize() const { return size; }
 
 
 	//Used as a hack for the MazeRenderer to generate the walls more effeciently
 	GraphNode* GetAllNodesArr() { return allNodes; }
 
-	vector<string> CreateEdgesString();
+	string AllWalls();
 
 protected:
 	void GetRandomStartEndNodes();

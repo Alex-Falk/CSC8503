@@ -122,7 +122,7 @@ public:
 	{
 		if (game_object)
 		{
-			if (game_object->scene) game_object->scene->RemoveGameObject(game_object);
+			//if (game_object->scene) game_object->scene->RemoveGameObject(game_object);
 
 			m_vpObjects.push_back(game_object);
 			game_object->scene = this;

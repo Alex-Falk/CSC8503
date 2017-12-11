@@ -34,13 +34,31 @@ public:
 		cudaParticleProg = new CudaCollidingParticles();
 
 		//The dam size (<value> * PARTICLE_RADIUS * 2) must be smaller than the simulation world size!
-		cudaParticleProg->InitializeParticleDam(1, 1, 1);
+		cudaParticleProg->InitializeParticleDam(60,10,60);
 
 		uint num_particles = cudaParticleProg->GetNumParticles();
 
+		Vector4 colour;
+		int col = rand() % 4;
+		switch (col) {
+		case 0:
+			colour = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+			break;
+		case 1:
+			colour = Vector4(0.0f, 1.0f, 0.0f, 1.0f);
+			break;
+		case 2:
+			colour = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
+			break;
+		case 3:
+			colour = Vector4(1.0f, 1.0f, 0.0f, 1.0f);
+			break;
+		}
+
+
 		RenderNodeParticles* rnode = new RenderNodeParticles();
 		rnode->SetParticleRadius(PARTICLE_RADIUS);
-		rnode->SetBaseColor(Vector4(1.f, 0.f, 1.f, 1.f));
+		rnode->SetBaseColor(colour);
 		rnode->GeneratePositionBuffer(num_particles, NULL);
 
 		const float half_grid_world_size = PARTICLE_GRID_SIZE * PARTICLE_GRID_CELL_SIZE * 0.5f;
@@ -51,9 +69,88 @@ public:
 		// vertex buffer that holds each particles world position.
 		this->AddGameObject(new GameObject("", rnode, NULL));
 
+		// Floor
+		this->AddGameObject(CommonUtils::BuildCuboidObject(
+			"Ground",
+			Vector3(0.0f, -1.0f, 0.0f),
+			Vector3(9.6f, 1.0f, 9.6f),
+			true,
+			0.0f,
+			true,
+			false,
+			Vector4(0.2f, 0.5f, 1.0f, 1.0f)));
 
+		// Wall 1
+		GameObject * wall1 = CommonUtils::BuildCuboidObject(
+			"Wall1",
+			Vector3(10.1f, 2.0f, 0.0f),
+			Vector3(0.5f, 4.0f, 9.6f),
+			true,
+			0.0f,
+			true,
+			false,
+			Vector4(0.2f, 0.5f, 1.0f, 1.0f));
+		this->AddGameObject(wall1);
+
+		// Wall 2
+		GameObject * wall2 = CommonUtils::BuildCuboidObject(
+			"Wall1",
+			Vector3(-10.1f, 2.0f, 0.0f),
+			Vector3(0.5f, 4.0f, 9.6f),
+			true,
+			0.0f,
+			true,
+			false,
+			Vector4(0.2f, 0.5f, 1.0f, 1.0f));
+		this->AddGameObject(wall2);
+
+		// Wall 3
+		GameObject * wall3 = CommonUtils::BuildCuboidObject(
+			"Wall1",
+			Vector3(0.0f, 2.0f, 10.1f),
+			Vector3(9.6f, 4.0f, 0.5f),
+			true,
+			0.0f,
+			true,
+			false,
+			Vector4(0.2f, 0.5f, 1.0f, 1.0f));
+		this->AddGameObject(wall3);
+
+		// Wall 4
+		GameObject * wall4 = CommonUtils::BuildCuboidObject(
+			"Wall1",
+			Vector3(0.0f, 2.0f, -10.1f),
+			Vector3(9.6f, 4.0f, 0.5f),
+			true,
+			0.0f,
+			true,
+			false,
+			Vector4(0.2f, 0.5f, 1.0f, 1.0f));
+		this->AddGameObject(wall4);
+
+		this->AddGameObject(CommonUtils::BuildSphereObject("Interactive_sphere",
+			Vector3(1.0f,5.0f,2.0f),
+			0.5f,									//Radius
+			true,									//Has Physics Object
+			1.0f / 4.0f,							//Inverse Mass
+			true,									//Has Collision Shape
+			true,									//Dragable by the user
+			CommonUtils::GenColor(0.2f, 0.8f)));	//Color
+
+		this->AddGameObject(CommonUtils::BuildSphereObject("Interactive_sphere2",
+			Vector3(-1.0f, 5.0f, -2.0f),
+			0.5f,									//Radius
+			true,									//Has Physics Object
+			1.0f / 4.0f,							//Inverse Mass
+			true,									//Has Collision Shape
+			true,									//Dragable by the user
+			CommonUtils::GenColor(0.2f, 0.8f)));	//Color
 
 		cudaParticleProg->InitializeOpenGLVertexBuffer(rnode->GetGLVertexBuffer());
+
+		Scene::OnInitializeScene();
+
+		PhysicsEngine::Instance()->SetLimits(Vector3(-10, -5, -10), Vector3(10, 25, 10));
 	}
 
 	virtual void OnCleanupScene() override
@@ -74,22 +171,30 @@ public:
 		
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_J))
 		{
-			float3 pos;
-			Vector3 posVec = GraphicsPipeline::Instance()->GetCamera()->GetViewDirection().Normalise();
-			pos.x = posVec.x;
-			pos.y = posVec.y;
-			pos.z = posVec.z;
+			GameObject* spawnSphere = CommonUtils::BuildSphereObject("spawned_sphere",
+				GraphicsPipeline::Instance()->GetCamera()->GetPosition() + GraphicsPipeline::Instance()->GetCamera()->GetViewDirection().Normalise()*2.0f,
+				0.5f,									//Radius
+				true,									//Has Physics Object
+				1.0f / 4.0f,							//Inverse Mass
+				true,									//Has Collision Shape
+				true,									//Dragable by the user
+				CommonUtils::GenColor(0.1f, 0.8f));		//Color
 
-			float3 vel;
-			Vector3 velVec = GraphicsPipeline::Instance()->GetCamera()->GetPosition() + GraphicsPipeline::Instance()->GetCamera()->GetViewDirection().Normalise()*2.0f;
-			vel.x = velVec.x;
-			vel.y = velVec.y;
-			vel.z = velVec.z;
-
-			cudaParticleProg->ShootParticle(pos, vel);
+			spawnSphere->Physics()->SetLinearVelocity(GraphicsPipeline::Instance()->GetCamera()->GetViewDirection().Normalise()*50.0f);
 		}
 
-		cudaParticleProg->UpdateParticles(dt);
+		vector<Vector3> positions;
+		vector<Vector3> velocities;
+
+		for (std::vector<GameObject*>::iterator it = m_vpObjects.begin(); it != m_vpObjects.end(); ++it) {
+			if ((*it)->HasPhysics()) {
+				positions.push_back((*it)->Physics()->GetPosition());
+				velocities.push_back((*it)->Physics()->GetLinearVelocity());
+			}
+
+		}
+
+		cudaParticleProg->UpdateParticles(dt,positions,velocities);
 
 	}
 

@@ -38,5 +38,31 @@
     <ClInclude Include="IntegratorScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="helper_math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderNodeParticles.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GPUBallPoolScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CudaCollidingParticles.cu">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="CudaParticles.cu">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="CudaParticles.cuh">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="CudaCollidingParticles.cuh">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="CudaCommon.cuh">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

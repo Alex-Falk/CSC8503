@@ -86,7 +86,6 @@ produce satisfactory results on the networked peers.
 #include <nclgl\NCLDebug.h>
 #include <ncltech\DistanceConstraint.h>
 #include <ncltech\CommonUtils.h>
-
 const Vector3 status_color3 = Vector3(1.0f, 0.6f, 0.6f);
 const Vector4 status_color = Vector4(status_color3.x, status_color3.y, status_color3.z, 1.0f);
 
@@ -99,6 +98,8 @@ Net1_Client::Net1_Client(const std::string& friendly_name)
 
 void Net1_Client::OnInitializeScene()
 {
+	generator = new MazeGenerator;
+
 	//Initialize Client Network
 	if (network.Initialize(0))
 	{
@@ -108,24 +109,37 @@ void Net1_Client::OnInitializeScene()
 		NCLDebug::Log("Network: Attempting to connect to server.");
 	}
 
-	//Generate Simple Scene with a box that can be updated upon recieving server packets
-	box = CommonUtils::BuildCuboidObject(
-		"Server",
-		Vector3(0.0f, 1.0f, 0.0f),
-		Vector3(0.5f, 0.5f, 0.5f),
-		true,									//Physics Enabled here Purely to make setting position easier via Physics()->SetPosition()
+	wallmesh = new OBJMesh(MESHDIR"cube.obj");
+
+	GLuint whitetex;
+	glGenTextures(1, &whitetex);
+	glBindTexture(GL_TEXTURE_2D, whitetex);
+	unsigned int pixel = 0xFFFFFFFF;
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, &pixel);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	wallmesh->SetTexture(whitetex);
+
+	GameObject* ground = CommonUtils::BuildCuboidObject(
+		"Ground",
+		Vector3(0.0f, -1.0f, 0.0f),
+		Vector3(20.0f, 1.0f, 20.0f),
+		false,
 		0.0f,
 		false,
 		false,
 		Vector4(0.2f, 0.5f, 1.0f, 1.0f));
-	this->AddGameObject(box);
+
+	this->AddGameObject(ground);
+
+	//Generate Simple Scene with a box that can be updated upon recieving server packets
+	
 }
 
 void Net1_Client::OnCleanupScene()
 {
 	Scene::OnCleanupScene();
-	box = NULL; // Deleted in above function
-
+	
 	//Send one final packet telling the server we are disconnecting
 	// - We are not waiting to resend this, so if it fails to arrive
 	//   the server will have to wait until we time out naturally
@@ -134,12 +148,16 @@ void Net1_Client::OnCleanupScene()
 	//Release network and all associated data/peer connections
 	network.Release();
 	serverConnection = NULL;
+	SAFE_DELETE(wallmesh);
+	if(maze)	maze =  nullptr;
+
+	SAFE_DELETE(generator);
+	
 }
 
 void Net1_Client::OnUpdateScene(float dt)
 {
 	Scene::OnUpdateScene(dt);
-
 
 	//Update Network
 	auto callback = std::bind(
@@ -148,21 +166,122 @@ void Net1_Client::OnUpdateScene(float dt)
 		std::placeholders::_1);				// Where to place the first parameter
 	network.ServiceNetwork(dt, callback);
 
+	if (maze)
+		maze->DrawFinalPath(path, 2.5f / (float)size,size);
+
+	if (Window::GetKeyboard()->KeyHeld(KEYBOARD_CAPITAL))
+	{
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_LEFT))
+		{
+			if (generator->GetGoalNode()->_idx % size != 0) {
+				generator->SetEndNode(generator->GetGoalNode()->_idx - 1);
+				maze->UpdateRenderer();
+				SendStartPosition();
+				SendEndPosition();
+			}
+		}
+
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_RIGHT))
+		{
+			if (generator->GetGoalNode()->_idx + 1 % generator->size != 0) {
+				generator->SetEndNode(generator->GetGoalNode()->_idx + 1);
+				maze->UpdateRenderer();
+				SendStartPosition();
+				SendEndPosition();
+			}
+		}
+
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_DOWN))
+		{
+
+			if (generator->GetStartNode()->_idx < (size*size) - size) {
+				generator->SetEndNode(generator->GetGoalNode()->_idx + size);
+				maze->UpdateRenderer();
+				SendStartPosition();
+				SendEndPosition();
+			}
+		}
+
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_UP))
+		{
+			if (generator->GetStartNode()->_idx > size) {
+				generator->SetEndNode(generator->GetGoalNode()->_idx - size);
+				maze->UpdateRenderer();
+				SendStartPosition();
+				SendEndPosition();
+			}
+		}
+	}
+	else {
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_LEFT))
+		{
+			if (generator->GetStartNode()->_idx % size != 0) {
+				generator->SetEndNode(generator->GetGoalNode()->_idx - 1);
+				maze->UpdateRenderer();
+				SendStartPosition();
+				SendEndPosition();
+			}
+		}
+
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_RIGHT))
+		{
+			if (generator->GetStartNode()->_idx + 1 % generator->size != 0) {
+				generator->SetStartNode(generator->GetStartNode()->_idx + 1);
+				maze->UpdateRenderer();
+				SendStartPosition();
+				SendEndPosition();
+			}
+		}
+
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_DOWN))
+		{
+
+			if (generator->GetStartNode()->_idx < (size*size) - size) {
+				generator->SetStartNode(generator->GetStartNode()->_idx + size);
+				maze->UpdateRenderer();
+				SendStartPosition();
+				SendEndPosition();
+			}
+		}
+
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_UP))
+		{
+			if (generator->GetStartNode()->_idx > size) {
+				generator->SetStartNode(generator->GetStartNode()->_idx - size);
+				maze->UpdateRenderer();
+				SendStartPosition();
+				SendEndPosition();
+			}
+		}
+	}
+
+
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_N))
+	{
+		this->RemoveGameObject(FindGameObject("maze"));
+		delete maze;
+		maze = nullptr;
+		RequestNewMaze();
+		SendStartPosition();
+		SendEndPosition();
+	}
+
 
 
 	//Add Debug Information to screen
-	uint8_t ip1 = serverConnection->address.host & 0xFF;
-	uint8_t ip2 = (serverConnection->address.host >> 8) & 0xFF;
-	uint8_t ip3 = (serverConnection->address.host >> 16) & 0xFF;
-	uint8_t ip4 = (serverConnection->address.host >> 24) & 0xFF;
+	//uint8_t ip1 = serverConnection->address.host & 0xFF;
+	//uint8_t ip2 = (serverConnection->address.host >> 8) & 0xFF;
+	//uint8_t ip3 = (serverConnection->address.host >> 16) & 0xFF;
+	//uint8_t ip4 = (serverConnection->address.host >> 24) & 0xFF;
 
-	NCLDebug::DrawTextWs(box->Physics()->GetPosition() + Vector3(0.f, 0.6f, 0.f), STATUS_TEXT_SIZE, TEXTALIGN_CENTRE, Vector4(0.f, 0.f, 0.f, 1.f),
-		"Peer: %u.%u.%u.%u:%u", ip1, ip2, ip3, ip4, serverConnection->address.port);
+	//NCLDebug::DrawTextWs(box->Physics()->GetPosition() + Vector3(0.f, 0.6f, 0.f), STATUS_TEXT_SIZE, TEXTALIGN_CENTRE, Vector4(0.f, 0.f, 0.f, 1.f),
+	//	"Peer: %u.%u.%u.%u:%u", ip1, ip2, ip3, ip4, serverConnection->address.port);
 
-	
-	NCLDebug::AddStatusEntry(status_color, "Network Traffic");
-	NCLDebug::AddStatusEntry(status_color, "    Incoming: %5.2fKbps", network.m_IncomingKb);
-	NCLDebug::AddStatusEntry(status_color, "    Outgoing: %5.2fKbps", network.m_OutgoingKb);
+	//
+	//NCLDebug::AddStatusEntry(status_color, "Network Traffic");
+	//NCLDebug::AddStatusEntry(status_color, "    Incoming: %5.2fKbps", network.m_IncomingKb);
+	//NCLDebug::AddStatusEntry(status_color, "    Outgoing: %5.2fKbps", network.m_OutgoingKb);
 }
 
 void Net1_Client::ProcessNetworkEvent(const ENetEvent& evnt)
@@ -177,7 +296,7 @@ void Net1_Client::ProcessNetworkEvent(const ENetEvent& evnt)
 				NCLDebug::Log(status_color3, "Network: Successfully connected to server!");
 
 				//Send a 'hello' packet
-				char* text_data = "Hellooo!";
+				char* text_data = "4Hellooo!";
 				ENetPacket* packet = enet_packet_create(text_data, strlen(text_data) + 1, 0);
 				enet_peer_send(serverConnection, 0, packet);
 			}	
@@ -188,21 +307,50 @@ void Net1_Client::ProcessNetworkEvent(const ENetEvent& evnt)
 	//Server has sent us a new packet
 	case ENET_EVENT_TYPE_RECEIVE:
 		{
-			if (evnt.packet->dataLength == sizeof(Vector3))
-			{
-				Vector3 pos;
-				memcpy(&pos, evnt.packet->data, sizeof(Vector3));
-				box->Physics()->SetPosition(pos);
-			}
-			else
-			{
-				NCLERROR("Recieved Invalid Network Packet!");
-			}
+		int i = evnt.packet->data[0] - '0';
+		switch (i) {
 
+		case MAZE_WALLS:
+			{
+			MazeStruct m = Recieve_maze(evnt);
+			ApplyMaze(m);
+			break;
+			}
+		case START_POS:
+			{
+			PosStruct p = Recieve_startpos(evnt);
+			
+			generator->SetStartNode(p.idx);
+			//generator->GetStartNode()->_pos = p.pos;
+			maze->UpdateRenderer();
+			break;
+			}
+		case END_POS:
+		{
+			PosStruct p = Recieve_startpos(evnt);
+
+			generator->SetEndNode(p.idx);
+			//generator->GetStartNode()->_pos = p.pos;
+			maze->UpdateRenderer();
+			break;
+		}
+		case PATH:
+			{
+			path.clear();
+			vector<int> idcs = Recieve_path(evnt);
+			for (int i = 0; i < idcs.size(); ++i) {
+				path.push_back(&generator->allNodes[idcs[i]]);
+			}
+			break;
+			}
+		default:
+			{
+			NCLERROR("Recieved Invalid Network Packet!");
+			break;
+			}
 		}
 		break;
-
-
+		}
 	//Server has disconnected
 	case ENET_EVENT_TYPE_DISCONNECT:
 		{
@@ -210,4 +358,59 @@ void Net1_Client::ProcessNetworkEvent(const ENetEvent& evnt)
 		}
 		break;
 	}
+}
+
+void Net1_Client::ApplyMaze(MazeStruct m) {
+
+	generator->Generate(m.size, 0);
+
+	size = m.size;
+
+	if (m.walls.size() > 0) {
+		for (int i = 0; i < m.walls.size() - 1; ++i) {
+			generator->allEdges[m.walls[i]]._iswall = true;
+		}
+	}
+
+
+	maze = new MazeRenderer(generator, wallmesh);
+	maze->Render()->SetTransform(Matrix4::Scale(Vector3(5.f, 5.0f / float(m.size), 5.f)));
+
+	this->AddGameObject(maze);
+
+}
+
+void Net1_Client::SendStartPosition() {
+
+	Vector3 pos = generator->GetStartNode()->_pos;
+	int idx = generator->GetStartNode()->_idx;
+
+	string s = to_string(START_POS) + ":" + to_string(idx) + " " + to_string(pos.x) + " " + to_string(pos.y) + " " + to_string(pos.z);
+	const char * char_pos = s.c_str();
+
+	ENetPacket* position_update = enet_packet_create(char_pos,sizeof(char) * s.length(), 0);
+	enet_peer_send(serverConnection, 0, position_update);
+
+}
+
+void Net1_Client::SendEndPosition() {
+
+	Vector3 pos = generator->GetGoalNode()->_pos;
+	int idx = generator->GetGoalNode()->_idx;
+
+	string s = to_string(END_POS) + ":" + to_string(idx) + " " + to_string(pos.x) + " " + to_string(pos.y) + " " + to_string(pos.z);
+	const char * char_pos = s.c_str();
+
+	ENetPacket* position_update = enet_packet_create(char_pos, sizeof(char) * s.length(), 0);
+	enet_peer_send(serverConnection, 0, position_update);
+
+}
+
+void Net1_Client::RequestNewMaze() {
+	string s = to_string(NEW_MAZE) + ":" + "10 " + to_string(rand() % 11 / 10.0f);
+
+	const char * char_pos = s.c_str();
+
+	ENetPacket* new_maze = enet_packet_create(char_pos, sizeof(char) * s.length(), 0);
+	enet_peer_send(serverConnection, 0, new_maze);
 }

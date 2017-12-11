@@ -956,6 +956,31 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include\thrust/system/de
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include\thrust/system/detail/adl/reduce_by_key.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include\thrust/system/detail/adl/find.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include\thrust/system/detail/adl/sort.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include\thrust/host_vector.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include\thrust/detail/vector_base.h
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Tools\MSVC\14.10.25017\include\vector
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include\thrust/detail/vector_base.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include\thrust/detail/overlapped_copy.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include\thrust/equal.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include\thrust/detail/equal.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include\thrust/system/detail/generic/equal.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include\thrust/system/detail/generic/equal.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include\thrust/mismatch.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include\thrust/detail/mismatch.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include\thrust/system/detail/generic/mismatch.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include\thrust/system/detail/generic/mismatch.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include\thrust/system/detail/adl/mismatch.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include\thrust/system/detail/sequential/mismatch.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include\thrust/system/detail/adl/equal.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include\thrust/system/detail/sequential/equal.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include\thrust/detail/host_vector.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include\thrust/device_vector.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include\thrust/device_malloc_allocator.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include\thrust/device_malloc.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include\thrust/detail/device_malloc.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include\thrust/device_free.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include\thrust/detail/device_free.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include\thrust/detail/device_vector.inl
 d:\projects\csc8503cuda\build\examples_cuda\CudaCommon.cuh
 d:\projects\csc8503cuda\build\examples_cuda\helper_math.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include\cuda_runtime.h
@@ -972,7 +997,6 @@ d:\projects\csc8503cuda\build\nclgl\Matrix3.h
 d:\projects\csc8503cuda\build\nclgl\Shader.h
 d:\projects\csc8503cuda\build\nclgl\OGLRenderer.h
 C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Tools\MSVC\14.10.25017\include\fstream
-C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Tools\MSVC\14.10.25017\include\vector
 D:\Projects\CSC8503CUDA\Build\ExternalLibs\GLEW\include\GL\wglew.h
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\windows.h
 C:\Program Files (x86)\Windows Kits\8.1\Include\shared\sdkddkver.h
