@@ -1,0 +1,32 @@
+Client Inputs:
+    ☐ Maze parameters (size, density)
+    ☐ Start & End Positon
+        ✔ Arrow Keys @done (2017-12-12 01:51:11)
+        ☐ Drag & Drop
+        ☐ Click Start & End
+        ☐ Type in Numbers
+    ☐ Toggle Avatar
+    
+Client Sends:
+    ☐ Send Maze parameters
+    ☐ Start & End Positon
+    ☐ Spawn Avatar command
+    ☐ Current Positions
+
+Client Recieves:
+    ✔ Maze walls @done (2017-12-12 01:50:57)
+    ☐ Other Clients Start & End Positon
+    ✔ Generated Path/Route from it's start to End @done (2017-12-12 01:51:02)
+
+Server Sends:
+    ✔ Maze walls @done (2017-12-12 01:51:04)
+    ☐ All Clients' Start & End Positons
+    ☐ All Clients' Avatar Positons
+    ✔ Generated Path/Routes @done (2017-12-12 01:51:48)
+    ☐ Hazard Positions
+
+Server Recieves:
+    ☐ Maze parameters
+    ☐ All Start and End Positon
+    ☐ Spawn Avatar Command
+    ☐ All Current Positions
