@@ -7,6 +7,7 @@
 
 struct MazeStruct {
 	int size;
+	float density;
 	vector<int> walls;
 };
 
@@ -20,7 +21,8 @@ void HandleKeyboardInputs();
 int ClientLoop();
 
 MazeStruct Recieve_maze(const ENetEvent& evnt);
-PosStruct Recieve_startpos(const ENetEvent& evnt);
+PosStruct Recieve_pos(const ENetEvent& evnt);
+vector<PosStruct> Recieve_positions(const ENetEvent& evnt);
 vector<int> Recieve_path(const ENetEvent& evnt);
 
 vector<string> split_string(string s, char d);

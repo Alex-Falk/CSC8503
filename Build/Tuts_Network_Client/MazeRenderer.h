@@ -6,7 +6,8 @@
 #include "SearchAlgorithm.h"
 #include <ncltech\ScreenPicker.h>
 
-
+class Net1_Client;
+class SceneManager;
 struct WallDescriptor
 {
 	uint _xs, _xe;
@@ -29,6 +30,9 @@ public:
 	void DrawSearchHistory(const SearchHistory& history, float line_width);
 	virtual void UpdateRenderer();
 	void DrawFinalPath(std::list<const GraphNode*> path,float line_width, int size);
+	void SetMeshRenderNodes(Net1_Client * c);
+	void DrawNavMesh();
+
 protected:
 	//Turn MazeGenerator data into flat 2D map (3 size x 3 size) of boolean's
 	// - True for wall

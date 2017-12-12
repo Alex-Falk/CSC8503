@@ -26,7 +26,7 @@ bool NetworkBase::Initialize(uint16_t external_port_number, size_t max_peers)
 
 	m_pNetwork = enet_host_create(
 		(external_port_number == 0) ? NULL : &address,	//the address at which other peers may connect to this host. If NULL, then no peers may connect to the host.
-		max_peers,												//the maximum number of peers that should be allocated for the host.
+		max_peers,										//the maximum number of peers that should be allocated for the host.
 		1,												//the maximum number of channels allowed; if 0, then this is equivalent to ENET_PROTOCOL_MAXIMUM_CHANNEL_COUNT
 		0,												//downstream bandwidth of the host in bytes/second; if 0, ENet will assume unlimited bandwidth.
 		0);												//upstream bandwidth of the host in bytes/second; if 0, ENet will assume unlimited bandwidth.

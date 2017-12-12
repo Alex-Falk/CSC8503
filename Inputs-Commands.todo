@@ -30,3 +30,13 @@ Server Recieves:
     ☐ All Start and End Positon
     ☐ Spawn Avatar Command
     ☐ All Current Positions
+
+
+
+Buttons Used:
+    Scene Management:   Y, T, R
+    Node Movement:      LEFT, RIGHT, UP, DOWN
+    Hold for end-node:  CAPS LOCK
+    Camera Movement:    W, A, S, D, SHIFT, CTRL
+    Request New Maze:   N
+    

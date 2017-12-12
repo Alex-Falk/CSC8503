@@ -1,5 +1,7 @@
 #include "MazeRenderer.h"
 #include <ncltech\CommonUtils.h>
+#include "Net1_Client.h"
+#include <ncltech\SceneManager.h>
 
 const Vector4 wall_color = Vector4(1.f, 0.8f, 0.3f, 1);
 
@@ -88,6 +90,99 @@ void MazeRenderer::DrawFinalPath(std::list<const GraphNode*> path, float line_wi
 
 		NCLDebug::DrawThickLine(start, end, line_width, CommonUtils::GenColor(0.8f));
 	}
+}
+
+void MazeRenderer::SetMeshRenderNodes(Net1_Client * c) {
+
+	if (Render()->GetChildWithName("MazeNodes")) {
+		Render()->RemoveChild(Render()->GetChildWithName("MazeNodes"));
+	}
+
+	GraphNode* allNodes = maze->allNodes;
+	uint size = maze->GetSize();
+	const float scalar = 1.f / (float)flat_maze_size;
+
+	RenderNode * mazenodes = new RenderNode();
+	mazenodes->SetName("MazeNodes");
+
+	for (int i = 0; i < size*size; ++i) {
+		Vector3 p = allNodes[i]._pos;
+
+		Vector3 cellpos = Vector3(
+			p.x * 3,
+			0.0f,
+			p.y * 3
+		) * scalar;
+		Vector3 cellsize = Vector3(
+			scalar * 2,
+			0.05f,
+			scalar * 2
+		);
+
+		RenderNode* quad = new RenderNode(mesh, Vector4(0, 0, 0, 0));
+		quad->SetTransform(
+			Matrix4::Translation(cellpos + cellsize * 0.5f) *
+			Matrix4::Scale(cellsize * 0.5f));
+		mazenodes->AddChild(quad);
+
+		Scene * s = SceneManager::Instance()->GetCurrentScene();
+
+		ScreenPicker::Instance()->RegisterNodeForMouseCallback(
+			quad,
+			std::bind(
+				&Net1_Client::ClickableLocationCallback,
+				c,
+				i
+				)
+			);
+	}
+
+	Render()->AddChild(mazenodes);
+}
+
+void MazeRenderer::DrawNavMesh()
+{
+	GraphNode* allNodes = maze->allNodes;
+	uint size = maze->GetSize();
+	float grid_scalar = 1.0f / (float)size;
+	Matrix4 transform = this->Render()->GetWorldTransform();
+
+
+
+	for (uint i = 0; i < size; ++i) {
+		for (uint j = 0; j < size; ++j) {
+			Vector3 p = allNodes[(i*size) + j]._pos;
+
+			Vector3 p1 = transform * Vector3(
+				(p.x) * grid_scalar,
+				0.1f,
+				(p.y) * grid_scalar);
+
+			Vector3 p2 = transform * Vector3(
+				(p.x) * grid_scalar,
+				0.1f,
+				(p.y + 1.0f) * grid_scalar);
+
+			Vector3 p3 = transform * Vector3(
+				(p.x + 1.0f) * grid_scalar,
+				0.1f,
+				(p.y + 1.0f) * grid_scalar);
+
+			Vector3 p4 = transform * Vector3(
+				(p.x + 1.0f) * grid_scalar,
+				0.1f,
+				(p.y) * grid_scalar);
+
+			NCLDebug::DrawThickLine(p1, p2, 0.01f, Vector4(1, 0, 0, 1));
+			NCLDebug::DrawThickLine(p2, p3, 0.01f, Vector4(1, 0, 0, 1));
+			NCLDebug::DrawThickLine(p3, p4, 0.01f, Vector4(1, 0, 0, 1));
+			NCLDebug::DrawThickLine(p4, p1, 0.01f, Vector4(1, 0, 0, 1));
+		}
+	}
+
+
+
+
 }
 
 uint MazeRenderer::Generate_FlatMaze()
@@ -215,31 +310,56 @@ void MazeRenderer::Generate_ConstructWalls()
 }
 
 void MazeRenderer::UpdateRenderer() {
-	GraphNode* start = maze->GetStartNode();
-	GraphNode* end = maze->GetGoalNode();
-
 	const float scalar = 1.f / (float)flat_maze_size;
 
-	Vector3 cellpos = Vector3(
-		start->_pos.x * 3,
-		0.0f,
-		start->_pos.y * 3
-	) * scalar;
-	Vector3 cellsize = Vector3(
-		scalar * 2,
-		1.0f,
-		scalar * 2
-	);
+	RenderNode *cube, *root = Render();
 
-	Render()->GetChildWithName("start")->SetTransform(Matrix4::Translation(cellpos + cellsize * 0.5f) * Matrix4::Scale(cellsize * 0.5f));
+	for (int i = 0; i < maze->startnodes.size(); ++i) {
+		GraphNode* start = maze->startnodes[i];
+		GraphNode* end	 = maze->endnodes[i];
 
-	cellpos = Vector3(
-		end->_pos.x * 3,
-		0.0f,
-		end->_pos.y * 3
-	) * scalar;
+		if (start && end) {
+			Vector3 cellpos = Vector3(
+				start->_pos.x * 3,
+				0.0f,
+				start->_pos.y * 3
+			) * scalar;
+			Vector3 cellsize = Vector3(
+				scalar * 2,
+				1.0f,
+				scalar * 2
+			);
 
-	Render()->GetChildWithName("end")->SetTransform(Matrix4::Translation(cellpos + cellsize * 0.5f) * Matrix4::Scale(cellsize * 0.5f));
+			if (Render()->GetChildWithName("start_" + to_string(i))) {
+				Render()->RemoveChild(Render()->GetChildWithName("start_" + to_string(i)));
+			}
+
+			cube = new RenderNode(mesh, Vector4(0.0f, 1.0f, 0.0f, 1.0f));
+			cube->SetName("start_" + to_string(i));
+			cube->SetTransform(
+				Matrix4::Translation(cellpos + cellsize * 0.5f) *
+				Matrix4::Scale(cellsize * 0.5f));
+			root->AddChild(cube);
+
+
+			cellpos = Vector3(
+				end->_pos.x * 3,
+				0.0f,
+				end->_pos.y * 3
+			) * scalar;
+
+			if (Render()->GetChildWithName("end_" + to_string(i))) {
+				Render()->RemoveChild(Render()->GetChildWithName("end_" + to_string(i)));
+			}
+
+			cube = new RenderNode(mesh, Vector4(1.0f, 0.0f, 0.0f, 1.0f));
+			cube->SetName("end_" + to_string(i));
+			cube->SetTransform(
+				Matrix4::Translation(cellpos + cellsize * 0.5f) *
+				Matrix4::Scale(cellsize * 0.5f));
+			root->AddChild(cube);
+		}	
+	}
 }
 
 void MazeRenderer::Generate_BuildRenderNodes()
@@ -293,43 +413,38 @@ void MazeRenderer::Generate_BuildRenderNodes()
 	cube->SetTransform(Matrix4::Translation(Vector3(0.5, 0.25f, 1.f + scalar*0.5f)) * Matrix4::Scale(Vector3(0.5f, 0.25f, scalar*0.5f)));
 	root->AddChild(cube);
 
-
 //Finally - our start/end goals
-	GraphNode* start = maze->GetStartNode();
-	GraphNode* end = maze->GetGoalNode();
+	for (int i = 0; i < maze->startnodes.size(); ++i) {
+		GraphNode* start = maze->startnodes[i];
+		GraphNode* end = maze->endnodes[i];
 
-	Vector3 cellpos = Vector3(
-		start->_pos.x * 3,
-		0.0f,
-		start->_pos.y * 3
-	) * scalar;
-	Vector3 cellsize = Vector3(
-		scalar * 2,
-		1.0f,
-		scalar * 2
-	);
+		Vector3 cellpos = Vector3(
+			start->_pos.x * 3,
+			0.0f,
+			start->_pos.y * 3
+		) * scalar;
+		Vector3 cellsize = Vector3(
+			scalar * 2,
+			1.0f,
+			scalar * 2
+		);
 
-	cube = new RenderNode(mesh, Vector4(0.0f, 1.0f, 0.0f, 1.0f));
-	cube->SetName("start");
-	cube->SetTransform(Matrix4::Translation(cellpos + cellsize * 0.5f) * Matrix4::Scale(cellsize * 0.5f));
-	root->AddChild(cube);
+		cube = new RenderNode(mesh, Vector4(0.0f, 1.0f, 0.0f, 1.0f));
+		cube->SetName("start_" + to_string(i));
+		cube->SetTransform(Matrix4::Translation(cellpos + cellsize * 0.5f) * Matrix4::Scale(cellsize * 0.5f));
+		root->AddChild(cube);
 
-	//GameObject * startObj = new GameObject("Start", cube);
-
-	//ScreenPicker::Instance()->RegisterNodeForMouseCallback(
-	//	cube, //Dummy is the rendernode that actually contains the drawable mesh, and the one we can to 'drag'
-	//	std::bind(&CommonUtils::DragableObjectCallback, startObj, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4)
-	//);
-
-	cellpos = Vector3(
-		end->_pos.x * 3,
-		0.0f,
-		end->_pos.y * 3
-	) * scalar;
-	cube = new RenderNode(mesh, Vector4(1.0f, 0.0f, 0.0f, 1.0f));
-	cube->SetName("end");
-	cube->SetTransform(Matrix4::Translation(cellpos + cellsize * 0.5f) * Matrix4::Scale(cellsize * 0.5f));
-	root->AddChild(cube);
+		cellpos = Vector3(
+			end->_pos.x * 3,
+			0.0f,
+			end->_pos.y * 3
+		) * scalar;
+		cube = new RenderNode(mesh, Vector4(1.0f, 0.0f, 0.0f, 1.0f));
+		cube->SetName("end_" + to_string(i));
+		cube->SetTransform(Matrix4::Translation(cellpos + cellsize * 0.5f) * Matrix4::Scale(cellsize * 0.5f));
+		root->AddChild(cube);
+	}
 
 	this->SetRender(root);
+
 }

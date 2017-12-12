@@ -8,6 +8,9 @@
 #include "MazeRenderer.h"
 #include <nclgl\OBJMesh.h>
 
+
+#define ID serverConnection->outgoingPeerID
+#define OUT_OF_RANGE -1
 //Basic Network Example
 
 class Net1_Client : public Scene
@@ -27,6 +30,10 @@ public:
 	void SendStartPosition();
 	void SendEndPosition();
 	void RequestNewMaze();
+	void SendAvatarLocation();
+	Vector3 Pos_To_Maze(Vector3 pos);
+	Vector3 Maze_Scale();
+	void ClickableLocationCallback(int idx);
 	ENetPeer* getPeer() { return serverConnection; }
 
 protected:
@@ -38,6 +45,12 @@ protected:
 	MazeRenderer* maze;
 
 	Mesh* wallmesh;
-	int size;
+	int size = 10;
+	float density = 0.5f;
+	bool drawPath = false;
+	bool drawMesh = false;
+	int clients;
 	std::list<const GraphNode*> path;
+
+	vector<int> avatars;
 };

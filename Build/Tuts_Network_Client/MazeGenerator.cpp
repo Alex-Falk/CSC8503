@@ -33,6 +33,7 @@ MazeGenerator::~MazeGenerator()
 
 void MazeGenerator::Generate(int grid_size, float maze_density)
 {
+	density = maze_density;
 	if (allNodes)
 	{
 		delete[] allNodes;
@@ -85,11 +86,11 @@ void MazeGenerator::Generate(int grid_size, float maze_density)
 		}
 	}
 
-	GetRandomStartEndNodes();
+	//GetRandomStartEndNodes();
 }
 
 std::string MazeGenerator::AllWalls() {
-	string walls = to_string(size) + ":";
+	string walls = to_string(size) + ":" + to_string(density) + ":";
 
 	uint base_offset = size * (size - 1);
 

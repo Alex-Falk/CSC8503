@@ -3,7 +3,7 @@
 #include <ncltech\Scene.h>
 #include "SearchAlgorithm.h"
 
-
+#define OUT_OF_RANGE -1
 
 class MazeGenerator
 {
@@ -17,9 +17,35 @@ public:
 	// so any two nodes picked randomly /will/ have a path between them
 	GraphNode* GetStartNode() const { return start; }
 	GraphNode* GetGoalNode()  const { return end; }
+	GraphNode* GetNode(int i) const { return &(allNodes[i]); }
 	
 	void SetStartNode(int i)		{ start = &(allNodes[i]); }
 	void SetEndNode(int i)			{ end = &(allNodes[i]); }
+
+	void Push_StartNode(int i)		{ startnodes.push_back(&(allNodes[i])); }
+	void Push_EndNode(int i)		{ endnodes.push_back(&(allNodes[i])); }
+
+	void SetStartNode(int idx, int i)	{ 
+		if (startnodes.size() <= idx) 
+		{ 
+			if (i != OUT_OF_RANGE)
+				startnodes.push_back(&(allNodes[i]));
+			else
+				startnodes.push_back(nullptr);
+		}
+		else { 
+			if (i != OUT_OF_RANGE)
+				startnodes[idx] = &(allNodes[i]);
+			else
+				startnodes[idx] = nullptr;
+		}
+	}
+	void SetEndNode(int idx, int i)	{
+		if (endnodes.size() <= idx) { endnodes.push_back(&(allNodes[i])); }
+		else { endnodes[idx] = &(allNodes[i]); }
+	}
+
+	
 
 	uint GetSize() const { return size; }
 
@@ -41,7 +67,10 @@ protected:
 
 public:
 	uint size;
+	float density = 0.0f;
 	GraphNode *start, *end;
+	vector<GraphNode*> startnodes;
+	vector<GraphNode*> endnodes;
 
 	GraphNode* allNodes;
 	GraphEdge* allEdges;

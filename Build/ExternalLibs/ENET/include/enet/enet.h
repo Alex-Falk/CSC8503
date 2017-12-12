@@ -141,7 +141,7 @@ typedef void (ENET_CALLBACK * ENetPacketFreeCallback) (struct _ENetPacket *);
  
    @sa ENetPacketFlag
  */
-enum Packet_Type { EMPTY, START_POS, END_POS, MAZE_WALLS, PATH, TEXT, NEW_MAZE };
+enum Packet_Type { NEW_USER, START_POS, END_POS, MAZE_WALLS, PATH, TEXT, NEW_MAZE,NUM_CLIENT,AVATAR_POS_UPDATE};
 
 typedef struct _ENetPacket
 {

@@ -1,5 +1,11 @@
 #include "Server.h"
 
+#define ID evnt.peer->incomingPeerID
+#define CLIENT_N server->m_pNetwork->connectedPeers
+#define STRING_PACKET enet_packet_create(s.c_str(), sizeof(char) * s.length(), 0)
+#define PATH_LIST std::list<const GraphNode*>
+
+
 int Server::ServerLoop() {
 	while (true)
 	{
@@ -13,100 +19,133 @@ int Server::ServerLoop() {
 			switch (evnt.type)
 			{
 			case ENET_EVENT_TYPE_CONNECT:
+			{
+				generator->SetStartNode(ID, OUT_OF_RANGE);
+				generator->SetEndNode(ID, OUT_OF_RANGE);
 				printf("- New Client Connected\n");
-				SendWalls();
-				SendStartPosition();
-				SendEndPosition();
-				UpdateAStarPreset();
-				SendPath();
-				break;
+				NewUser(ID);
+				SendNumberClients();
+				SendWalls(ID);
+				SendStartPositions(ID);
+				SendEndPositions(ID);
+				if (avatars.size() ==ID) { avatars.push_back(OUT_OF_RANGE); }
+				else if (avatars.size() > ID) { avatars[ID] = OUT_OF_RANGE; }
+				SendAvatarPositions(ID);
 
+				if (paths.size() == ID) { paths.push_back(PATH_LIST()); }
+				else if (paths.size() > ID) { paths[ID] = PATH_LIST(); }
+
+
+			}
+				break;
 			case ENET_EVENT_TYPE_RECEIVE:
 				switch (evnt.packet->data[0] - '0') {
 				case START_POS:
 				{
-					char * c = new char[evnt.packet->dataLength];
+					PosStruct p = Recieve_pos(evnt);
+					generator->SetStartNode(ID, p.idx);
+					UpdateAStarPreset(ID);
+					SendPath(ID);
 
-					memcpy(c, evnt.packet->data, evnt.packet->dataLength);
-
-					ENetPacket* pos_packet = enet_packet_create(c, evnt.packet->dataLength, 0);
-					enet_host_broadcast(server->m_pNetwork, 0, pos_packet);
-
-					PosStruct p = Recieve_startpos(evnt);
-					generator->SetStartNode(p.idx);
-					UpdateAStarPreset();
-					SendPath();
+					SendStartPositions();
+					break;
 				}
-				break;
+					
 				case END_POS:
 				{
-					char * c = new char[evnt.packet->dataLength];
+					PosStruct p = Recieve_pos(evnt);
+					generator->SetEndNode(ID, p.idx);
 
-					memcpy(c, evnt.packet->data, evnt.packet->dataLength);
+					if (avatars[ID] != OUT_OF_RANGE) {
+						generator->SetStartNode(ID, avatars[ID]);
+						SendStartPositions(ID);
+					}
+					UpdateAStarPreset(ID);
+					SendPath(ID);
 
-					ENetPacket* pos_packet = enet_packet_create(c, evnt.packet->dataLength, 0);
-					enet_host_broadcast(server->m_pNetwork, 0, pos_packet);
-
-					PosStruct p = Recieve_startpos(evnt);
-					generator->SetEndNode(p.idx);
-					UpdateAStarPreset();
-					SendPath();
+					SendEndPositions();
+					break;
 				}
-				break;
+					
 				case TEXT:
+				{
 					printf("\t Client %d says: %s\n", evnt.peer->incomingPeerID, evnt.packet->data);
 					enet_packet_destroy(evnt.packet);
 					break;
+				}
+
 				case NEW_MAZE:
 				{
 					string packet;
 					for (int i = 2; i < evnt.packet->dataLength; ++i) {
 						packet.push_back(evnt.packet->data[i]);
 					}
-
 					vector<float> params = split_string_toFloat(packet, ' ');
 
+			/*		delete generator;
+					generator = nullptr;
+					generator = new MazeGenerator();*/
 					generator->Generate((int)params[0], params[1]);
+
+					for (int i = 0; i < server->m_pNetwork->connectedPeers; ++i) {
+						generator->SetStartNode(i, OUT_OF_RANGE);
+						generator->SetEndNode(i, OUT_OF_RANGE);
+						avatars[i] = OUT_OF_RANGE;
+
+					}
+
+					SendStartPositions();
+					SendEndPositions();
 					SendWalls();
-					SendStartPosition();
-					UpdateAStarPreset();
-					SendPath();
+
+
+					for (int i = 0; i < server->m_pNetwork->connectedPeers; ++i) {
+						UpdateAStarPreset(i);
+						SendPath(i);
+					}				
 					break;
 				}
 
+				case AVATAR_POS_UPDATE:
+				{
+					string packet;
+					for (int i = 2; i < evnt.packet->dataLength; ++i) {
+						packet.push_back(evnt.packet->data[i]);
+					}
+					avatars[ID] = stoi(packet);
+					SendAvatarPositions();
 				}
+				}
+
 				break;
 
 			case ENET_EVENT_TYPE_DISCONNECT:
-				printf("- Client %d has disconnected.\n", evnt.peer->incomingPeerID);
+				printf("- Client %d has disconnected.\n", ID);
+				//generator->startnodes.erase(generator->startnodes.begin() + evnt.peer->incomingPeerID);
+				//generator->endnodes.erase(generator->startnodes.end() + evnt.peer->incomingPeerID);
+				SendNumberClients();
 				break;
 			}
 		});
 
-		//Broadcast update packet to all connected clients at a rate of UPDATE_TIMESTEP updates per second
-		//if (accum_time >= UPDATE_TIMESTEP)
-		//{
-		//	//Packet data
-		//	// - At the moment this is just a position update that rotates around the origin of the world
-		//	//   though this can be any variable, structure or class you wish. Just remember that everything 
-		//	//   you send takes up valuable network bandwidth so no sending every PhysicsObject struct each frame ;)
-		//	accum_time = 0.0f;
-		//	Vector3 pos = Vector3(
-		//		cos(rotation) * 2.0f,
-		//		1.5f,
-		//		sin(rotation) * 2.0f);
+		if (accum_time >= UPDATE_TIMESTEP)
+		{
+			accum_time = 0.0f;
+			for (int i = 0; i < CLIENT_N; ++i) {
+				if (avatars[i] != OUT_OF_RANGE) {
+					FollowPath(i);
+				}
+			}
+		}
 
-		//	//Create the packet and broadcast it (unreliable transport) to all clients
-		//	ENetPacket* position_update = enet_packet_create(&pos, sizeof(Vector3), 0);
-		//	enet_host_broadcast(server->m_pNetwork, 0, position_update);
-		//}
+
 		Sleep(0);
 	}
 	system("pause");
 	server->Release();
 }
 
-void Server::SendWalls()
+void Server::SendWalls(int i)
 {
 	string * walls = new string;
 	*walls = to_string(MAZE_WALLS) + ":" + generator->AllWalls();
@@ -114,10 +153,22 @@ void Server::SendWalls()
 	const char * char_walls = walls->c_str();
 
 	ENetPacket* wall = enet_packet_create(char_walls, sizeof(char) * walls->length(), 0);
-	enet_host_broadcast(server->m_pNetwork, 0, wall);
+
+	if (i != OUT_OF_RANGE)
+		enet_peer_send(&server->m_pNetwork->peers[i], 0, wall);
+	else 
+		enet_host_broadcast(server->m_pNetwork, 0, wall);
 }
 
-void Server::SendPath() {
+void Server::NewUser(int i)
+{
+	string userInfo = to_string(NEW_USER) + ":" + to_string(i);
+
+	ENetPacket* packet = enet_packet_create(userInfo.c_str(), sizeof(char) * userInfo.length(), 0);
+	enet_host_broadcast(server->m_pNetwork, 0, packet);
+}
+
+void Server::SendPath(int i) {
 	
 	std::list<const GraphNode*> path = search_as->GetFinalPath();
 
@@ -128,44 +179,72 @@ void Server::SendPath() {
 		++it;
 	}
 
-	const char * idcs = str.c_str();
+	ENetPacket* path_packet = enet_packet_create(str.c_str(), sizeof(char)*str.size(), 0);
+	//enet_host_broadcast(server->m_pNetwork, 0, path_packet);
+	enet_peer_send(&server->m_pNetwork->peers[i], 0, path_packet);
+}
 
-	ENetPacket* path_packet = enet_packet_create(idcs, sizeof(char)*str.size(), 0);
-	enet_host_broadcast(server->m_pNetwork, 0, path_packet);
+void Server::SendStartPositions(int i) {
+
+	string s = to_string(START_POS) + ":";
+
+	for (vector<GraphNode *>::iterator it = generator->startnodes.begin(); it != generator->startnodes.end(); ++it) {
+		int idx;
+		Vector3 pos;
+		if (*(it))
+		{
+			idx = (*it)->_idx;
+			pos = (*it)->_pos;
+		}
+		else
+		{
+			idx = OUT_OF_RANGE;
+			pos = Vector3(OUT_OF_RANGE, OUT_OF_RANGE, OUT_OF_RANGE);
+		}
+
+			s += to_string(idx) + " " + to_string(pos.x) + " " + to_string(pos.y) + " " + to_string(pos.z) + " ";
+	}
+
+	ENetPacket* position_update = STRING_PACKET;
+
+	if (i == OUT_OF_RANGE)
+		enet_host_broadcast(server->m_pNetwork, 0, position_update);
+	else
+		enet_peer_send(&server->m_pNetwork->peers[i], 0, position_update);
 
 }
 
-void Server::SendStartPosition() {
+void Server::SendEndPositions(int i) {
 
-	Vector3 pos = generator->GetStartNode()->_pos;
-	int idx = generator->GetStartNode()->_idx;
+	string s = to_string(END_POS) + ":";
 
-	string s = to_string(START_POS) + ":" + to_string(idx) + " " + to_string(pos.x) + " " + to_string(pos.y) + " " + to_string(pos.z);
-	const char * char_pos = s.c_str();
+	for (vector<GraphNode *>::iterator it = generator->endnodes.begin(); it != generator->endnodes.end(); ++it) {
+		int idx;
+		Vector3 pos;
+		if (*(it))
+		{
+			idx = (*it)->_idx;
+			pos = (*it)->_pos;
+		}
+		else
+		{
+			idx = OUT_OF_RANGE;
+			pos = Vector3(OUT_OF_RANGE, OUT_OF_RANGE, OUT_OF_RANGE);
+		}
 
-	ENetPacket* position_update = enet_packet_create(char_pos, sizeof(char) * s.length(), 0);
-	enet_host_broadcast(server->m_pNetwork, 0, position_update);
+		s += to_string(idx) + " " + to_string(pos.x) + " " + to_string(pos.y) + " " + to_string(pos.z) + " ";
+	}
+
+	ENetPacket* position_update = enet_packet_create(s.c_str(), sizeof(char) * s.length(), 0);
+	
+	if (i == OUT_OF_RANGE)
+		enet_host_broadcast(server->m_pNetwork, 0, position_update);
+	else
+		enet_peer_send(&server->m_pNetwork->peers[i], 0, position_update);
 
 }
 
-
-void Server::SendEndPosition() {
-
-	Vector3 pos = generator->GetGoalNode()->_pos;
-	int idx = generator->GetGoalNode()->_idx;
-
-	string s = to_string(END_POS) + ":" + to_string(idx) + " " + to_string(pos.x) + " " + to_string(pos.y) + " " + to_string(pos.z);
-	const char * char_pos = s.c_str();
-
-	ENetPacket* position_update = enet_packet_create(char_pos, sizeof(char) * s.length(), 0);
-	enet_host_broadcast(server->m_pNetwork, 0, position_update);
-
-}
-
-
-
-
-void Server::UpdateAStarPreset()
+void Server::UpdateAStarPreset(int i)
 {
 	//Example presets taken from:
 	// http://movingai.com/astar-var.html
@@ -200,11 +279,55 @@ void Server::UpdateAStarPreset()
 	}
 	search_as->SetWeightings(weightingG, weightingH);
 
-	GraphNode* start = generator->GetStartNode();
-	GraphNode* end = generator->GetGoalNode();
-	search_as->FindBestPath(start, end);
+	GraphNode* start	= generator->startnodes[i];
+	GraphNode* end		= generator->endnodes[i];
+
+	if (start && end) {
+		search_as->FindBestPath(start, end);
+	}
+	paths[i] = search_as->GetFinalPath();
+	
 }
 
+void Server::SendNumberClients() {
+
+	string s = to_string(NUM_CLIENT) + ":" + to_string(server->m_pNetwork->connectedPeers);
+
+	ENetPacket* num_clients = STRING_PACKET;
+	enet_host_broadcast(server->m_pNetwork, 0, num_clients);
+}
+
+void Server::SendAvatarPositions(int i) {
+	string s = to_string(AVATAR_POS_UPDATE) + ":";
+
+	for (int j = 0; j < CLIENT_N; ++j) {
+		s += to_string(avatars[j]) + " ";
+	}
+
+	ENetPacket* avatar_positions = STRING_PACKET;
+
+	if (i == OUT_OF_RANGE)
+		enet_host_broadcast(server->m_pNetwork, 0, avatar_positions);
+	else
+		enet_peer_send(&server->m_pNetwork->peers[i], 0, avatar_positions);
+}
+
+void Server::FollowPath(int i) {
+
+	for (std::list<const GraphNode*>::iterator it = paths[i].begin(); it != paths[i].end();) {
+		if ((*it)->_idx == avatars[i]) {
+			++it;
+			if (it != paths[i].end()) {
+				avatars[i] = (*it)->_idx;
+				break;
+			}
+		}
+		else {
+			++it;
+		}
+	}
+	SendAvatarPositions();
+}
 
 
 void Win32_PrintAllAdapterIPAddresses()

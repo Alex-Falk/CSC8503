@@ -26,6 +26,7 @@ void HandleKeyboardInputs()
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_R)) {
 		SceneManager::Instance()->JumpToScene(sceneIdx);
 	}
+
 }
 
 int ClientLoop()
@@ -73,8 +74,13 @@ MazeStruct Recieve_maze(const ENetEvent& evnt) {
 	if (packet.find_first_of(':') != string::npos) {
 		m.size = stoi(packet.substr(0, packet.find_first_of(':')));
 
-		string idcs = packet.substr(packet.find_first_of(':')+1);
-		vector<int> split_elements = split_string_toInt(idcs, ' ');
+		packet = packet.substr(packet.find_first_of(':')+1);
+
+		m.density = stof(packet.substr(0, packet.find_first_of(':')));
+
+		packet = packet.substr(packet.find_first_of(':') + 1);
+
+		vector<int> split_elements = split_string_toInt(packet, ' ');
 
 		m.walls = split_elements;
 	}
@@ -82,7 +88,7 @@ MazeStruct Recieve_maze(const ENetEvent& evnt) {
 	return m;
 }
 
-PosStruct Recieve_startpos(const ENetEvent& evnt) {
+PosStruct Recieve_pos(const ENetEvent& evnt) {
 
 	PosStruct p;
 	Vector3 pos;
@@ -92,9 +98,9 @@ PosStruct Recieve_startpos(const ENetEvent& evnt) {
 		packet.push_back(evnt.packet->data[i]);
 	}
 
-	p.idx = stoi(packet.substr(0, packet.find_first_of(':')));
+	p.idx = stoi(packet.substr(0, packet.find_first_of(' ')));
 
-	string indcs = packet.substr(packet.find_first_of(':') + 1);
+	string indcs = packet.substr(packet.find_first_of(' ') + 1);
 	vector<float> split_elements = split_string_toFloat(packet, ' ');
 
 
@@ -107,6 +113,30 @@ PosStruct Recieve_startpos(const ENetEvent& evnt) {
 	p.pos = pos;
 	
 	return p;
+
+}
+
+vector<PosStruct> Recieve_positions(const ENetEvent& evnt) {
+
+	string packet;
+	for (int i = 2; i < evnt.packet->dataLength; ++i) {
+		packet.push_back(evnt.packet->data[i]);
+	}
+
+	vector<float> split_elements = split_string_toFloat(packet, ' ');
+
+	vector<PosStruct> positions;
+	for (int i = 0; i < split_elements.size(); i += 4)
+	{
+		PosStruct p;
+		p.idx = split_elements[i];
+		p.pos.x = split_elements[i+1];
+		p.pos.y = split_elements[i+2];
+		p.pos.z = split_elements[i+3];
+
+		positions.push_back(p);
+	}
+	return positions;
 
 }
 
@@ -141,7 +171,7 @@ vector<int> split_string_toInt(string s, char d) {
 	vector<int> chars;
 
 	size_t delim_idx = s.find_first_of(d);
-	if (delim_idx && s != "" && s != " ") {
+	if (delim_idx != string::npos && s != "" && s != " ") {
 		chars.push_back(stoi(s.substr(0, delim_idx)));
 		vector<int> subs = split_string_toInt(s.substr(delim_idx+1), d);
 		for (vector<int>::iterator it = subs.begin(); it != subs.end(); ++it) {
@@ -163,7 +193,7 @@ vector<float> split_string_toFloat(string s, char d) {
 			chars.push_back((*it));
 		}
 	}
-	else {
+	else if (s != "") {
 		chars.push_back(stof(s));
 	}
 	return chars;
@@ -178,3 +208,4 @@ bool isNumber(char c) {
 		return false;
 	}
 }
+
