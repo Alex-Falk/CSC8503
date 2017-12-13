@@ -46,14 +46,14 @@ Coursework Part B:
         
         Own TODOs:
         ✔ If end node is moved recompute path from avatar position (therefore set start node to avatar position) @done (2017-12-12 20:25:13)
-        ☐ Interpolate for smooth movement
+        ✔ Interpolate for smooth movement @done (2017-12-13 22:20:44)
         ✔ Stop sending star and end nodes of all clients to all other clients, keep those client specific (and serverside) @high @done (2017-12-13 10:48:12)
         ✔ Get rid of useless packets @high @today @done (2017-12-13 10:48:09)
 
     Advanced Features (Up to 20 Marks):
         Server Features:
-        ☐ ​The server will add hazards to the maze which act using a hierarchical, data-driven FSM. Example parent states for these hazards might be 'patrol', 'pursue', 'flee'. The server will update the behaviour of these hazards based on client avatar position. @today 
-        ☐ The server will broadcast position updates for these hazards to the client. @today 
+        ✔ ​The server will add hazards to the maze which act using a hierarchical, data-driven FSM. Example parent states for these hazards might be 'patrol', 'pursue', 'flee'. The server will update the behaviour of these hazards based on client avatar position. @today @done (2017-12-13 22:20:39)
+        ✔ The server will broadcast position updates for these hazards to the client. @today @done (2017-12-13 22:20:38)
         ✔ The server will allow multiple clients to connect to a maze when it is created, each with their own avatar, and provide routes for each on request. Client avatars are not expected to physically interact. @today @done (2017-12-12 19:59:45)
         ✔ The server will compute and broadcast routes on demand for clients, based on current location and updated goal position. @today @done (2017-12-12 20:25:18)
         ✔ The server will broadcast position updates for all clients to all clients. @today @done (2017-12-12 18:10:43)
@@ -62,7 +62,7 @@ Coursework Part B:
         Client Features:
         ✔ ​The client will provide a point-click interface for start (right click) and end (left click) positions. @done (2017-12-12 21:51:16)
         ✔ Once a path is being followed, the client will accept a left click to update the goal position. @done (2017-12-12 21:51:54)
-        ☐ The client will render hazards based on information received from the server. @today 
+        ✔ The client will render hazards based on information received from the server. @today @done (2017-12-13 22:20:34)
         ✔ The client will be able to trigger a newly generated scene and maze with a key press. @done (2017-12-13 09:41:17)
         
     Extended Features (Up to 30 Marks):
