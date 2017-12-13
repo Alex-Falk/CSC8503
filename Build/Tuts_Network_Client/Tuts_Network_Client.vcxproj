@@ -89,10 +89,17 @@
     <ClCompile Include="MazeRenderer.cpp" />
     <ClCompile Include="Net1_Client.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Pursue.cpp" />
     <ClCompile Include="Server.cpp" />
+    <ClCompile Include="State.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Chase.h" />
     <ClInclude Include="ClientFunctions.h" />
+    <ClInclude Include="Find.h" />
+    <ClInclude Include="Pursue.h" />
+    <ClInclude Include="State.h" />
+    <ClInclude Include="Patrol.h" />
     <ClInclude Include="MazeGenerator.h" />
     <ClInclude Include="MazeRenderer.h" />
     <ClInclude Include="MessageCreator.h" />

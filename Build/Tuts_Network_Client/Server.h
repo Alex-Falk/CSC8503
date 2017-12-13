@@ -8,15 +8,20 @@
 #include "MazeGenerator.h"
 #include "SearchAStar.h"
 #include "ClientFunctions.h"
+#include <ncltech\CommonUtils.h>
+
 
 #include <iphlpapi.h>
 #pragma comment(lib, "IPHLPAPI.lib")
 
+#define HAZARD_NUM 3
 #define SERVER_PORT 1234
-#define UPDATE_TIMESTEP 1.0f//(1.0f / 30.0f) //send 30 position updates per second
+#define UPDATE_TIMESTEP 1.0f/30.0f//(1.0f / 30.0f) //send 30 position updates per second
 #define OUT_OF_RANGE -1
 
 void Win32_PrintAllAdapterIPAddresses();
+
+class State;
 
 class Server
 {
@@ -25,6 +30,7 @@ protected:
 	GameTimer timer;
 	float accum_time = 0.0f;
 	float rotation = 0.0f;
+	vector<float> lerp_factor;
 
 	// Maze & Pathfinding
 	MazeGenerator * generator;
@@ -36,19 +42,11 @@ protected:
 
 	// Client Avatar position indeces
 	vector<int> avatars;
+	vector<PhysicsNode *> avatar_obj;
 
+	vector<State*> hazards;
 public:
-	Server() {
-		server = new NetworkBase();
-		printf("Server Initiated\n");
-
-		Win32_PrintAllAdapterIPAddresses();
-
-		timer.GetTimedMS();
-		generator = new MazeGenerator();
-		search_as = new SearchAStar();
-		generator->Generate(10, 0.7f);
-	};
+	Server();
 	~Server()
 	{
 		server->Release();
@@ -64,19 +62,23 @@ public:
 	// Sending / Broadcasting methods
 	//--------------------------------------------------------------------------------------------//
 
+	void InitializeArrayElements(int id);
+
+	void UpdateHazards();
+
+	Vector3 InterpolatePositionLinear(Vector3 posA, Vector3 posB, float factor);
+
 	// Can either broadcast or send individually
 	void SendWalls			(int i = OUT_OF_RANGE);
-	void SendStartPositions	(int i = OUT_OF_RANGE);
-	void SendEndPositions	(int i = OUT_OF_RANGE);
 	void SendAvatarPositions(int i = OUT_OF_RANGE);
+	void SendHazardPosition	(int i = OUT_OF_RANGE);
 
 	// Sent individually
-	void FollowPath			(int i);
-	void SendPath			(int i);
-	void UpdateAStarPreset	(int i);
+	void FollowPath				(int i);
+	void SendPath				(int i);
+	void UpdateAStarPreset		(int i);
 
 	// Broadcasts
-	void SendNumberClients	();
 	void NewUser			(int i);
 
 

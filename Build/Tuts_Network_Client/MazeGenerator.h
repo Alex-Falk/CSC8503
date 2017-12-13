@@ -19,8 +19,20 @@ public:
 	GraphNode* GetGoalNode()  const { return end; }
 	GraphNode* GetNode(int i) const { return &(allNodes[i]); }
 	
-	void SetStartNode(int i)		{ start = &(allNodes[i]); }
-	void SetEndNode(int i)			{ end = &(allNodes[i]); }
+	void SetStartNode(int i)		{
+		if (i != OUT_OF_RANGE)
+			start = &(allNodes[i]);
+		else
+			start = nullptr;
+	}
+
+
+	void SetEndNode(int i)			{
+		if (i != OUT_OF_RANGE)
+			end = &(allNodes[i]);
+		else
+			end = nullptr;
+	}
 
 	void Push_StartNode(int i)		{ startnodes.push_back(&(allNodes[i])); }
 	void Push_EndNode(int i)		{ endnodes.push_back(&(allNodes[i])); }

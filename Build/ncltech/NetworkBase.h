@@ -50,8 +50,8 @@ enum Packet_Type {
 	PATH,				// Sends indeces of elements of path in order
 	TEXT,				// Sends text
 	NEW_MAZE,			// User requesting new maze from server (could combine with maze_walls for other direction)
-	NUM_CLIENT,			// Sending number of clients - can get rid of this
-	AVATAR_POS_UPDATE	// Updates the avatar position(s)
+	AVATAR_POS_UPDATE,	// Updates the avatar position(s)
+	HAZARD_POS_UPDATE	// Update Hazards positions 
 };
 
 

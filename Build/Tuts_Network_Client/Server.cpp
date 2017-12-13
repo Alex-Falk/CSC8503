@@ -1,9 +1,33 @@
 #include "Server.h"
+#include "State.h"
 
 #define ID evnt.peer->incomingPeerID
 #define CLIENT_N server->m_pNetwork->connectedPeers
 #define STRING_PACKET enet_packet_create(s.c_str(), sizeof(char) * s.length(), 0)
 #define PATH_LIST std::list<const GraphNode*>
+
+Server::Server() {
+
+	srand(time(NULL));
+	server = new NetworkBase();
+	printf("Server Initiated\n");
+
+	Win32_PrintAllAdapterIPAddresses();
+
+	timer.GetTimedMS();
+	generator = new MazeGenerator();
+	search_as = new SearchAStar();
+	generator->Generate(10, 0.7f);
+
+	for (int i = 0; i < HAZARD_NUM; ++i){
+		hazards.push_back(new State());
+		hazards[i]->SetMaze(generator);
+		hazards[i]->SetStartNode();
+		hazards[i]->avatar_idcs = avatars;
+		hazards[i]->On_Initialize();
+	}
+	
+}
 
 
 int Server::ServerLoop() {
@@ -20,21 +44,13 @@ int Server::ServerLoop() {
 			{
 			case ENET_EVENT_TYPE_CONNECT:
 			{
-				generator->SetStartNode(ID, OUT_OF_RANGE);
-				generator->SetEndNode(ID, OUT_OF_RANGE);
+				
 				printf("- New Client Connected\n");
-				NewUser(ID);				// Tell all clients of new user
-				SendNumberClients();		// Tell the clients how many clients there are
+
+				InitializeArrayElements(ID);// Initalise array elements for start & end nodes, avatar positions and paths
 				SendWalls(ID);				// Send maze info to new client
-				SendStartPositions(ID);		// TODO: This can go
-				SendEndPositions(ID);		// TODO: this too
-				if (avatars.size() ==ID) { avatars.push_back(OUT_OF_RANGE); }	// Initialize avatar for  client
-				else if (avatars.size() > ID) { avatars[ID] = OUT_OF_RANGE; }
 				SendAvatarPositions(ID);	// Send the avatars position to the client
-
-				if (paths.size() == ID) { paths.push_back(PATH_LIST()); }		// Initialize path for client
-				else if (paths.size() > ID) { paths[ID] = PATH_LIST(); }		// 
-
+				SendHazardPosition(ID);
 
 			}
 				break;
@@ -49,7 +65,6 @@ int Server::ServerLoop() {
 					UpdateAStarPreset(ID);
 					SendPath(ID);
 
-					SendStartPositions();
 					break;
 				}
 					
@@ -58,15 +73,9 @@ int Server::ServerLoop() {
 					PosStruct p = Recieve_pos(evnt);
 					generator->SetEndNode(ID, p.idx);
 
-					// TODO: whut?
-					if (avatars[ID] != OUT_OF_RANGE) {
-						generator->SetStartNode(ID, avatars[ID]);
-						SendStartPositions(ID);
-					}
 					UpdateAStarPreset(ID);
 					SendPath(ID);
 
-					SendEndPositions();
 					break;
 				}
 					
@@ -85,27 +94,16 @@ int Server::ServerLoop() {
 					}
 					vector<float> params = split_string_toFloat(packet, ' ');
 
-			/*		delete generator;
-					generator = nullptr;
-					generator = new MazeGenerator();*/
 					generator->Generate((int)params[0], params[1]);
 
 					for (int i = 0; i < server->m_pNetwork->connectedPeers; ++i) {
-						generator->SetStartNode(i, OUT_OF_RANGE);
-						generator->SetEndNode(i, OUT_OF_RANGE);
-						avatars[i] = OUT_OF_RANGE;
-
+						InitializeArrayElements(i);
+						SendPath(i);
 					}
 
-					SendStartPositions();
-					SendEndPositions();
+					SendAvatarPositions();
 					SendWalls();
-
-
-					for (int i = 0; i < server->m_pNetwork->connectedPeers; ++i) {
-						UpdateAStarPreset(i);
-						SendPath(i);
-					}				
+			
 					break;
 				}
 
@@ -116,8 +114,15 @@ int Server::ServerLoop() {
 						packet.push_back(evnt.packet->data[i]);
 					}
 					avatars[ID] = stoi(packet);
+					PhysicsNode * pnode = new PhysicsNode();
+					pnode->SetPosition(generator->GetNode(avatars[ID])->_pos);
+					// TODO: Extend for actual physics;
+					avatar_obj[ID] = pnode;
+					
 					SendAvatarPositions();
+					UpdateHazards();
 				}
+				break;
 				}
 
 				break;
@@ -126,7 +131,7 @@ int Server::ServerLoop() {
 				printf("- Client %d has disconnected.\n", ID);
 				//generator->startnodes.erase(generator->startnodes.begin() + evnt.peer->incomingPeerID);
 				//generator->endnodes.erase(generator->startnodes.end() + evnt.peer->incomingPeerID);
-				SendNumberClients();
+				//SendNumberClients();
 				break;
 			}
 		});
@@ -138,6 +143,11 @@ int Server::ServerLoop() {
 				if (avatars[i] != OUT_OF_RANGE) {
 					FollowPath(i);
 				}
+			}
+			
+			for (int i = 0; i < HAZARD_NUM; ++i) {
+				hazards[i]->Update();
+				SendHazardPosition();
 			}
 		}
 
@@ -187,66 +197,6 @@ void Server::SendPath(int i) {
 	enet_peer_send(&server->m_pNetwork->peers[i], 0, path_packet);
 }
 
-void Server::SendStartPositions(int i) {
-
-	string s = to_string(START_POS) + ":";
-
-	for (vector<GraphNode *>::iterator it = generator->startnodes.begin(); it != generator->startnodes.end(); ++it) {
-		int idx;
-		Vector3 pos;
-		if (*(it))
-		{
-			idx = (*it)->_idx;
-			pos = (*it)->_pos;
-		}
-		else
-		{
-			idx = OUT_OF_RANGE;
-			pos = Vector3(OUT_OF_RANGE, OUT_OF_RANGE, OUT_OF_RANGE);
-		}
-
-			s += to_string(idx) + " " + to_string(pos.x) + " " + to_string(pos.y) + " " + to_string(pos.z) + " ";
-	}
-
-	ENetPacket* position_update = STRING_PACKET;
-
-	if (i == OUT_OF_RANGE)
-		enet_host_broadcast(server->m_pNetwork, 0, position_update);
-	else
-		enet_peer_send(&server->m_pNetwork->peers[i], 0, position_update);
-
-}
-
-void Server::SendEndPositions(int i) {
-
-	string s = to_string(END_POS) + ":";
-
-	for (vector<GraphNode *>::iterator it = generator->endnodes.begin(); it != generator->endnodes.end(); ++it) {
-		int idx;
-		Vector3 pos;
-		if (*(it))
-		{
-			idx = (*it)->_idx;
-			pos = (*it)->_pos;
-		}
-		else
-		{
-			idx = OUT_OF_RANGE;
-			pos = Vector3(OUT_OF_RANGE, OUT_OF_RANGE, OUT_OF_RANGE);
-		}
-
-		s += to_string(idx) + " " + to_string(pos.x) + " " + to_string(pos.y) + " " + to_string(pos.z) + " ";
-	}
-
-	ENetPacket* position_update = enet_packet_create(s.c_str(), sizeof(char) * s.length(), 0);
-	
-	if (i == OUT_OF_RANGE)
-		enet_host_broadcast(server->m_pNetwork, 0, position_update);
-	else
-		enet_peer_send(&server->m_pNetwork->peers[i], 0, position_update);
-
-}
-
 void Server::UpdateAStarPreset(int i)
 {
 	//Example presets taken from:
@@ -292,19 +242,33 @@ void Server::UpdateAStarPreset(int i)
 	
 }
 
-void Server::SendNumberClients() {
-
-	string s = to_string(NUM_CLIENT) + ":" + to_string(server->m_pNetwork->connectedPeers);
-
-	ENetPacket* num_clients = STRING_PACKET;
-	enet_host_broadcast(server->m_pNetwork, 0, num_clients);
-}
-
 void Server::SendAvatarPositions(int i) {
 	string s = to_string(AVATAR_POS_UPDATE) + ":";
 
 	for (int j = 0; j < CLIENT_N; ++j) {
-		s += to_string(avatars[j]) + " ";
+		if (avatar_obj[j]) {
+			Vector3 pos = avatar_obj[j]->GetPosition();
+			s += to_string(avatars[j]) + " " + to_string(pos.x) + " " + to_string(pos.y) + " " + to_string(pos.z) + " ";
+		}
+		else {
+			s += to_string(avatars[j]) + " -1 -1 -1 ";
+		}
+	}
+
+	ENetPacket* avatar_positions = STRING_PACKET;
+
+	if (i == OUT_OF_RANGE)
+		enet_host_broadcast(server->m_pNetwork, 0, avatar_positions);
+	else
+		enet_peer_send(&server->m_pNetwork->peers[i], 0, avatar_positions);
+}
+
+void Server::SendHazardPosition(int i) {
+	string s = to_string(HAZARD_POS_UPDATE) + ":";
+
+	for (int j = 0; j < HAZARD_NUM; ++j) {
+		Vector3 pos = hazards[j]->current_pos;
+		s += to_string(hazards[j]->current_idx) + " " + to_string(pos.x) + " " + to_string(pos.y) + " " + to_string(pos.z) + " ";
 	}
 
 	ENetPacket* avatar_positions = STRING_PACKET;
@@ -319,19 +283,66 @@ void Server::FollowPath(int i) {
 
 	for (std::list<const GraphNode*>::iterator it = paths[i].begin(); it != paths[i].end();) {
 		if ((*it)->_idx == avatars[i]) {
+			Vector3 posA = ((*it)->_pos);
+			int idxA = (*it)->_idx;
 			++it;
 			if (it != paths[i].end()) {
-				avatars[i] = (*it)->_idx;
-				break;
+				Vector3 posB = ((*it)->_pos);
+				int idxB = (*it)->_idx;
+
+				lerp_factor[i] += 0.05f;
+				avatar_obj[i]->SetPosition(InterpolatePositionLinear(posA, posB, lerp_factor[i]));
+			
+
+				if (lerp_factor[i] >= 1.0f) {
+					avatars[i] = idxB;
+					lerp_factor[i] = 0.0f;
+				}
 			}
 		}
 		else {
 			++it;
 		}
+
 	}
 	SendAvatarPositions();
+	UpdateHazards();
 }
 
+void Server::InitializeArrayElements(int id) {
+	// Initialize the stored Start and End nodes or this client
+	generator->SetStartNode	(id, OUT_OF_RANGE);
+	generator->SetEndNode	(id, OUT_OF_RANGE);
+
+	// Initialize avatar element for given client to OUT_OF_RANGE
+	if		(avatars.size() == id)	{ avatars.push_back(OUT_OF_RANGE); }	
+	else if (avatars.size() > id)	{ avatars[id] = OUT_OF_RANGE; }
+
+	if (avatar_obj.size() == id)	 { avatar_obj.push_back(nullptr); }
+	else if (avatar_obj.size() > id) { avatar_obj[id] = nullptr; }
+
+	// Initialize path for client as an empty path
+	if		(paths.size() == id)	{ paths.push_back(PATH_LIST()); }		
+	else if (paths.size() > id)		{ paths[id] = PATH_LIST(); }	 
+
+	if (lerp_factor.size() == id)		{ lerp_factor.push_back(0.0f); }
+	else if (lerp_factor.size() > id)	{ lerp_factor[id] = 0.0f; }
+}
+
+void Server::UpdateHazards() {
+	for (int i = 0; i < HAZARD_NUM; ++i) {
+		hazards[i]->UpdateAvatars(avatars);
+	}
+
+}
+
+Vector3 Server::InterpolatePositionLinear(Vector3 posA, Vector3 posB, float factor)
+{
+	//With factor between 0-1, this is defined as:
+	// LerpA-B(factor) = (1 - factor) * A + factor * B
+
+	return posA * (1.0f - factor) + posB * factor;
+}
 
 void Win32_PrintAllAdapterIPAddresses()
 {

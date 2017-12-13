@@ -105,9 +105,6 @@ PosStruct Recieve_pos(const ENetEvent& evnt) {
 	string indcs = packet.substr(packet.find_first_of(' ') + 1);
 	vector<float> split_elements = split_string_toFloat(packet, ' ');
 
-
-	
-
 	pos.x = split_elements[0];
 	pos.y = split_elements[1];
 	pos.z = split_elements[2];

@@ -95,7 +95,6 @@ const Vector4 status_color = Vector4(status_color3.x, status_color3.y, status_co
 Net1_Client::Net1_Client(const std::string& friendly_name)
 	: Scene(friendly_name)
 	, serverConnection(NULL)
-	, box(NULL)
 {
 }
 
@@ -182,6 +181,9 @@ void Net1_Client::OnUpdateScene(float dt)
 	if (maze && drawMesh)
 		maze->DrawNavMesh();
 
+
+		
+
 	//Add Debug Information to screen
 	uint8_t ip1 = serverConnection->address.host & 0xFF;
 	uint8_t ip2 = (serverConnection->address.host >> 8) & 0xFF;
@@ -203,25 +205,25 @@ void Net1_Client::ProcessNetworkEvent(const ENetEvent& evnt)
 {
 	switch (evnt.type)
 	{
-	//New connection request or an existing peer accepted our connection request
+		//New connection request or an existing peer accepted our connection request
 	case ENET_EVENT_TYPE_CONNECT:
+	{
+		if (evnt.peer == serverConnection)
 		{
-			if (evnt.peer == serverConnection)
-			{
-				NCLDebug::Log(status_color3, "Network: Successfully connected to server!");
+			NCLDebug::Log(status_color3, "Network: Successfully connected to server!");
 
-				//Send a 'hello' packet
-				char* text_data = "4Hellooo!";
-				ENetPacket* packet = enet_packet_create(text_data, strlen(text_data) + 1, 0);
-				enet_peer_send(serverConnection, 0, packet);
-			}	
+			//Send a 'hello' packet
+			char* text_data = "4Hellooo!";
+			ENetPacket* packet = enet_packet_create(text_data, strlen(text_data) + 1, 0);
+			enet_peer_send(serverConnection, 0, packet);
 		}
-		break;
+	}
+	break;
 
 
 	//Server has sent us a new packet
 	case ENET_EVENT_TYPE_RECEIVE:
-		{
+	{
 		//--------------------------------------------------------------------------------------------//
 		// Different commands are defined by the first char in the packet. 
 		// They correspond to the enum Packet_Type
@@ -229,58 +231,10 @@ void Net1_Client::ProcessNetworkEvent(const ENetEvent& evnt)
 		int i = evnt.packet->data[0] - '0';
 		switch (i) {
 
-		case NEW_USER:
-		{
-			string packet;
-			for (int i = 2; i < evnt.packet->dataLength; ++i) {
-				packet.push_back(evnt.packet->data[i]);
-			}
-
-			int userID = stoi(packet);
-
-			//TODO: Get rid of this stuff, the user side only need its own start and end nodes, not everyones
-			generator->SetStartNode(userID, OUT_OF_RANGE);
-			generator->SetEndNode(userID, OUT_OF_RANGE);
-			
-			//TODO: this can probably be done somewhere else and not take up a command
-			if (avatars.size() == userID) {
-				avatars.push_back(OUT_OF_RANGE);
-			}
-			else if (avatars.size() > userID) { 
-				avatars[userID] = OUT_OF_RANGE;
-			}
-			else {
-				NCLERROR("Missing User");
-			}
-
-			break;
-		}
 		case MAZE_WALLS:
 		{
 			MazeStruct m = Recieve_maze(evnt);
 			ApplyMaze(m);
-			break;
-		}
-		case START_POS:
-		{
-			//TODO: Client doesnt need to recieve this
-			vector<PosStruct> positions = Recieve_positions(evnt);
-			
-			for (int i = 0; i < positions.size(); ++i) {
-				generator->SetStartNode(i, positions[i].idx);
-			}
-			maze->UpdateRenderer();
-			break;
-		}
-		case END_POS:
-		{
-			//TODO: Client doesn't need to recieve this
-			vector<PosStruct> positions = Recieve_positions(evnt);
-
-			for (int i = 0; i < positions.size(); ++i) {
-				generator->SetEndNode(i, positions[i].idx);
-			}
-			maze->UpdateRenderer();
 			break;
 		}
 		case PATH:
@@ -290,17 +244,6 @@ void Net1_Client::ProcessNetworkEvent(const ENetEvent& evnt)
 			for (int i = 0; i < idcs.size(); ++i) {
 				path.push_back(&generator->allNodes[idcs[i]]);
 			}
-			break;
-		}
-		case NUM_CLIENT:
-		{
-			// TODO: This is probably not needed
-			string packet;
-			for (int i = 2; i < evnt.packet->dataLength; ++i) {
-				packet.push_back(evnt.packet->data[i]);
-			}
-
-			clients = stoi(packet);
 			break;
 		}
 		case AVATAR_POS_UPDATE:
@@ -313,10 +256,18 @@ void Net1_Client::ProcessNetworkEvent(const ENetEvent& evnt)
 			// TODO: Make a method to do this is
 			RenderNode * cube, *root = maze->Render();
 
-			vector<int> s = split_string_toInt(packet, ' ');
-			for (int i = 0; i < s.size(); ++i) {
-				if (avatars.size() == i) { avatars.push_back(s[i]); }
-				else if (avatars.size() > i) { avatars[i] = s[i]; }
+			//vector<int> s = split_string_toInt(packet, ' ');
+
+			vector<PosStruct> ps = Recieve_positions(evnt);
+			for (int i = 0; i < ps.size(); ++i) {
+				if (avatars.size() == i) {
+					avatars.push_back(ps[i].idx);
+					avatar_positions.push_back(ps[i].pos);
+				}
+				else if (avatars.size() > i) {
+					avatars[i] = ps[i].idx;
+					avatar_positions[i] = ps[i].pos;
+				}
 
 				if (avatars[i] != OUT_OF_RANGE) {
 					if (root->GetChildWithName("Avatar_" + to_string(i))) {
@@ -326,24 +277,43 @@ void Net1_Client::ProcessNetworkEvent(const ENetEvent& evnt)
 					cube = new RenderNode(CommonMeshes::Cube(), Vector4(0.0f, 1.0f, 0.0f, 1.0f));
 					cube->SetName("Avatar_" + to_string(i));
 					cube->SetTransform(
-						Matrix4::Translation(Pos_To_Maze(generator->GetNode(avatars[i])->_pos)) *
+						Matrix4::Translation(Pos_To_Maze(avatar_positions[i])) *
 						Matrix4::Scale(Maze_Scale()));
 					root->AddChild(cube);
 				}
 			}
-			break;
 		}
+		break;
+		case HAZARD_POS_UPDATE:
+		{
+			RenderNode * cube, *root = maze->Render();
+
+			vector<PosStruct> ps = Recieve_positions(evnt);
+			for (int i = 0; i < ps.size(); ++i) {
+				if (root->GetChildWithName("Hazard_" + to_string(i))) {
+					root->RemoveChild(root->GetChildWithName("Hazard_" + to_string(i)));
+				}
+
+				cube = new RenderNode(CommonMeshes::Cube(), Vector4(0.5f, 0.0f, 0.0f, 1.0f));
+				cube->SetName("Hazard_" + to_string(i));
+				cube->SetTransform(
+					Matrix4::Translation(Pos_To_Maze(ps[i].pos)) *
+					Matrix4::Scale(Maze_Scale()));
+				root->AddChild(cube);
+			}
+		}
+		break;
+
 		default:
 		{
 			NCLERROR("Recieved Invalid Network Packet!");
 			break;
 		}
-		
+
 		}
-		
 		break;
-		}
-	//Server has disconnected
+		//Server has disconnected
+	}
 	case ENET_EVENT_TYPE_DISCONNECT:
 		{
 			NCLDebug::Log(status_color3, "Network: Server has disconnected!");
@@ -363,13 +333,11 @@ void Net1_Client::ApplyMaze(MazeStruct m) {
 
 	generator->Generate(m.size, 0);
 
-	// TODO: only need to do this for the current client
-	for (int i = 0; i < clients; ++i) {
-		generator->SetStartNode(i, OUT_OF_RANGE);
-		generator->SetEndNode(i, OUT_OF_RANGE);
-	}
+	// Sets the start and end nodes to -1 which means they will not be put into the maze
+	generator->SetStartNode(OUT_OF_RANGE);
+	generator->SetEndNode(OUT_OF_RANGE);
 
-	size = m.size;
+	size	= m.size;
 	density = m.density;
 
 	if (m.walls.size() > 0) {
@@ -383,7 +351,7 @@ void Net1_Client::ApplyMaze(MazeStruct m) {
 	maze->Render()->SetTransform(
 		Matrix4::Translation(Vector3(-m.size/2.0f,0,-m.size/2.0f)) * 
 		Matrix4::Scale(Vector3(m.size, 5.0f / float(m.size), m.size)));
-	
+
 
 	this->AddGameObject(maze);
 
@@ -394,8 +362,8 @@ void Net1_Client::ApplyMaze(MazeStruct m) {
 //--------------------------------------------------------------------------------------------//
 void Net1_Client::SendStartPosition() {
 
-	Vector3 pos = generator->startnodes[ID]->_pos;
-	int idx = generator->startnodes[ID]->_idx;
+	Vector3 pos = generator->GetStartNode()->_pos;//generator->startnodes[ID]->_pos;
+	int idx = generator->GetStartNode()->_idx;//generator->startnodes[ID]->_idx;
 
 	string s = to_string(START_POS) + ":" + to_string(idx) + " " + to_string(pos.x) + " " + to_string(pos.y) + " " + to_string(pos.z);
 	const char * char_pos = s.c_str();
@@ -407,8 +375,8 @@ void Net1_Client::SendStartPosition() {
 
 void Net1_Client::SendEndPosition() {
 
-	Vector3 pos = generator->endnodes[ID]->_pos;
-	int idx = generator->endnodes[ID]->_idx;
+	Vector3 pos = generator->GetGoalNode()->_pos;//generator->endnodes[ID]->_pos;
+	int idx = generator->GetGoalNode()->_idx;//generator->endnodes[ID]->_idx;
 
 	string s = to_string(END_POS) + ":" + to_string(idx) + " " + to_string(pos.x) + " " + to_string(pos.y) + " " + to_string(pos.z);
 	const char * char_pos = s.c_str();
@@ -439,12 +407,15 @@ void Net1_Client::SendAvatarLocation() {
 //--------------------------------------------------------------------------------------------//
 void Net1_Client::HandleKeyboardInputs()
 {
+	GraphNode * start = generator->GetStartNode();
+	GraphNode * end = generator->GetGoalNode();
+
 	if (Window::GetKeyboard()->KeyHeld(KEYBOARD_CAPITAL))
 	{
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_LEFT))
 		{
-			if (generator->endnodes[ID]->_idx % size != 0) {
-				generator->SetEndNode(ID, generator->endnodes[ID]->_idx - 1);
+			if (end->_idx % size != 0) {
+				generator->SetEndNode(end->_idx - 1);
 				maze->UpdateRenderer();
 				SendEndPosition();
 			}
@@ -452,8 +423,8 @@ void Net1_Client::HandleKeyboardInputs()
 
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_RIGHT))
 		{
-			if (generator->endnodes[ID]->_idx + 1 % generator->size != 0) {
-				generator->SetEndNode(ID, generator->endnodes[ID]->_idx + 1);
+			if (end->_idx + 1 % generator->size != 0) {
+				generator->SetEndNode(end->_idx + 1);
 				maze->UpdateRenderer();
 				SendEndPosition();
 			}
@@ -462,8 +433,8 @@ void Net1_Client::HandleKeyboardInputs()
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_DOWN))
 		{
 
-			if (generator->endnodes[ID]->_idx < (size*size) - size) {
-				generator->SetEndNode(ID, generator->endnodes[ID]->_idx + size);
+			if (end->_idx < (size*size) - size) {
+				generator->SetEndNode(end->_idx + size);
 				maze->UpdateRenderer();
 				SendEndPosition();
 			}
@@ -471,8 +442,8 @@ void Net1_Client::HandleKeyboardInputs()
 
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_UP))
 		{
-			if (generator->endnodes[ID]->_idx > size) {
-				generator->SetEndNode(ID, generator->endnodes[ID]->_idx - size);
+			if (end->_idx > size) {
+				generator->SetEndNode(end->_idx - size);
 				maze->UpdateRenderer();
 				SendEndPosition();
 			}
@@ -481,8 +452,8 @@ void Net1_Client::HandleKeyboardInputs()
 	else {
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_LEFT))
 		{
-			if (generator->startnodes[ID]->_idx % size != 0) {
-				generator->SetStartNode(ID, generator->startnodes[ID]->_idx - 1);
+			if (start->_idx % size != 0) {
+				generator->SetStartNode(start->_idx - 1);
 				maze->UpdateRenderer();
 				SendStartPosition();
 			}
@@ -490,8 +461,8 @@ void Net1_Client::HandleKeyboardInputs()
 
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_RIGHT))
 		{
-			if (generator->startnodes[ID]->_idx + 1 % generator->size != 0) {
-				generator->SetStartNode(ID, generator->startnodes[ID]->_idx + 1);
+			if (start->_idx + 1 % generator->size != 0) {
+				generator->SetStartNode(start->_idx + 1);
 				maze->UpdateRenderer();
 				SendStartPosition();
 			}
@@ -500,8 +471,8 @@ void Net1_Client::HandleKeyboardInputs()
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_DOWN))
 		{
 
-			if (generator->startnodes[ID]->_idx < (size*size) - size) {
-				generator->SetStartNode(ID, generator->startnodes[ID]->_idx + size);
+			if (start->_idx < (size*size) - size) {
+				generator->SetStartNode(start->_idx + size);
 				maze->UpdateRenderer();
 				SendStartPosition();
 			}
@@ -509,8 +480,8 @@ void Net1_Client::HandleKeyboardInputs()
 
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_UP))
 		{
-			if (generator->startnodes[ID]->_idx > size) {
-				generator->SetStartNode(ID, generator->startnodes[ID]->_idx - size);
+			if (start->_idx > size) {
+				generator->SetStartNode(start->_idx - size);
 				maze->UpdateRenderer();
 				SendStartPosition();
 			}
@@ -519,8 +490,12 @@ void Net1_Client::HandleKeyboardInputs()
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_RETURN))
 	{
-		avatars[ID] = generator->startnodes[ID]->_idx;
-		SendAvatarLocation();
+		if (generator->GetStartNode())
+		{
+			avatars[ID] = start->_idx;
+			SendAvatarLocation();
+		}
+
 	}
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_N))
@@ -558,6 +533,12 @@ void Net1_Client::HandleKeyboardInputs()
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_K)) {
 		drawMesh = !drawMesh;
+	}
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Q)) {
+		drawTiles = !drawTiles;
+		if (maze && drawTiles) { maze->Render()->GetChildWithName("MazeNodes")->Wake(); }
+		else if (maze && !drawTiles) { maze->Render()->GetChildWithName("MazeNodes")->Sleep(); }
 	}
 }
 
@@ -600,11 +581,25 @@ Vector3 Net1_Client::Maze_Scale() {
 //--------------------------------------------------------------------------------------------//
 void Net1_Client::ClickableLocationCallback(int idx) {
 	if (Window::GetMouse()->ButtonDown(MOUSE_LEFT)) {
-		generator->endnodes[ID] = &generator->allNodes[idx];
+		//generator->endnodes[ID] = &generator->allNodes[idx];
+		generator->SetEndNode(idx);
+		if (avatars[ID] != OUT_OF_RANGE) {
+			generator->SetStartNode(avatars[ID]);
+		}
+		if (generator->GetStartNode())
+			SendStartPosition();
 		SendEndPosition();
+		maze->UpdateRenderer();
 	}
 	else if (Window::GetMouse()->ButtonDown(MOUSE_RIGHT)) {
-		generator->startnodes[ID] = &generator->allNodes[idx];
+		//generator->startnodes[ID] = &generator->allNodes[idx];
+		generator->SetStartNode(idx);
+		//avatars[ID] = OUT_OF_RANGE;
+		//if (maze->Render()->GetChildWithName("Avatar_" + to_string(ID))) {
+		//	maze->Render()->RemoveChild(maze->Render()->GetChildWithName("Avatar_" + to_string(ID)));
+		//}
+		SendAvatarLocation();
 		SendStartPosition();
+		maze->UpdateRenderer();
 	}
 }

@@ -5,6 +5,8 @@
 #include <nclgl\PerfTimer.h>
 #include <ncltech\NetworkBase.h>
 
+class Net1_Client;
+
 struct MazeStruct {
 	int size;
 	float density;

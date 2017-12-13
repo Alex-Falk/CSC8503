@@ -47,9 +47,9 @@ public:
 	// Handle Keyboard Inputs which require to edit data stored in this class
 	void HandleKeyboardInputs();
 
-protected:
-	GameObject* box;
+	bool isDrawingTiles() { return drawTiles; }
 
+protected:
 	// Network
 	NetworkBase network;
 	ENetPeer*	serverConnection;
@@ -64,6 +64,7 @@ protected:
 	// Debug Draw bools
 	bool drawPath = false;
 	bool drawMesh = false;
+	bool drawTiles = false;
 
 	// Number of clients connected to this client's server - used for drawing
 	int clients;
@@ -73,4 +74,5 @@ protected:
 
 	// Indeces indicating all avatars' positions
 	vector<int> avatars;
+	vector<Vector3> avatar_positions;
 };

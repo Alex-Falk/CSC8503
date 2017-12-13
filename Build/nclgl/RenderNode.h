@@ -36,7 +36,7 @@ public:
 
 	virtual void DrawOpenGL(bool isShadowPass)
 	{
-		if (this->mesh)
+		if (this->mesh && awake)
 			this->mesh->Draw();
 	}
 
