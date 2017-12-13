@@ -17,8 +17,8 @@ struct PosStruct {
 };
 
 void PrintStatusEntries();
-void HandleKeyboardInputs();
-int ClientLoop();
+void HandleKeyboardInputs(Net1_Client * c);
+int ClientLoop(Net1_Client * c);
 
 MazeStruct Recieve_maze(const ENetEvent& evnt);
 PosStruct Recieve_pos(const ENetEvent& evnt);

@@ -12,6 +12,7 @@
 
 enum Type {SERVER,CLIENT};
 Type thisType = SERVER;
+Net1_Client * c;
 
 void Quit(bool error = false, const string &reason = "");
 
@@ -38,7 +39,8 @@ void Initialize()
 
 								//Enqueue All Scenes
 								// - Add any new scenes you want here =D
-	SceneManager::Instance()->EnqueueScene(new Net1_Client("Network #1 - Example Client"));
+	c = new Net1_Client("Network #1 - Example Client");
+	SceneManager::Instance()->EnqueueScene(c);
 }
 
 void Quit(bool error, const string &reason) {
@@ -96,7 +98,7 @@ int main()
 		break;
 
 	case CLIENT:
-		int i = ClientLoop();
+		int i = ClientLoop(c);
 		enet_deinitialize(); 
 		return 0;
 		break;

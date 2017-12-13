@@ -1,5 +1,5 @@
 #include "ClientFunctions.h"
-
+#include "Net1_Client.h"
 
 void PrintStatusEntries()
 {
@@ -13,10 +13,11 @@ void PrintStatusEntries()
 	);
 }
 
-void HandleKeyboardInputs()
+void HandleKeyboardInputs(Net1_Client * c)
 {
 	uint sceneIdx = SceneManager::Instance()->GetCurrentSceneIndex();
 	uint sceneMax = SceneManager::Instance()->SceneCount();
+
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Y))
 		SceneManager::Instance()->JumpToScene((sceneIdx + 1) % sceneMax);
 
@@ -27,9 +28,10 @@ void HandleKeyboardInputs()
 		SceneManager::Instance()->JumpToScene(sceneIdx);
 	}
 
+	c->HandleKeyboardInputs();
 }
 
-int ClientLoop()
+int ClientLoop(Net1_Client * c)
 {
 	Window::GetWindow().GetTimer()->GetTimedMS();
 
@@ -42,7 +44,7 @@ int ClientLoop()
 		PrintStatusEntries();
 
 		//Handle Keyboard Inputs
-		HandleKeyboardInputs();
+		HandleKeyboardInputs(c);
 
 		//Update Scene
 		SceneManager::Instance()->GetCurrentScene()->FireOnSceneUpdate(dt);

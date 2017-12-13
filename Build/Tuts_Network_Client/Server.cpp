@@ -23,23 +23,25 @@ int Server::ServerLoop() {
 				generator->SetStartNode(ID, OUT_OF_RANGE);
 				generator->SetEndNode(ID, OUT_OF_RANGE);
 				printf("- New Client Connected\n");
-				NewUser(ID);
-				SendNumberClients();
-				SendWalls(ID);
-				SendStartPositions(ID);
-				SendEndPositions(ID);
-				if (avatars.size() ==ID) { avatars.push_back(OUT_OF_RANGE); }
+				NewUser(ID);				// Tell all clients of new user
+				SendNumberClients();		// Tell the clients how many clients there are
+				SendWalls(ID);				// Send maze info to new client
+				SendStartPositions(ID);		// TODO: This can go
+				SendEndPositions(ID);		// TODO: this too
+				if (avatars.size() ==ID) { avatars.push_back(OUT_OF_RANGE); }	// Initialize avatar for  client
 				else if (avatars.size() > ID) { avatars[ID] = OUT_OF_RANGE; }
-				SendAvatarPositions(ID);
+				SendAvatarPositions(ID);	// Send the avatars position to the client
 
-				if (paths.size() == ID) { paths.push_back(PATH_LIST()); }
-				else if (paths.size() > ID) { paths[ID] = PATH_LIST(); }
+				if (paths.size() == ID) { paths.push_back(PATH_LIST()); }		// Initialize path for client
+				else if (paths.size() > ID) { paths[ID] = PATH_LIST(); }		// 
 
 
 			}
 				break;
 			case ENET_EVENT_TYPE_RECEIVE:
+
 				switch (evnt.packet->data[0] - '0') {
+
 				case START_POS:
 				{
 					PosStruct p = Recieve_pos(evnt);
@@ -56,6 +58,7 @@ int Server::ServerLoop() {
 					PosStruct p = Recieve_pos(evnt);
 					generator->SetEndNode(ID, p.idx);
 
+					// TODO: whut?
 					if (avatars[ID] != OUT_OF_RANGE) {
 						generator->SetStartNode(ID, avatars[ID]);
 						SendStartPositions(ID);
