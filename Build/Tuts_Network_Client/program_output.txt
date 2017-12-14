@@ -1,57 +1,57 @@
-[22:43:45] Unable to initialise Network Host!
-[22:43:46] Loading Shader:
-[22:43:46]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechVertexBasic.glsl
-[22:43:46]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechFragSuperSample.glsl
-[22:43:46]     -> Linking Shader: Success!
-[22:43:46] 
-[22:43:46] Loading Shader:
-[22:43:46]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechVertexShadow.glsl
-[22:43:46]     -> Compiling Shader: ../../Data/Shaders/Common/EmptyFragment.glsl
-[22:43:46]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechGeomShadow.glsl
-[22:43:46]     -> Linking Shader: Success!
-[22:43:46] 
-[22:43:46] Loading Shader:
-[22:43:46]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechVertexFull.glsl
-[22:43:46]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechFragForwardRender.glsl
-[22:43:46]     -> Linking Shader: Success!
-[22:43:46] 
-[22:43:46] Loading Shader:
-[22:43:46]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/PointVertex.glsl
-[22:43:46]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/PointFragment.glsl
-[22:43:46]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/PointGeometry.glsl
-[22:43:46]     -> Linking Shader: Success!
-[22:43:46] 
-[22:43:46] Loading Shader:
-[22:43:46]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/Vertex.glsl
-[22:43:46]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/Fragment.glsl
-[22:43:46]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/LineGeometry.glsl
-[22:43:46]     -> Linking Shader: Success!
-[22:43:46] 
-[22:43:46] Loading Shader:
-[22:43:46]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/VertexColOnly.glsl
-[22:43:46]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/Fragment.glsl
-[22:43:46]     -> Linking Shader: Success!
-[22:43:46] 
-[22:43:46] Loading Shader:
-[22:43:46]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/TextVertex.glsl
-[22:43:46]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/TextFragment.glsl
-[22:43:46]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/TextGeometry.glsl
-[22:43:46]     -> Linking Shader: Success!
-[22:43:46] 
-[22:43:47] Loading Shader:
-[22:43:47]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechVertexPicker.glsl
-[22:43:47]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechFragScreenPicker_nsightfix.glsl
-[22:43:47]     -> Linking Shader: Success!
-[22:43:47] 
-[22:43:47] Loading Mesh: ../../Data/Meshes/cube.obj
-[22:43:47] 
-[22:43:47] Loading Mesh: ../../Data/Meshes/sphere.obj
-[22:43:47] 
-[22:43:47] [SceneManager] - Enqueued scene: "Network #1 - Example Client"
-[22:43:47] 
-[22:43:47] Network: Initialized!
-[22:43:47] Network: Attempting to connect to server.
-[22:43:47] Loading Mesh: ../../Data/Meshes/cube.obj
-[22:43:47] 
-[22:43:47] [SceneManager] - Scene switched to: "Network #1 - Example Client"
-[22:43:47] Network: Successfully connected to server!
+[22:48:42] Unable to initialise Network Host!
+[22:48:43] Loading Shader:
+[22:48:43]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechVertexBasic.glsl
+[22:48:43]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechFragSuperSample.glsl
+[22:48:43]     -> Linking Shader: Success!
+[22:48:43] 
+[22:48:43] Loading Shader:
+[22:48:43]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechVertexShadow.glsl
+[22:48:43]     -> Compiling Shader: ../../Data/Shaders/Common/EmptyFragment.glsl
+[22:48:43]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechGeomShadow.glsl
+[22:48:43]     -> Linking Shader: Success!
+[22:48:43] 
+[22:48:43] Loading Shader:
+[22:48:43]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechVertexFull.glsl
+[22:48:43]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechFragForwardRender.glsl
+[22:48:43]     -> Linking Shader: Success!
+[22:48:43] 
+[22:48:43] Loading Shader:
+[22:48:43]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/PointVertex.glsl
+[22:48:43]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/PointFragment.glsl
+[22:48:43]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/PointGeometry.glsl
+[22:48:43]     -> Linking Shader: Success!
+[22:48:43] 
+[22:48:43] Loading Shader:
+[22:48:43]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/Vertex.glsl
+[22:48:43]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/Fragment.glsl
+[22:48:43]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/LineGeometry.glsl
+[22:48:43]     -> Linking Shader: Success!
+[22:48:43] 
+[22:48:43] Loading Shader:
+[22:48:43]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/VertexColOnly.glsl
+[22:48:43]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/Fragment.glsl
+[22:48:43]     -> Linking Shader: Success!
+[22:48:43] 
+[22:48:43] Loading Shader:
+[22:48:43]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/TextVertex.glsl
+[22:48:43]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/TextFragment.glsl
+[22:48:43]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/TextGeometry.glsl
+[22:48:43]     -> Linking Shader: Success!
+[22:48:43] 
+[22:48:43] Loading Shader:
+[22:48:43]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechVertexPicker.glsl
+[22:48:43]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechFragScreenPicker_nsightfix.glsl
+[22:48:43]     -> Linking Shader: Success!
+[22:48:43] 
+[22:48:43] Loading Mesh: ../../Data/Meshes/cube.obj
+[22:48:43] 
+[22:48:43] Loading Mesh: ../../Data/Meshes/sphere.obj
+[22:48:43] 
+[22:48:43] [SceneManager] - Enqueued scene: "Network #1 - Example Client"
+[22:48:43] 
+[22:48:43] Network: Initialized!
+[22:48:43] Network: Attempting to connect to server.
+[22:48:43] Loading Mesh: ../../Data/Meshes/cube.obj
+[22:48:43] 
+[22:48:43] [SceneManager] - Scene switched to: "Network #1 - Example Client"
+[22:48:43] Network: Successfully connected to server!

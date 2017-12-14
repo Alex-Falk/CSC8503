@@ -1,18 +1,1 @@
-﻿  CollisionDetectionSAT.cpp
-  CommonUtils.cpp
-  CuboidCollisionShape.cpp
-  Manifold.cpp
-  OcTree.cpp
-d:\projects\csc8503\build\ncltech\MultiGameObject.h(37): warning C4018: '<': signed/unsigned mismatch
-OcTree.cpp(20): warning C4018: '>': signed/unsigned mismatch
-OcTree.cpp(120): warning C4018: '>': signed/unsigned mismatch
-OcTree.cpp(287): warning C4018: '>': signed/unsigned mismatch
-OcTree.cpp(290): warning C4018: '>': signed/unsigned mismatch
-  PhysicsEngine.cpp
-  PhysicsNode.cpp
-  SceneManager.cpp
-d:\projects\csc8503\build\ncltech\MultiGameObject.h(37): warning C4018: '<': signed/unsigned mismatch
-  SoftBody.cpp
-d:\projects\csc8503\build\ncltech\MultiGameObject.h(37): warning C4018: '<': signed/unsigned mismatch
-  SphereCollisionShape.cpp
-  ncltech.vcxproj -> D:\Projects\CSC8503\Build\Release\ncltech.lib
+﻿
