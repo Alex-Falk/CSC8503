@@ -14,11 +14,50 @@ inline Vector3 float_to_vec(float3 flo) {
 	return Vector3(flo.x, flo.y, flo.z);
 }
 
+__global__ void CollideParticles(float baumgarte_factor, uint num_particles, Node* particles, CPUParticle * cpu_particles, float separation, int num_CPU_obj)
+{
+	uint index = blockIdx.x*blockDim.x + threadIdx.x;
+	if (index >= num_particles)
+		return;
 
-__device__ void resolveSpring(Node * nodes, Spring s,float dt) {
+	Node p = particles[index];
 
+	if (p.invmass != 0.0f)
+	{
+		for (int i = 0; i < num_CPU_obj; ++i) {
+			CPUParticle cpu_p = cpu_particles[i];
+			//float3 newpos = make_float3(cpu_p.pos.x, cpu_p.pos.y, cpu_p.pos.z);
+
+			//Do a quick sphere-sphere test
+			float3 ab = cpu_p.pos - p.pos;
+			float lengthSq = dot(ab, ab);
+
+			const float diameterSq = ((separation + cpu_p.radius + 1.0f) * (separation + cpu_p.radius + 1.0f));
+			if (lengthSq < diameterSq)
+			{
+				//We have a collision!
+				float len = sqrtf(lengthSq);
+				float3 abn = ab / len;
+
+				//Direct normal collision (no friction/shear)
+				float abnVel = dot(cpu_p.vel - cpu_p.vel, abn);
+				float jn = -(abnVel * (1.f + 0.00f));
+
+				//Extra energy to overcome overlap error
+				float overlap = cpu_p.radius - len;
+				float b = overlap * baumgarte_factor;
+
+
+				jn += b;
+
+				jn = max(jn, 0.0f);
+				p.vel -= abn * (jn * 0.5f);
+			}
+		}
+	}
+	particles[index] = p;
+	
 }
-
 
 __global__ void UpdateSpringSet(Node * nodes, SpringSet set, int w, int h, float h_rest, float d_rest, float dt) {
 	
@@ -170,7 +209,7 @@ __global__ void UpdateSpringSet(Node * nodes, SpringSet set, int w, int h, float
 				/ dt)
 				* distance_offset;
 
-			float jn = ((distance_offset * 0.1f) / (constraintMass * dt)) - (0.01f * (abnVel));
+			float jn = (distance_offset * 0.6f) / (constraintMass * dt) - (0.01f * (abnVel));
 			//s.p1.vel -= abn * jn * s.p1.invmass;
 			//s.p2.vel += abn * jn * s.p2.invmass;
 
@@ -182,29 +221,51 @@ __global__ void UpdateSpringSet(Node * nodes, SpringSet set, int w, int h, float
 
 }
 
+__host__
+struct UpdatePositions
+{
+	UpdatePositions(float dt, float3 gravity)
+		: _dt(dt)
+		, _gravity(gravity)
+	{
+	}
 
+	float _dt;
+	float3 _gravity;
 
+	__host__ __device__
+		void operator()(Node& p)
+	{
+		//Time integration
+		if(p.invmass != 0)
+			p.vel += _gravity;
+		p.vel *= 0.999f;
+
+		p.pos += p.vel * _dt;
+	}
+};
 
 CudaSoftBody::CudaSoftBody(int w, int h, float s, Vector3 pos, GLuint tex)
 {
 	this->w = w;
 	this->h = h;
+	this->s = s;
 	this->pos = new Vector3(pos);
+
+	nodes = new Node[w*h];
+
 	for (int i = 0; i < h; ++i) {
 		for (int j = 0; j < w; ++j) {
-			PhysicsNode * pnode = new PhysicsNode();
-			pnode->SetPosition(Vector3(pos.x + (s*j), pos.y + (s*i), pos.z));
+			Node pnode;
+			pnode.pos = vec_to_float((Vector3(pos.x + (s*j), pos.y, pos.z + (s*i))));
+			pnode.vel = make_float3(0.0f, 0.0f, 0.0f);
+			pnode.invmass = (60.0f);
+			if (i == 0)
+				pnode.invmass = 0.f;
+			
+			nodes[(i*w) + j] = pnode;
 
-			pnode->SetInverseMass(60.0f);
-
-			//if (i == h - 1) {//&& j == 0 || (i == h - 1 && j == w - 1)) {
-			//	pnode->SetInverseMass(0.0f);
-			//}
-
-			CollisionShape* pColshape = new SphereCollisionShape(0.7f*s);
-			pnode->SetCollisionShape(pColshape);
-			physicsnodes.push_back(pnode);
-
+			
 		}
 	}
 
@@ -222,30 +283,7 @@ CudaSoftBody::CudaSoftBody(int w, int h, float s, Vector3 pos, GLuint tex)
 	rnode->SetTransform(Matrix4::Translation(Vector3(pos.x, pos.y, pos.z)));
 	rnode->SetBoundingRadius(10);
 
-	mgo = new MultiGameObject("softBody", rnode, physicsnodes, this->pos);
-	mgo->SetSiblingsCollide(false);
-	mgo->RotateObject(Vector3(1, 0, 0), -90);
-	mgo->UpdatePosition(Vector3(2.5, 15, -2.5));
-
-	ScreenPicker::Instance()->RegisterNodeForMouseCallback(
-		dummy, //Dummy is the rendernode that actually contains the drawable mesh, and the one we can to 'drag'
-		std::bind(&CommonUtils::DragableObjectCallback, mgo, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4)
-	);
-
-	physicsnodes[0]->SetOnUpdateCallback(
-		std::bind(
-			&CudaSoftBody::UpdateMesh,
-			this,
-			std::placeholders::_1)
-	);
-
-	nodes = new Node[physicsnodes.size()];
-
-	for (int i = 0; i < physicsnodes.size(); ++i) {
-		nodes[i].invmass = physicsnodes[i]->GetInverseMass();
-		nodes[i].pos = vec_to_float(physicsnodes[i]->GetPosition());
-		nodes[i].vel = vec_to_float(physicsnodes[i]->GetLinearVelocity());
-	}
+	obj = rnode;
 
 	gpuErrchk(cudaMalloc(&cuda_nodes,		w * h *	sizeof(Node)));
 	
@@ -255,17 +293,17 @@ CudaSoftBody::~CudaSoftBody()
 {
 }
 
-void CudaSoftBody::UpdateMesh(const Matrix4 &matrix) {
+void CudaSoftBody::UpdateMesh() {
 	int k = 0;
 	for (int i = 0; i < h - 1; ++i) {
 		for (int j = 0; j < w - 1; ++j) {
-			m->vertices[k] = physicsnodes[(i * w) + j]->GetPosition() - *pos;
-			m->vertices[k + 1] = physicsnodes[(i * w) + j + 1]->GetPosition() - *pos;
-			m->vertices[k + 2] = physicsnodes[((i + 1) * w) + j]->GetPosition() - *pos;
+			m->vertices[k] = float_to_vec(nodes[(i * w) + j].pos) - *pos;
+			m->vertices[k + 1] = float_to_vec(nodes[(i * w) + j + 1].pos) - *pos;
+			m->vertices[k + 2] = float_to_vec(nodes[((i + 1) * w) + j].pos) - *pos;
 
-			m->vertices[k + 3] = physicsnodes[(i * w) + j + 1]->GetPosition() - *pos;
-			m->vertices[k + 4] = physicsnodes[((i + 1) * w) + j + 1]->GetPosition() - *pos;
-			m->vertices[k + 5] = physicsnodes[((i + 1) * w) + j]->GetPosition() - *pos;
+			m->vertices[k + 3] = float_to_vec(nodes[(i * w) + j + 1].pos) - *pos;
+			m->vertices[k + 4] = float_to_vec(nodes[((i + 1) * w) + j + 1].pos) - *pos;
+			m->vertices[k + 5] = float_to_vec(nodes[((i + 1) * w) + j].pos) - *pos;
 
 			k += 6;
 		}
@@ -276,38 +314,61 @@ void CudaSoftBody::UpdateMesh(const Matrix4 &matrix) {
 	m->BufferData();
 }
 
-void CudaSoftBody::UpdateSoftBody(float dt)
+void CudaSoftBody::UpdateSoftBody(float dt, vector<PhysicsNode *> cpuparticles)
 {
+	const float fixed_timestep = 1.0f / 60.0f;
+	float baumgarte_factor = 0.05f / fixed_timestep;
+	const float3 gravity = make_float3(0, -0.01f, 0);
 
-	for (int i = 0; i < physicsnodes.size(); ++i) {
-		nodes[i].invmass = physicsnodes[i]->GetInverseMass();
-		nodes[i].pos = vec_to_float(physicsnodes[i]->GetPosition());
-		nodes[i].vel = vec_to_float(physicsnodes[i]->GetLinearVelocity());
+	cuda_cpu_particles = new CPUParticle[cpuparticles.size()];
+	cpu_particles = new CPUParticle[cpuparticles.size()];
+
+	for (int i = 0; i < cpuparticles.size(); ++i) {
+		cpu_particles[i].invmass	= cpuparticles[i]->GetInverseMass();
+		cpu_particles[i].radius		= cpuparticles[i]->GetBoundingRadius();
+		cpu_particles[i].pos		= vec_to_float(cpuparticles[i]->GetPosition());
+		cpu_particles[i].vel		= vec_to_float(cpuparticles[i]->GetLinearVelocity());
 	}
 
+
+	gpuErrchk(cudaMalloc(&cuda_cpu_particles, cpuparticles.size() * sizeof(CPUParticle)));
+
+	gpuErrchk(cudaMemcpy(cuda_cpu_particles, cpu_particles, cpuparticles.size() * sizeof(CPUParticle), cudaMemcpyHostToDevice));
 	gpuErrchk(cudaMemcpy(cuda_nodes, nodes, w * h * sizeof(Node), cudaMemcpyHostToDevice));
 
-	UpdateSpringSet << < w*h, 1 >> > (cuda_nodes, HOR1, w, h, straight_rest_length, diagonal_rest_length, dt);
+	thrust::for_each(
+		thrust::device_ptr<Node>(cuda_nodes),
+		thrust::device_ptr<Node>(cuda_nodes + (w*h)),
+		UpdatePositions(fixed_timestep, gravity));
 
-	UpdateSpringSet << < w*h, 1 >> > (cuda_nodes, HOR2, w, h, straight_rest_length, diagonal_rest_length, dt);
 
-	UpdateSpringSet << < w*h, 1 >> > (cuda_nodes, VERT1, w, h, straight_rest_length, diagonal_rest_length, dt);
 
-	UpdateSpringSet << < w*h, 1 >> > (cuda_nodes, VERT2, w, h, straight_rest_length, diagonal_rest_length, dt);
-
-	UpdateSpringSet << < w, h >> > (cuda_nodes, DIAG_R1, w, h,	straight_rest_length, diagonal_rest_length, dt);
-
-	UpdateSpringSet << < w, h >> > (cuda_nodes, DIAG_R2, w, h,	straight_rest_length, diagonal_rest_length, dt);
 	
-	UpdateSpringSet << < w, h >> > (cuda_nodes, DIAG_L1, w, h,	straight_rest_length, diagonal_rest_length, dt);
 
-	UpdateSpringSet << < w, h >> > (cuda_nodes, DIAG_L2, w, h,	straight_rest_length, diagonal_rest_length, dt);
+	for (int i = 0; i < 10; ++i) {
+		CollideParticles << < w*h, 1 >> > (baumgarte_factor, w*h, cuda_nodes, cuda_cpu_particles, s, cpuparticles.size());
+
+		UpdateSpringSet << < w*h, 1 >> > (cuda_nodes, HOR1, w, h, straight_rest_length, diagonal_rest_length, dt);
+
+		UpdateSpringSet << < w*h, 1 >> > (cuda_nodes, HOR2, w, h, straight_rest_length, diagonal_rest_length, dt);
+
+		UpdateSpringSet << < w*h, 1 >> > (cuda_nodes, VERT1, w, h, straight_rest_length, diagonal_rest_length, dt);
+
+		UpdateSpringSet << < w*h, 1 >> > (cuda_nodes, VERT2, w, h, straight_rest_length, diagonal_rest_length, dt);
+
+		UpdateSpringSet << < w, h >> > (cuda_nodes, DIAG_R1, w, h, straight_rest_length, diagonal_rest_length, dt);
+
+		UpdateSpringSet << < w, h >> > (cuda_nodes, DIAG_R2, w, h, straight_rest_length, diagonal_rest_length, dt);
+
+		UpdateSpringSet << < w, h >> > (cuda_nodes, DIAG_L1, w, h, straight_rest_length, diagonal_rest_length, dt);
+
+		UpdateSpringSet << < w, h >> > (cuda_nodes, DIAG_L2, w, h, straight_rest_length, diagonal_rest_length, dt);
+
+	}
 
 	gpuErrchk(cudaMemcpy(nodes, cuda_nodes, w * h * sizeof(Node), cudaMemcpyDeviceToHost));
-
-	for (int i = 0; i < physicsnodes.size(); ++i) {
-		physicsnodes[i]->SetLinearVelocity(float_to_vec(nodes[i].vel));
-	}
+	gpuErrchk(cudaFree(cuda_cpu_particles));
+	cuda_cpu_particles = NULL;
+	UpdateMesh();
 }
-
 

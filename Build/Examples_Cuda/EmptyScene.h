@@ -37,17 +37,7 @@ public:
 		PhysicsEngine::Instance()->SetOctreeMinSize(1);
 
 		//Who doesn't love finding some common ground?
-		this->AddGameObject(CommonUtils::BuildCuboidObject(
-			"Ground",
-			Vector3(0.0f, 0.0f, 0.0f),
-			Vector3(20.0f, 1.0f, 20.0f),
-			true,
-			0.0f,
-			true,
-			false,
-			Vector4(0.2f, 0.5f, 1.0f, 1.0f)));
-
-		this->AddGameObject(CommonUtils::BuildSphereObject("Floating_sphere",
+		GameObject* sphere = (CommonUtils::BuildSphereObject("Floating_sphere",
 			Vector3(0,10,0),
 			2.0f,									//Radius
 			true,									//Has Physics Object
@@ -55,10 +45,14 @@ public:
 			true,									//Has Collision Shape
 			true,									//Dragable by the user
 			CommonUtils::GenColor(0.5, 0.8f)));	//Color
-	
-		cloth = new CudaSoftBody(25,25,.25,Vector3(0, 10, -10), tex);
 
-		this->AddMultiGameObject(cloth->GetGameObject());
+		sphere->Physics()->SetBoundingRadius(2.1f);
+		
+		this->AddGameObject(sphere);
+
+		cloth = new CudaSoftBody(100,100,.05,Vector3(-2.5,15,-2.5), tex);
+
+		this->AddGameObject(new GameObject("CudaCloth",cloth->GetRenderNode()));
 
 		Scene::OnInitializeScene();
 
@@ -67,11 +61,18 @@ public:
 
 	virtual void OnUpdateScene(float dt) override
 	{
-		cloth->UpdateSoftBody(PhysicsEngine::Instance()->GetDeltaTime());
+		physicsnodes.clear();
+		for (std::vector<GameObject*>::iterator it = m_vpObjects.begin(); it != m_vpObjects.end(); ++it) {
+			if ((*it)->HasPhysics()) {
+				physicsnodes.push_back((*it)->Physics());
+			}
+		}
+		cloth->UpdateSoftBody(PhysicsEngine::Instance()->GetDeltaTime(),physicsnodes);
 	}
 
 private:
 	GLuint					tex;
 	CudaSoftBody *			cloth;
+	vector<PhysicsNode *>	physicsnodes;
 
 };
