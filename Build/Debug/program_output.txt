@@ -1,1 +1,0 @@
-[10:47:38] [SceneManager] Closing scene manager
