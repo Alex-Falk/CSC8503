@@ -375,13 +375,14 @@ Mesh* Mesh::GenerateMesh(int w, int h, float s) {
 				m->vertices[c + 4] = Vector3(s*(i + 1),s*(j + 1), 0.0f);
 				m->vertices[c + 5] = Vector3(s*(i + 1), s*j, 0.0f);
 
-				m->textureCoords[c] = Vector2(0.0f, 0.0f);
-				m->textureCoords[c + 1] = Vector2(0.0f, 1.0f);
-				m->textureCoords[c + 2] = Vector2(1.0f, 0.0f);
 
-				m->textureCoords[c + 3] = Vector2(0.0f, 1.0f);
-				m->textureCoords[c + 4] = Vector2(1.0f, 1.0f);
-				m->textureCoords[c + 5] = Vector2(1.0f, 0.0f);
+				m->textureCoords[c]		= Vector2((float)i / (float)w		, (float)j / (float)h);
+				m->textureCoords[c + 1] = Vector2((float)i / (float)w		, (float)(j + 1) / (float)h);
+				m->textureCoords[c + 2] = Vector2((float)(i + 1) / (float)w	, (float)j / (float)h);
+
+				m->textureCoords[c + 3] = Vector2((float)i / (float)w		, (float)(j+1) / (float)h);
+				m->textureCoords[c + 4] = Vector2((float)(i + 1) / (float)w	, (float)(j + 1) / (float)h);
+				m->textureCoords[c + 5] = Vector2((float)(i + 1) / (float)w	, (float)j / (float)h);
 
 				c += 6;
 			}

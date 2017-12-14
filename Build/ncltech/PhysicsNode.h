@@ -113,6 +113,7 @@ public:
 
 	inline bool					IsGood()					const { return isGood; }
 
+	inline std::string			getName()					const { return friendly_name; }
 
 
 
@@ -137,6 +138,8 @@ public:
 	inline void SetIntegrator(Integrator i)							{ integrator = i; }
 
 	inline void SetGood(bool b)										{ isGood = b; }
+
+	inline void SetName(std::string name)							{ friendly_name = name; }
 
 	inline void SetCollisionShape(CollisionShape* colShape)
 	{ 
@@ -205,4 +208,6 @@ protected:
 
 
 	bool				isGood = false;
+
+	std::string			friendly_name;
 };

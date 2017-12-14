@@ -76,15 +76,28 @@ void State::FollowPath() {
 					Vector3 posB = ((*it)->_pos);
 					int idxB = (*it)->_idx;
 
-					if (it != h->path.end()) {
-						h->lerp_factor += 0.05f;
-						h->current_pos = InterpolatePositionLinear(posA, posB, h->lerp_factor);
+					if (idxA + 1 == idxB && (posA - h->pnode->GetPosition()).LengthSQ() <= 0.002f) {
+						h->pnode->SetLinearVelocity(Vector3(1, 0, 0));
+					}
+					else if (idxA - 1 == idxB && (posA - h->pnode->GetPosition()).LengthSQ() <= 0.002f) {
+						h->pnode->SetLinearVelocity(Vector3(-1, 0, 0));
+					}
+					else if (idxA + 10 == idxB && (posA - h->pnode->GetPosition()).LengthSQ() <= 0.002f) {
+						h->pnode->SetLinearVelocity(Vector3(0, 1, 0));
+					}
+					else if (idxA - 10 == idxB && (posA - h->pnode->GetPosition()).LengthSQ() <= 0.002f) {
+						h->pnode->SetLinearVelocity(Vector3(0, -1, 0));
 					}
 
-					if (h->lerp_factor >= 1.0f) {
+					Vector3 vel = h->pnode->GetLinearVelocity();
+
+					if ((posB - h->pnode->GetPosition()).LengthSQ() < (posB - posA).LengthSQ() / 4.0f) {
 						h->current_idx = idxB;
-						h->lerp_factor = 0.0f;
 					}
+				}
+				else if ((posA - h->pnode->GetPosition()).LengthSQ() < 0.002f) {
+					h->pnode->SetLinearVelocity(Vector3(0, 0, 0));
+					h->pnode->SetPosition(posA);
 				}
 				break;
 			}

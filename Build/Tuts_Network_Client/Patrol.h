@@ -8,6 +8,7 @@ public:
 
 	virtual void On_Initialize() {
 		_isActive = true;
+		UpdateAStarPreset(h->current_idx, h->PickRandomNode());
 	}
 
 	virtual void Update() {

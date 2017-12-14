@@ -9,7 +9,7 @@ Coursework 1:
         ✔ At any point, a player should be able to end their session by pressing the 'X' key. The program should exit cleanly. @done (2017-12-12 18:06:52)
 
         Own TODOs:
-        ☐ Texture projectile @high @today 
+        ✔ Texture projectile @high @today @done (2017-12-14 18:36:49)
         ☐ Create Scene for good/bad @low @today 
         ☐ Sphere-plane check example @low @today 
         
@@ -19,7 +19,7 @@ Coursework 1:
         ✔ Your simulation will include broadphase culling of some form, providing a meaningful performance benefit. @done (2017-12-12 01:29:47)
         ✔ One scene shall include a GPU-modelled soft body (e.g. a piece of non-tearable cloth). @done (2017-12-12 01:29:49)
 
-        ☐ Put colissions from11 softbody on gpu @low @today 
+        ✔ Put colissions from11 softbody on gpu @low @today @done (2017-12-14 17:33:51)
     
         Extended Features (Up to 30 Marks):
         ✔ One scene shall include a ball pool featuring over 100 colliders within a box. All physics computation for this ball pool, including collision detection and response, shall take place on the GPU. @done (2017-12-12 01:31:57)
@@ -49,7 +49,7 @@ Coursework Part B:
         ✔ Interpolate for smooth movement @done (2017-12-13 22:20:44)
         ✔ Stop sending star and end nodes of all clients to all other clients, keep those client specific (and serverside) @high @done (2017-12-13 10:48:12)
         ✔ Get rid of useless packets @high @today @done (2017-12-13 10:48:09)
-        ☐ Minor tweaks to movement so that we don't get jumping @today @low 
+        ✔ Minor tweaks to movement so that we don't get jumping @today @low @done (2017-12-14 16:06:07)
 
     Advanced Features (Up to 20 Marks):
         Server Features:
@@ -70,7 +70,7 @@ Coursework Part B:
         Server Features:
         ☐ ​The server will accept client instruction to change the environment by turning a passable square into a wall (a cube shall grow out of the ground). When this occurs, a nearby wall square should become passable. This will trigger a recomputation of the Navigation Mesh, with the updated mesh broadcast to all clients. @today @high 
         ☐ The server shall, in some way, manage the possibility that a cube might be spawned in an occupied grid square.
-        ☐ Client avatars can now physically interact, with all physics computation (collision detection and response, direction changes) taking place on the server. @today @high 
+        ✔ Client avatars can now physically interact, with all physics computation (collision detection and response, direction changes) taking place on the server. @today @high @done (2017-12-14 12:34:00)
         ☐ The server shall broadcast higher-order data to clients, not just position updates, in order to facilitate dead reckoning. 
         Client Features:
         ☐ ​The client shall employ dead reckoning to approximate the position and direction of all client avatars, tending towards eventual consistency. @today 

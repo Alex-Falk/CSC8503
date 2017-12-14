@@ -276,7 +276,7 @@ CudaSoftBody::CudaSoftBody(int w, int h, float s, Vector3 pos, GLuint tex)
 
 	m = Mesh::GenerateMesh(w - 1, h - 1, s);
 	m->SetTexture(tex);
-	RenderNode* dummy = new RenderNode(m, Vector4(1, 0, 0, 1));
+	RenderNode* dummy = new RenderNode(m, Vector4(1, 1, 1, 1));
 	rnode->AddChild(dummy);
 	dummy->SetCulling(false);
 

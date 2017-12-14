@@ -66,6 +66,7 @@ int Server::ServerLoop() {
 				case START_POS:
 				{
 					PosStruct p = Recieve_pos(evnt);
+					avatars[ID] = OUT_OF_RANGE;
 					generator->SetStartNode(ID, p.idx);
 					UpdateAStarPreset(ID);
 					SendPath(ID);
@@ -132,7 +133,8 @@ int Server::ServerLoop() {
 					avatars[ID] = stoi(packet);
 					if (!avatar_obj[ID]) {
 						PhysicsNode * pnode = new PhysicsNode();
-						CollisionShape * pColshape = new CuboidCollisionShape(Vector3(0.5f,0.5f,0.5f));
+						pnode->SetName("Avatar");
+						CollisionShape * pColshape = new CuboidCollisionShape(Vector3(0.33f,0.33f,0.33f));
 						pnode->SetCollisionShape(pColshape);
 						pnode->SetInverseMass(1.0f/10.0f);
 						pnode->SetBoundingRadius(2.0f);
@@ -145,7 +147,6 @@ int Server::ServerLoop() {
 								ID
 								));
 						avatar_obj[ID] = pnode;
-
 						PhysicsEngine::Instance()->AddPhysicsObject(pnode);
 						
 					}
@@ -313,7 +314,7 @@ void Server::SendHazardPosition(int i) {
 	string s = to_string(HAZARD_POS_UPDATE) + ":";
 
 	for (int j = 0; j < HAZARD_NUM; ++j) {
-		Vector3 pos = hazards[j]->current_pos;
+		Vector3 pos = hazards[j]->pnode->GetPosition();
 		s += to_string(hazards[j]->current_idx) + " " + to_string(pos.x) + " " + to_string(pos.y) + " " + to_string(pos.z) + " ";
 	}
 
@@ -327,9 +328,11 @@ void Server::SendHazardPosition(int i) {
 
 void Server::FollowPath(int i) {
 
+	bool on_path = false;
 	if (avatar_obj[i]) {
 		for (std::list<const GraphNode*>::iterator it = paths[i].begin(); it != paths[i].end();) {
 			if ((*it)->_idx == avatars[i]) {
+				on_path = true;
 				Vector3 posA = ((*it)->_pos);
 				int idxA = (*it)->_idx;
 				++it;
@@ -355,35 +358,6 @@ void Server::FollowPath(int i) {
 					if ((posB - avatar_obj[i]->GetPosition()).LengthSQ() < (posB - posA).LengthSQ() / 4.0f) {
 						avatars[i] = idxB;
 					}
-					else if ((posA - avatar_obj[i]->GetPosition()).LengthSQ() > (posB - posA).LengthSQ() && (posA - avatar_obj[i]->GetPosition()).Normalise() == (vel).Normalise()) {
-						avatar_obj[i]->SetLinearVelocity(avatar_obj[i]->GetLinearVelocity() * -1);
-
-						Vector3 avatarPos = avatar_obj[i]->GetPosition();
-						int avatarIdx = avatars[i];
-						GraphNode * current = generator->GetNode(avatarIdx);
-						GraphNode * other = generator->GetNode(avatarIdx - 1);
-
-						//if ((avatarPos - other->_pos).LengthSQ() > (current->_pos - other->_pos).LengthSQ() / 4.0f) {
-						//	avatars[i] = other->_idx;
-						//}
-
-						//other = generator->GetNode(avatarIdx + 1);
-						//if ((avatarPos - other->_pos).LengthSQ() > (current->_pos - other->_pos).LengthSQ() / 4.0f) {
-						//	avatars[i] = other->_idx; 
-						//}
-
-						//other = generator->GetNode(avatarIdx + generator->size);
-						//if ((avatarPos - other->_pos).LengthSQ() > (current->_pos - other->_pos).LengthSQ() / 4.0f) { 
-						//	avatars[i] = other->_idx;
-						//}
-
-						//other = generator->GetNode(avatarIdx - generator->size);
-						//if ((avatarPos - other->_pos).LengthSQ() > (current->_pos - other->_pos).LengthSQ() / 4.0f) { 
-						//	avatars[i] = other->_idx;
-						//}
-
-
-					}
 				}
 				else if ((posA - avatar_obj[i]->GetPosition()).LengthSQ() < 0.002f) {
 					avatar_obj[i]->SetLinearVelocity(Vector3(0, 0, 0));
@@ -395,6 +369,12 @@ void Server::FollowPath(int i) {
 			}
 
 		}
+
+		if (!on_path) {
+			UpdateAStarPreset(i);
+			SendPath(i);
+		}
+
 		UpdateHazards();
 	}
 
@@ -405,18 +385,9 @@ void Server::StartFollowing(int i) {
 	Vector3 pos = (*it)->_pos;
 	int idx = (*it)->_idx;
 
-	if (pos.x < avatar_obj[i]->GetPosition().x) {
-		avatar_obj[i]->SetLinearVelocity(Vector3(1, 0, 0));
-	}
-	else if (pos.x > avatar_obj[i]->GetPosition().x) {
-		avatar_obj[i]->SetLinearVelocity(Vector3(-1, 0, 0));
-	}
-	else if (pos.y < avatar_obj[i]->GetPosition().y) {
-		avatar_obj[i]->SetLinearVelocity(Vector3(0, 1, 0));
-	}
-	else if (pos.y > avatar_obj[i]->GetPosition().y) {
-		avatar_obj[i]->SetLinearVelocity(Vector3(0, -1, 0));
-	}
+	Vector3 newvel = (avatar_obj[i]->GetPosition() - pos).Normalise();
+
+	avatar_obj[i]->SetLinearVelocity(-newvel);
 }
 
 void Server::InitializeArrayElements(int id) {
@@ -516,16 +487,58 @@ void Win32_PrintAllAdapterIPAddresses()
 }
 
 bool Server::ColissionCallback(PhysicsNode* self, PhysicsNode* other,int self_idx) {
-	Vector3 pos1 = self->GetPosition();
-	Vector3 pos2 = other->GetPosition();
+	if (other->getName() == "Avatar") {
+		Vector3 pos1 = self->GetPosition();
+		Vector3 pos2 = other->GetPosition();
 
-	Vector3 vel1 = self->GetLinearVelocity();
-	Vector3 vel2 = other->GetLinearVelocity();
+		Vector3 vel1 = self->GetLinearVelocity();
+		Vector3 vel2 = other->GetLinearVelocity();
 
-	if ((pos2 - pos1).Normalise() == vel1.Normalise() || (pos1 - pos2).Normalise() == vel2.Normalise()) {
-		self->SetLinearVelocity(vel1*-1);
-		other->SetLinearVelocity(vel2*-1);
+		self->SetLinearVelocity(Vector3(0, 0, 0));
+		int other_idx;
+
+		for (int i = 0; i < avatar_obj.size(); ++i) {
+			if (other == avatar_obj[i]) {
+				other_idx = i;
+				break;
+			}
+		}
+
+		if ((pos2 - pos1).Normalise() == vel1.Normalise() || vel1.LengthSQ() == 0) {
+
+			if (avatars[self_idx] != avatars[other_idx]) {
+				avatar_obj[self_idx]->SetPosition(avatar_obj[self_idx]->GetPosition() - (pos2 - pos1).Normalise() * 0.1f);
+				generator->SetStartNode(avatars[self_idx], self_idx);
+				generator->SetEndNode(avatars[self_idx], self_idx);
+				UpdateAStarPreset(self_idx);
+				SendPath(self_idx);
+				//StartFollowing(self_idx);
+			}
+
+			else {
+				auto start = paths[self_idx].begin();
+				++start;
+				for (auto it = start; it != paths[self_idx].end(); ++it) {
+					int i = (*it)->_idx;
+					if (i == avatars[self_idx]) {
+						--it;
+						i = (*it)->_idx;
+						generator->SetStartNode(i, self_idx);
+						generator->SetEndNode(i, self_idx);
+						UpdateAStarPreset(self_idx);
+						SendPath(self_idx);
+						//StartFollowing(self_idx);
+						return false;
+					}
+				}
+			}
+		}
 	}
-		
+
+	else if (other->getName() == "Hazard") {
+		InitializeArrayElements(self_idx);
+		UpdateHazards();
+	}
+
 	return false;
 }

@@ -4,6 +4,11 @@
 void Chase::Update() {
 	h->last_known_pos = h->avatar_idcs[h->target];
 
+	if (h->avatar_idcs[h->target] == OUT_OF_RANGE) {
+		h->SwitchState(PATROL);
+		return;
+	}
+
 	bool los = Check_Los(h->avatar_idcs[h->target]);
 	if (!los) {
 		_isActive = false;

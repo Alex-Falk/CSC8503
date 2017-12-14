@@ -15,7 +15,7 @@ public:
 	const MazeGenerator * maze;
 
 	int current_idx;
-	Vector3 current_pos;
+	PhysicsNode * pnode;
 
 	// Pathfinding
 	int last_known_pos = OUT_OF_RANGE;
@@ -41,6 +41,8 @@ public:
 
 	virtual void SwitchState(State_enum s);
 
+	bool CollisionCallback(PhysicsNode * self, PhysicsNode * collidingObject);
+
 	virtual void UpdateAvatars(vector<int> avatars) {
 		avatar_idcs = avatars;
 	}
@@ -56,7 +58,7 @@ public:
 			current_idx = PickRandomNode();
 		else
 			current_idx = i;
-		current_pos = maze->GetNode(current_idx)->_pos;
+		pnode->SetPosition(maze->GetNode(current_idx)->_pos);
 	}
 
 };

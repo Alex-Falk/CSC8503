@@ -1,3 +1,2 @@
-﻿  SceneManager.cpp
-d:\projects\csc8503\build\ncltech\SceneManager.h(53): warning C4267: 'return': conversion from 'size_t' to 'uint', possible loss of data
+﻿  CommonMeshes.cpp
   ncltech.vcxproj -> D:\Projects\CSC8503\Build\x64\Release\ncltech.lib

@@ -4,6 +4,7 @@
 #include "Chase.h"
 #include "State.h"
 #include "Find.h"
+#include <ncltech\CuboidCollisionShape.h>
 
 Hazard::Hazard(MazeGenerator * maze) {
 	this->maze = maze;
@@ -14,6 +15,21 @@ Hazard::Hazard(MazeGenerator * maze) {
 	pursue_find_state	= new Find(this);
 
 	search_as			= new SearchAStar();
+	
+	pnode				= new PhysicsNode();
+	pnode->SetName("Hazard");
+	CollisionShape * pColshape = new CuboidCollisionShape(Vector3(0.33f, 0.33f, 0.33f));
+	pnode->SetCollisionShape(pColshape);
+	pnode->SetInverseMass(1.0f / 10.0f);
+	pnode->SetBoundingRadius(2.0f);
+	pnode->SetOnCollisionCallback(
+		std::bind(
+			&Hazard::CollisionCallback,
+			this,
+			std::placeholders::_1,
+			std::placeholders::_2));
+
+	PhysicsEngine::Instance()->AddPhysicsObject(pnode);
 
 	current_state		= patrol_state;
 }
@@ -34,22 +50,29 @@ void Hazard::SwitchState(State_enum s) {
 	switch (s) {
 	case PATROL:
 		current_state = patrol_state;
-		cout << "Now Patrolling\n";
 		break;
 	case PURSUE:
 		current_state = pursue_state;
-		cout << "Now Pursuing\n";
 		break;
 	case PURSUE_CHASE:
 		current_state = pursue_chase_state;
-		cout << "Now Chasing\n";
 		break;
 	case PURSUE_FIND:
 		current_state = pursue_find_state;
-		cout << "Now Finding\n";
 		break;
 	}
 
 	current_state->On_Initialize();
 }
 
+
+bool Hazard::CollisionCallback(PhysicsNode * self, PhysicsNode * collidingObject) {
+	if (collidingObject->getName() == "Hazard") {
+		//current_state->UpdateAStarPreset(current_idx, PickRandomNode());
+	}
+	if (collidingObject->getName() == "Avatar") {
+		SwitchState(PATROL);
+		current_state->UpdateAStarPreset(current_idx, PickRandomNode());
+	}
+	return false;
+}
