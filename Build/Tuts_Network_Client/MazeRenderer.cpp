@@ -27,6 +27,40 @@ MazeRenderer::MazeRenderer(MazeGenerator* gen, Mesh* wallmesh)
 	}
 }
 
+void MazeRenderer::SetGenerator(MazeGenerator* gen, Net1_Client * c) {
+	if (gen) {
+		maze = gen;
+	}
+	
+
+	delete[] flat_maze;
+	flat_maze = NULL;
+
+	if (Render()->GetChildWithName("MazeNodes")) {
+		RenderNode * r = Render()->GetChildWithName("MazeNodes");
+		for (auto it = r->GetChildIteratorStart(); it != r->GetChildIteratorEnd(); ++it) {
+			ScreenPicker::Instance()->UnregisterNodeForMouseCallback((*it));
+		}
+
+		Render()->RemoveChild(Render()->GetChildWithName("MazeNodes"));
+	}
+
+	GraphicsPipeline::Instance()->RemoveRenderNode(renderNode);
+	delete renderNode;
+	renderNode = NULL;
+	this->SetRender(new RenderNode());
+
+	uint num_walls = Generate_FlatMaze();
+
+	wall_descriptors.reserve(num_walls);
+
+	Generate_ConstructWalls();
+
+	Generate_BuildRenderNodes();
+
+	SetMeshRenderNodes(c);
+}
+
 MazeRenderer::~MazeRenderer()
 {
 	mesh = NULL;
@@ -40,6 +74,8 @@ MazeRenderer::~MazeRenderer()
 
 		Render()->RemoveChild(Render()->GetChildWithName("MazeNodes"));
 	}
+
+	GraphicsPipeline::Instance()->RemoveRenderNode(Render());
 
 	if (flat_maze)
 	{
@@ -81,24 +117,27 @@ void MazeRenderer::DrawFinalPath(std::list<const GraphNode*> path, float line_wi
 
 	Matrix4 transform = this->Render()->GetWorldTransform();
 
-	for (std::list<const GraphNode*>::iterator it = path.begin(); it != path.end();) {
-		Vector3 pos1 = (*it)->_pos;
-		++it;
-		if (it == path.end()) { break; }
-		Vector3 pos2 = (*it)->_pos;
-		
-		Vector3 start = transform * Vector3(
-			(pos1.x + 0.5f) * grid_scalar,
-			0.1f,
-			(pos1.y + 0.5f) * grid_scalar);
+	if (path.size() > 0) {
+		for (std::list<const GraphNode*>::iterator it = path.begin(); it != path.end();) {
+			Vector3 pos1 = (*it)->_pos;
+			++it;
+			if (it == path.end()) { break; }
+			Vector3 pos2 = (*it)->_pos;
 
-		Vector3 end = transform * Vector3(
-			(pos2.x + 0.5f) * grid_scalar,
-			0.1f,
-			(pos2.y + 0.5f) * grid_scalar);
+			Vector3 start = transform * Vector3(
+				(pos1.x + 0.5f) * grid_scalar,
+				0.1f,
+				(pos1.y + 0.5f) * grid_scalar);
 
-		NCLDebug::DrawThickLine(start, end, line_width, CommonUtils::GenColor(0.8f));
+			Vector3 end = transform * Vector3(
+				(pos2.x + 0.5f) * grid_scalar,
+				0.1f,
+				(pos2.y + 0.5f) * grid_scalar);
+
+			NCLDebug::DrawThickLine(start, end, line_width, CommonUtils::GenColor(0.8f));
+		}
 	}
+
 }
 
 void MazeRenderer::SetMeshRenderNodes(Net1_Client * c) {
@@ -119,7 +158,7 @@ void MazeRenderer::SetMeshRenderNodes(Net1_Client * c) {
 	RenderNode * mazenodes = new RenderNode();
 	mazenodes->SetName("MazeNodes");
 
-	for (int i = 0; i < size*size; ++i) {
+	for (int i = 0; i < (size)*(size); ++i) {
 		Vector3 p = allNodes[i]._pos;
 
 		Vector3 cellpos = Vector3(
@@ -147,10 +186,9 @@ void MazeRenderer::SetMeshRenderNodes(Net1_Client * c) {
 				&Net1_Client::ClickableLocationCallback,
 				c,
 				i
-				)
-			);
+			)
+		);
 	}
-
 	Render()->AddChild(mazenodes);
 }
 

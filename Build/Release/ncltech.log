@@ -1,2 +1,7 @@
-﻿  NetworkBase.cpp
+﻿  OcTree.cpp
+d:\projects\csc8503\build\ncltech\MultiGameObject.h(37): warning C4018: '<': signed/unsigned mismatch
+OcTree.cpp(20): warning C4018: '>': signed/unsigned mismatch
+OcTree.cpp(120): warning C4018: '>': signed/unsigned mismatch
+OcTree.cpp(287): warning C4018: '>': signed/unsigned mismatch
+OcTree.cpp(290): warning C4018: '>': signed/unsigned mismatch
   ncltech.vcxproj -> D:\Projects\CSC8503\Build\Release\ncltech.lib

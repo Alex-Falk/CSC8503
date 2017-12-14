@@ -56,7 +56,7 @@ protected:
 
 	// Maze
 	MazeGenerator* generator;
-	MazeRenderer* maze;
+	MazeRenderer* maze = nullptr;
 	Mesh* wallmesh;
 	int size = 10;
 	float density = 0.5f;

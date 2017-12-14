@@ -1,4 +1,7 @@
-﻿  SphereCollisionShape.cpp
+﻿  CollisionDetectionSAT.cpp
+  Generating Code...
+  Compiling...
+  SphereCollisionShape.cpp
   SoftBody.cpp
 d:\projects\csc8503\build\ncltech\multigameobject.h(37): warning C4018: '<': signed/unsigned mismatch
   ScreenPicker.cpp
@@ -20,6 +23,5 @@ d:\projects\csc8503\build\ncltech\octree.cpp(282): warning C4018: '>': signed/un
   CuboidCollisionShape.cpp
   CommonUtils.cpp
   CommonMeshes.cpp
-  CollisionDetectionSAT.cpp
   Generating Code...
   ncltech.vcxproj -> D:\Projects\CSC8503\Build\Debug\ncltech.lib

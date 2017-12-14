@@ -50,8 +50,8 @@ int ClientLoop(Net1_Client * c)
 		SceneManager::Instance()->GetCurrentScene()->FireOnSceneUpdate(dt);
 
 		//Update Physics
-		PhysicsEngine::Instance()->Update(dt);
-		PhysicsEngine::Instance()->DebugRender();
+		//PhysicsEngine::Instance()->Update(dt);
+		//PhysicsEngine::Instance()->DebugRender();
 
 		//Render Scene
 

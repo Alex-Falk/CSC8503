@@ -67,6 +67,8 @@ public:
 
 	Vector3 InterpolatePositionLinear(Vector3 posA, Vector3 posB, float factor);
 
+	bool ColissionCallback(PhysicsNode * self, PhysicsNode * other, int self_idx);
+
 	// Can either broadcast or send individually
 	void SendWalls			(int i = OUT_OF_RANGE);
 	void SendAvatarPositions(int i = OUT_OF_RANGE);
@@ -74,6 +76,7 @@ public:
 
 	// Sent individually
 	void FollowPath				(int i);
+	void StartFollowing(int i);
 	void SendPath				(int i);
 	void UpdateAStarPreset		(int i);
 

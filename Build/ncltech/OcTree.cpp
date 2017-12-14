@@ -182,10 +182,18 @@ std::vector<CollisionPair> OcTree::CreatePairs(Node * node)
 						pnodeB = node->elements[j];
 
 						//Check they both atleast have collision shapes
+						bool siblings;
+						if (pnodeA->GetParent()) {
+							siblings = pnodeA->GetParent()->SiblingsCollide();
+						}
+						else {
+							siblings = true;
+						}
+
 						if (pnodeA->GetCollisionShape() != NULL
 							&& pnodeB->GetCollisionShape() != NULL
 							&& (pnodeA->GetPosition() - pnodeB->GetPosition()).Length() <= pnodeA->GetBoundingRadius() + pnodeB->GetBoundingRadius()
-							&& (pnodeA->GetParent() != pnodeB->GetParent() || (pnodeA->GetParent() == pnodeB->GetParent() && pnodeA->GetParent()->SiblingsCollide()))
+							&& (pnodeA->GetParent() != pnodeB->GetParent() || (pnodeA->GetParent() == pnodeB->GetParent() && siblings))
 							)
 						{
 							CollisionPair cp;

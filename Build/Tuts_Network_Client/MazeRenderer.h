@@ -23,6 +23,7 @@ class MazeRenderer : public GameObject
 {
 public:
 	MazeRenderer(MazeGenerator* gen, Mesh* wallmesh = CommonMeshes::Cube());
+	void SetGenerator(MazeGenerator * gen, Net1_Client * c);
 	virtual ~MazeRenderer();
 
 	//The search history draws from edges because they already store the 'to'

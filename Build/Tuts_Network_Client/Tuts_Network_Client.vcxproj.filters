@@ -39,6 +39,15 @@
     <ClCompile Include="Pursue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Hazard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Chase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="find.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Net1_Client.h">
@@ -84,6 +93,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Find.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Hazard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -100,7 +100,8 @@ Net1_Client::Net1_Client(const std::string& friendly_name)
 
 void Net1_Client::OnInitializeScene()
 {
-	generator = new MazeGenerator;
+	generator = new MazeGenerator();
+	generator->Generate(10, 0);
 
 	//--------------------------------------------------------------------------------------------//
 	//Initialize Client Network
@@ -141,6 +142,7 @@ void Net1_Client::OnInitializeScene()
 		Vector4(0.2f, 0.5f, 1.0f, 1.0f));
 
 	this->AddGameObject(ground);	
+
 }
 
 void Net1_Client::OnCleanupScene()
@@ -269,10 +271,12 @@ void Net1_Client::ProcessNetworkEvent(const ENetEvent& evnt)
 					avatar_positions[i] = ps[i].pos;
 				}
 
+				if (root->GetChildWithName("Avatar_" + to_string(i))) {
+					root->RemoveChild(root->GetChildWithName("Avatar_" + to_string(i)));
+				}
+
 				if (avatars[i] != OUT_OF_RANGE) {
-					if (root->GetChildWithName("Avatar_" + to_string(i))) {
-						root->RemoveChild(root->GetChildWithName("Avatar_" + to_string(i)));
-					}
+
 
 					cube = new RenderNode(CommonMeshes::Cube(), Vector4(0.0f, 1.0f, 0.0f, 1.0f));
 					cube->SetName("Avatar_" + to_string(i));
@@ -330,9 +334,9 @@ void Net1_Client::ApplyMaze(MazeStruct m) {
 	this->RemoveGameObject(FindGameObject("maze"));
 	delete maze;
 	maze = nullptr;
-
+	
 	generator->Generate(m.size, 0);
-
+	
 	// Sets the start and end nodes to -1 which means they will not be put into the maze
 	generator->SetStartNode(OUT_OF_RANGE);
 	generator->SetEndNode(OUT_OF_RANGE);
@@ -347,6 +351,7 @@ void Net1_Client::ApplyMaze(MazeStruct m) {
 	}
 
 	maze = new MazeRenderer(generator, wallmesh);
+	maze->UpdateRenderer();
 	maze->SetMeshRenderNodes(this);
 	maze->Render()->SetTransform(
 		Matrix4::Translation(Vector3(-m.size/2.0f,0,-m.size/2.0f)) * 
@@ -409,7 +414,7 @@ void Net1_Client::HandleKeyboardInputs()
 {
 	GraphNode * start = generator->GetStartNode();
 	GraphNode * end = generator->GetGoalNode();
-
+	
 	if (Window::GetKeyboard()->KeyHeld(KEYBOARD_CAPITAL))
 	{
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_LEFT))
@@ -581,7 +586,6 @@ Vector3 Net1_Client::Maze_Scale() {
 //--------------------------------------------------------------------------------------------//
 void Net1_Client::ClickableLocationCallback(int idx) {
 	if (Window::GetMouse()->ButtonDown(MOUSE_LEFT)) {
-		//generator->endnodes[ID] = &generator->allNodes[idx];
 		generator->SetEndNode(idx);
 		if (avatars[ID] != OUT_OF_RANGE) {
 			generator->SetStartNode(avatars[ID]);
@@ -592,12 +596,7 @@ void Net1_Client::ClickableLocationCallback(int idx) {
 		maze->UpdateRenderer();
 	}
 	else if (Window::GetMouse()->ButtonDown(MOUSE_RIGHT)) {
-		//generator->startnodes[ID] = &generator->allNodes[idx];
 		generator->SetStartNode(idx);
-		//avatars[ID] = OUT_OF_RANGE;
-		//if (maze->Render()->GetChildWithName("Avatar_" + to_string(ID))) {
-		//	maze->Render()->RemoveChild(maze->Render()->GetChildWithName("Avatar_" + to_string(ID)));
-		//}
 		SendAvatarLocation();
 		SendStartPosition();
 		maze->UpdateRenderer();
