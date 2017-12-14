@@ -114,10 +114,12 @@ void MazeRenderer::DrawSearchHistory(const SearchHistory& history, float line_wi
 void MazeRenderer::DrawFinalPath(std::list<const GraphNode*> path, float line_width,int size)
 {
 	float grid_scalar = 1.0f / (float)size;
+	float colour_factor = 0.66f / (float)path.size();
 
 	Matrix4 transform = this->Render()->GetWorldTransform();
 
 	if (path.size() > 0) {
+		int i = 0;
 		for (std::list<const GraphNode*>::iterator it = path.begin(); it != path.end();) {
 			Vector3 pos1 = (*it)->_pos;
 			++it;
@@ -134,7 +136,8 @@ void MazeRenderer::DrawFinalPath(std::list<const GraphNode*> path, float line_wi
 				0.1f,
 				(pos2.y + 0.5f) * grid_scalar);
 
-			NCLDebug::DrawThickLine(start, end, line_width, CommonUtils::GenColor(0.8f));
+			NCLDebug::DrawThickLine(start, end, line_width, CommonUtils::GenColor(0.66f + i * colour_factor));
+			++i;
 		}
 	}
 

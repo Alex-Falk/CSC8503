@@ -66,7 +66,6 @@ int Server::ServerLoop() {
 				case START_POS:
 				{
 					PosStruct p = Recieve_pos(evnt);
-					avatars[ID] = OUT_OF_RANGE;
 					generator->SetStartNode(ID, p.idx);
 					UpdateAStarPreset(ID);
 					SendPath(ID);
@@ -189,10 +188,10 @@ int Server::ServerLoop() {
 			accum_time = 0.0f;
 			SendAvatarPositions();
 
-			for (int i = 0; i < HAZARD_NUM; ++i) {
-				hazards[i]->Update();
-				SendHazardPosition();
-			}
+for (int i = 0; i < HAZARD_NUM; ++i) {
+	hazards[i]->Update();
+	SendHazardPosition();
+}
 		}
 
 
@@ -213,7 +212,7 @@ void Server::SendWalls(int i)
 
 	if (i != OUT_OF_RANGE)
 		enet_peer_send(&server->m_pNetwork->peers[i], 0, wall);
-	else 
+	else
 		enet_host_broadcast(server->m_pNetwork, 0, wall);
 }
 
@@ -230,12 +229,15 @@ void Server::SendPath(int i) {
 	string str = to_string(PATH) + ":";
 
 	if (paths[i].size() > 0) {
-		
-		std::list<const GraphNode*>::iterator it = paths[i].begin();
-		for (int j = 1; j < paths[i].size(); ++j) {
-			str = str + to_string((*it)->_idx) + " ";
-			++it;
+		auto new_path = paths[i];
+		std::list<const GraphNode*>::iterator it = new_path.begin();
+		if (it != new_path.end()) {
+			for (int j = 1; j < new_path.size(); ++j) {
+				str = str + to_string((*it)->_idx) + " ";
+				++it;
+			}
 		}
+
 	}
 
 	ENetPacket* path_packet = enet_packet_create(str.c_str(), sizeof(char)*str.size(), 0);
@@ -254,10 +256,10 @@ void Server::UpdateAStarPreset(int i)
 	default:
 	case 0:
 		//Only distance from the start node matters - fans out from start node
-weightingG = 1.0f;
-weightingH = 0.0f;
-astar_preset_text = "Dijkstra - None heuristic search";
-break;
+		weightingG = 1.0f;
+		weightingH = 0.0f;
+		astar_preset_text = "Dijkstra - None heuristic search";
+		break;
 	case 1:
 		//Only distance to the end node matters
 		weightingG = 0.0f;
@@ -284,8 +286,15 @@ break;
 
 	if (start && end) {
 		search_as->FindBestPath(start, end);
+		paths[i] = search_as->GetFinalPath();
+		/*if (paths[i].size() > 2) {
+			paths[i] = StringPulling(i);
+		}*/
 	}
-	paths[i] = search_as->GetFinalPath();
+	else {
+		paths[i] = PATH_LIST(0);
+	}
+
 
 }
 
@@ -340,18 +349,22 @@ void Server::FollowPath(int i) {
 					Vector3 posB = ((*it)->_pos);
 					int idxB = (*it)->_idx;
 
-					if (idxA + 1 == idxB && (posA - avatar_obj[i]->GetPosition()).LengthSQ() <= 0.002f) {
-						avatar_obj[i]->SetLinearVelocity(Vector3(1, 0, 0));
+					if ((posA - avatar_obj[i]->GetPosition()).LengthSQ() <= 0.002f) {
+						avatar_obj[i]->SetLinearVelocity((posB - posA).Normalise());
 					}
-					else if (idxA - 1 == idxB && (posA - avatar_obj[i]->GetPosition()).LengthSQ() <= 0.002f) {
-						avatar_obj[i]->SetLinearVelocity(Vector3(-1, 0, 0));
-					}
-					else if (idxA + 10 == idxB && (posA - avatar_obj[i]->GetPosition()).LengthSQ() <= 0.002f) {
-						avatar_obj[i]->SetLinearVelocity(Vector3(0, 1, 0));
-					}
-					else if (idxA - 10 == idxB && (posA - avatar_obj[i]->GetPosition()).LengthSQ() <= 0.002f) {
-						avatar_obj[i]->SetLinearVelocity(Vector3(0, -1, 0));
-					}
+					
+					//if (idxA + 1 == idxB && (posA - avatar_obj[i]->GetPosition()).LengthSQ() <= 0.002f) {
+					//	avatar_obj[i]->SetLinearVelocity(Vector3(1, 0, 0));
+					//}
+					//else if (idxA - 1 == idxB && (posA - avatar_obj[i]->GetPosition()).LengthSQ() <= 0.002f) {
+					//	avatar_obj[i]->SetLinearVelocity(Vector3(-1, 0, 0));
+					//}
+					//else if (idxA + 10 == idxB && (posA - avatar_obj[i]->GetPosition()).LengthSQ() <= 0.002f) {
+					//	avatar_obj[i]->SetLinearVelocity(Vector3(0, 1, 0));
+					//}
+					//else if (idxA - 10 == idxB && (posA - avatar_obj[i]->GetPosition()).LengthSQ() <= 0.002f) {
+					//	avatar_obj[i]->SetLinearVelocity(Vector3(0, -1, 0));
+					//}
 
 					Vector3 vel = avatar_obj[i]->GetLinearVelocity();
 
@@ -370,10 +383,10 @@ void Server::FollowPath(int i) {
 
 		}
 
-		if (!on_path) {
-			UpdateAStarPreset(i);
-			SendPath(i);
-		}
+		//if (!on_path) {
+		//	UpdateAStarPreset(i);
+		//	SendPath(i);
+		//}
 
 		UpdateHazards();
 	}
@@ -399,8 +412,20 @@ void Server::InitializeArrayElements(int id) {
 	if		(avatars.size() == id)	{ avatars.push_back(OUT_OF_RANGE); }	
 	else if (avatars.size() > id)	{ avatars[id] = OUT_OF_RANGE; }
 
-	if (avatar_obj.size() == id)	 { avatar_obj.push_back(nullptr); }
-	else if (avatar_obj.size() > id) { avatar_obj[id] = nullptr; }
+	if (avatar_obj.size() == id)	 { 
+		avatar_obj.push_back(nullptr); 
+	}
+	else if (avatar_obj.size() > id) { 
+		if (avatar_obj[id]) {
+			PhysicsEngine::Instance()->RemovePhysicsObject(avatar_obj[id]);
+			delete avatar_obj[id];
+			avatar_obj[id] = nullptr;
+		}
+		else {
+			avatar_obj[id] = nullptr;
+		}
+		
+	}
 
 	// Initialize path for client as an empty path
 	PATH_LIST a(0);
@@ -409,6 +434,7 @@ void Server::InitializeArrayElements(int id) {
 
 	if (lerp_factor.size() == id)		{ lerp_factor.push_back(0.0f); }
 	else if (lerp_factor.size() > id)	{ lerp_factor[id] = 0.0f; }
+
 }
 
 void Server::UpdateHazards() {
@@ -505,7 +531,6 @@ bool Server::ColissionCallback(PhysicsNode* self, PhysicsNode* other,int self_id
 		}
 
 		if ((pos2 - pos1).Normalise() == vel1.Normalise() || vel1.LengthSQ() == 0) {
-
 			if (avatars[self_idx] != avatars[other_idx]) {
 				avatar_obj[self_idx]->SetPosition(avatar_obj[self_idx]->GetPosition() - (pos2 - pos1).Normalise() * 0.1f);
 				generator->SetStartNode(avatars[self_idx], self_idx);
@@ -541,4 +566,78 @@ bool Server::ColissionCallback(PhysicsNode* self, PhysicsNode* other,int self_id
 	}
 
 	return false;
+}
+
+std::list<const GraphNode *> Server::StringPulling(int i) {
+	std::list<const GraphNode *> new_path;
+
+	auto it = paths[i].begin();
+	new_path.push_back((*it));
+
+	for (auto it = paths[i].begin(); it != paths[i].end(); ++it) {
+		auto it2 = new_path.end();
+		--it2;
+		if (!(Check_los((*it2)->_idx, (*it)->_idx))) {
+			--it;
+			new_path.push_back((*it));
+			++it;
+		}
+	}
+
+	--it;
+	new_path.push_back(*it);
+
+	return new_path;
+
+}
+
+bool Server::Check_los(int start, int end) {
+
+	int j_start = start;
+	int j_end = end;
+	int i_start = 0;
+	int i_end = 0;
+	int s = generator->size;
+	int base_offset = s * (s - 1);
+
+	while (j_start > s - 1) {
+		j_start -= s;
+		++i_start;
+	}
+
+	while (j_end > s - 1) {
+		j_end -= s;
+		++i_end;
+	}
+
+	// Same column
+	if (j_start == j_end) {
+		if (i_start > i_end) {
+			for (int i = i_start; i > i_end; --i) {
+				if (generator->allEdges[base_offset + (j_start * (s - 1)) + i]._iswall) { return false; };
+			}
+		}
+		else if (i_start < i_end) {
+			for (int i = i_start; i < i_end; ++i) {
+				if (generator->allEdges[base_offset + (j_start * (s - 1)) + i]._iswall) { return false; };
+			}
+		}
+		else { return true; }
+	}
+	// Same Row
+	else if (i_start == i_end) {
+		if (j_start > j_end) {
+			for (int j = j_start; j > j_end; --j) {
+				if (generator->allEdges[(i_start * (s - 1) + j)]._iswall) { return false; };
+			}
+		}
+		else if (j_start < j_end) {
+			for (int j = j_start; j < j_end; ++j) {
+				if (generator->allEdges[(i_start * (s - 1) + j)]._iswall) { return false; };
+			}
+		}
+		else { return true; }
+	}
+	else { return false; }
+
 }

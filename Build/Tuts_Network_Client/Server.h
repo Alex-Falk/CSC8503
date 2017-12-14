@@ -79,6 +79,9 @@ public:
 	void StartFollowing(int i);
 	void SendPath				(int i);
 	void UpdateAStarPreset		(int i);
+	std::list<const GraphNode*> StringPulling(int i);
+
+	bool Check_los(int start, int end);
 
 	// Broadcasts
 	void NewUser			(int i);

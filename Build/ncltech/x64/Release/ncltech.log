@@ -1,2 +1,15 @@
-﻿  CommonMeshes.cpp
+﻿  CollisionDetectionSAT.cpp
+CollisionDetectionSAT.cpp(231): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  CommonUtils.cpp
+  CuboidCollisionShape.cpp
+CuboidCollisionShape.cpp(72): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  Manifold.cpp
+  OcTree.cpp
+OcTree.cpp(270): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+  PhysicsEngine.cpp
+  PhysicsNode.cpp
+  SceneManager.cpp
+d:\projects\csc8503\build\ncltech\SceneManager.h(53): warning C4267: 'return': conversion from 'size_t' to 'uint', possible loss of data
+  SoftBody.cpp
+  SphereCollisionShape.cpp
   ncltech.vcxproj -> D:\Projects\CSC8503\Build\x64\Release\ncltech.lib
