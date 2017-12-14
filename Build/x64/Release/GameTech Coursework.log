@@ -1,0 +1,8 @@
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(387,5): warning MSB8028: The intermediate directory (x64\Release\) contains files shared from another project (GameTech Coursework.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
+main.obj : error LNK2001: unresolved external symbol "public: void __cdecl CudaCollidingParticles::UpdateParticles(float,class std::vector<class Vector3,class std::allocator<class Vector3> >,class std::vector<class Vector3,class std::allocator<class Vector3> >)" (?UpdateParticles@CudaCollidingParticles@@QEAAXMV?$vector@VVector3@@V?$allocator@VVector3@@@std@@@std@@0@Z)
+main.obj : error LNK2001: unresolved external symbol "public: void __cdecl CudaCollidingParticles::InitializeOpenGLVertexBuffer(unsigned int)" (?InitializeOpenGLVertexBuffer@CudaCollidingParticles@@QEAAXI@Z)
+main.obj : error LNK2001: unresolved external symbol "public: void __cdecl CudaCollidingParticles::InitializeParticleDam(int,int,int)" (?InitializeParticleDam@CudaCollidingParticles@@QEAAXHHH@Z)
+main.obj : error LNK2001: unresolved external symbol "public: __cdecl CudaCollidingParticles::~CudaCollidingParticles(void)" (??1CudaCollidingParticles@@QEAA@XZ)
+main.obj : error LNK2001: unresolved external symbol "public: __cdecl CudaCollidingParticles::CudaCollidingParticles(void)" (??0CudaCollidingParticles@@QEAA@XZ)
+D:\Projects\CSC8503\Build\x64\Release\GameTech Coursework.exe : fatal error LNK1120: 5 unresolved externals
