@@ -16,6 +16,12 @@ _-_-_-_-_-_-_-""  ""
 #define USE_MD5MESH
 #define WEEK_3_CODE
 
+#define OUT_OF_RANGE -1
+
+enum State_enum { PATROL, PURSUE, PURSUE_CHASE, PURSUE_FIND };
+
+
+
 //It's pi(ish)...
 static const float		PI = 3.14159265358979323846f;	
 

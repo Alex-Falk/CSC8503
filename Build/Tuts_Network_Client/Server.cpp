@@ -1,6 +1,7 @@
 #include "Server.h"
 #include "State.h"
 
+
 #define ID evnt.peer->incomingPeerID
 #define CLIENT_N server->m_pNetwork->connectedPeers
 #define STRING_PACKET enet_packet_create(s.c_str(), sizeof(char) * s.length(), 0)
@@ -20,11 +21,9 @@ Server::Server() {
 	generator->Generate(10, 0.7f);
 
 	for (int i = 0; i < HAZARD_NUM; ++i){
-		hazards.push_back(new State());
-		hazards[i]->SetMaze(generator);
-		hazards[i]->SetStartNode();
+		hazards.push_back(new Hazard(generator));
+		hazards[i]->SetStartNode(OUT_OF_RANGE);
 		hazards[i]->avatar_idcs = avatars;
-		hazards[i]->On_Initialize();
 	}
 	
 }
@@ -100,8 +99,9 @@ int Server::ServerLoop() {
 						InitializeArrayElements(i);
 						SendPath(i);
 					}
-
+					ResetHazards();
 					SendAvatarPositions();
+					SendHazardPosition();
 					SendWalls();
 			
 					break;
@@ -333,7 +333,15 @@ void Server::UpdateHazards() {
 	for (int i = 0; i < HAZARD_NUM; ++i) {
 		hazards[i]->UpdateAvatars(avatars);
 	}
+}
 
+void Server::ResetHazards() {
+	for (int i = 0; i < hazards.size(); ++i) {
+		delete hazards[i];
+		hazards[i] = new Hazard(generator);
+		hazards[i]->SetStartNode(OUT_OF_RANGE);
+		hazards[i]->avatar_idcs = avatars;
+	}
 }
 
 Vector3 Server::InterpolatePositionLinear(Vector3 posA, Vector3 posB, float factor)

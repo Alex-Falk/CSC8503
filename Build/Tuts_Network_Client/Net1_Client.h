@@ -7,10 +7,10 @@
 #include "ClientFunctions.h"
 #include "MazeRenderer.h"
 #include <nclgl\OBJMesh.h>
+#include <nclgl\common.h>
 
 
 #define ID serverConnection->outgoingPeerID
-#define OUT_OF_RANGE -1
 //Basic Network Example
 
 class Net1_Client : public Scene

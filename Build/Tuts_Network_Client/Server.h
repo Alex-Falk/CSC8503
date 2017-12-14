@@ -9,7 +9,7 @@
 #include "SearchAStar.h"
 #include "ClientFunctions.h"
 #include <ncltech\CommonUtils.h>
-
+#include "Hazard.h"
 
 #include <iphlpapi.h>
 #pragma comment(lib, "IPHLPAPI.lib")
@@ -17,11 +17,8 @@
 #define HAZARD_NUM 3
 #define SERVER_PORT 1234
 #define UPDATE_TIMESTEP 1.0f/30.0f//(1.0f / 30.0f) //send 30 position updates per second
-#define OUT_OF_RANGE -1
 
 void Win32_PrintAllAdapterIPAddresses();
-
-class State;
 
 class Server
 {
@@ -44,7 +41,7 @@ protected:
 	vector<int> avatars;
 	vector<PhysicsNode *> avatar_obj;
 
-	vector<State*> hazards;
+	vector<Hazard*> hazards;
 public:
 	Server();
 	~Server()
@@ -65,6 +62,8 @@ public:
 	void InitializeArrayElements(int id);
 
 	void UpdateHazards();
+
+	void ResetHazards();
 
 	Vector3 InterpolatePositionLinear(Vector3 posA, Vector3 posB, float factor);
 

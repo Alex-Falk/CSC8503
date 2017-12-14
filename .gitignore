@@ -10,3 +10,17 @@ Build/ncltech/Debug/
 *.csv
 
 *.tlog
+
+Build/Debug/
+
+*.idb
+
+*.pdb
+
+*.vcxproj
+
+*.filters
+
+Build/Examples_Cuda/\.vs/Examples_Cuda/v15/
+
+*.lastbuildstate

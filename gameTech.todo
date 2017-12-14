@@ -14,12 +14,12 @@ Coursework 1:
         ☐ Sphere-plane check example @low @today 
         
     Advanced Features (Up to 20 Marks):
-        
-        ☐ Physics nodes in your simulation can have multiple collision shapes with their own offsets, and automatic compounded inertia calculation. In this fashion, you will be able to represent more complex objects as combinations of simpler shapes (such as a rabbit formed from multiple spheres). @critical 
+        ☐ 
+        ☐ Physics nodes in your simulation can have multiple collision shapes with their own offsets, and automatic compounded inertia calculation. In this fashion, you will be able to represent more complex objects as combinations of simpler shapes (such as a rabbit formed from multiple spheres). @critical @today
         ✔ Your simulation will include broadphase culling of some form, providing a meaningful performance benefit. @done (2017-12-12 01:29:47)
         ✔ One scene shall include a GPU-modelled soft body (e.g. a piece of non-tearable cloth). @done (2017-12-12 01:29:49)
 
-        ☐ Put colissions from11 softbody on gpu @low @tomorrow
+        ☐ Put colissions from11 softbody on gpu @low @today 
     
         Extended Features (Up to 30 Marks):
         ✔ One scene shall include a ball pool featuring over 100 colliders within a box. All physics computation for this ball pool, including collision detection and response, shall take place on the GPU. @done (2017-12-12 01:31:57)
@@ -49,6 +49,7 @@ Coursework Part B:
         ✔ Interpolate for smooth movement @done (2017-12-13 22:20:44)
         ✔ Stop sending star and end nodes of all clients to all other clients, keep those client specific (and serverside) @high @done (2017-12-13 10:48:12)
         ✔ Get rid of useless packets @high @today @done (2017-12-13 10:48:09)
+        ☐ Minor tweaks to movement so that we don't get jumping @today @low 
 
     Advanced Features (Up to 20 Marks):
         Server Features:
@@ -57,7 +58,7 @@ Coursework Part B:
         ✔ The server will allow multiple clients to connect to a maze when it is created, each with their own avatar, and provide routes for each on request. Client avatars are not expected to physically interact. @today @done (2017-12-12 19:59:45)
         ✔ The server will compute and broadcast routes on demand for clients, based on current location and updated goal position. @today @done (2017-12-12 20:25:18)
         ✔ The server will broadcast position updates for all clients to all clients. @today @done (2017-12-12 18:10:43)
-        ☐ The server will employ string-pulling to govern the movement of client avatars.
+        ☐ The server will employ string-pulling to govern the movement of client avatars. @today @high 
         ✔ The server will accept a command to recreate the scene with a newly generated map. @done (2017-12-12 18:11:12)
         Client Features:
         ✔ ​The client will provide a point-click interface for start (right click) and end (left click) positions. @done (2017-12-12 21:51:16)
@@ -67,10 +68,10 @@ Coursework Part B:
         
     Extended Features (Up to 30 Marks):
         Server Features:
-        ☐ ​The server will accept client instruction to change the environment by turning a passable square into a wall (a cube shall grow out of the ground). When this occurs, a nearby wall square should become passable. This will trigger a recomputation of the Navigation Mesh, with the updated mesh broadcast to all clients. @today 
+        ☐ ​The server will accept client instruction to change the environment by turning a passable square into a wall (a cube shall grow out of the ground). When this occurs, a nearby wall square should become passable. This will trigger a recomputation of the Navigation Mesh, with the updated mesh broadcast to all clients. @today @high 
         ☐ The server shall, in some way, manage the possibility that a cube might be spawned in an occupied grid square.
-        ☐ Client avatars can now physically interact, with all physics computation (collision detection and response, direction changes) taking place on the server. @today 
-        ☐ The server shall broadcast higher-order data to clients, not just position updates, in order to facilitate dead reckoning.
+        ☐ Client avatars can now physically interact, with all physics computation (collision detection and response, direction changes) taking place on the server. @today @high 
+        ☐ The server shall broadcast higher-order data to clients, not just position updates, in order to facilitate dead reckoning. 
         Client Features:
-        ☐ ​The client shall employ dead reckoning to approximate the position and direction of all client avatars, tending towards eventual consistency. @tomorrow
-        ☐ The client shall accept a new command (keyboard or unassigned mouse click) to make a previously passable square unpassable by spawning a new cube. It shall broadcast this instruction to the server. @today 
+        ☐ ​The client shall employ dead reckoning to approximate the position and direction of all client avatars, tending towards eventual consistency. @today 
+        ☐ The client shall accept a new command (keyboard or unassigned mouse click) to make a previously passable square unpassable by spawning a new cube. It shall broadcast this instruction to the server. @today @high 
