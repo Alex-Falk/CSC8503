@@ -143,8 +143,10 @@ void MazeRenderer::DrawFinalPath(std::list<const GraphNode*> path, float line_wi
 
 }
 
+//Creates render nodes at all graph nodes in the maze and makese these clickable to set start and end locations
 void MazeRenderer::SetMeshRenderNodes(Net1_Client * c) {
 
+	//Delete all the previous clickable nodes. This is needed for when we update the mazes size and therfore need a different amount (and locations) of clickable nodes
 	if (Render()->GetChildWithName("MazeNodes")) {
 		RenderNode * r = Render()->GetChildWithName("MazeNodes");
 		for (auto it = r->GetChildIteratorStart(); it != r->GetChildIteratorEnd(); ++it) {
@@ -364,6 +366,7 @@ void MazeRenderer::Generate_ConstructWalls()
 
 }
 
+// Updates the start and end nodes to new positions
 void MazeRenderer::UpdateRenderer() {
 	const float scalar = 1.f / (float)flat_maze_size;
 

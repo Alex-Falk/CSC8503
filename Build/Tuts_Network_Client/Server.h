@@ -14,7 +14,9 @@
 #include <iphlpapi.h>
 #pragma comment(lib, "IPHLPAPI.lib")
 
-#define HAZARD_NUM 3
+// Class which handles everything on the serverside
+
+#define HAZARD_NUM 3			//number of hazards
 #define SERVER_PORT 1234
 #define UPDATE_TIMESTEP 1.0f/30.0f//(1.0f / 30.0f) //send 30 position updates per second
 
@@ -67,6 +69,7 @@ public:
 
 	Vector3 InterpolatePositionLinear(Vector3 posA, Vector3 posB, float factor);
 
+	//Callback that handles collissions between avatars (or an avatar and another object)
 	bool ColissionCallback(PhysicsNode * self, PhysicsNode * other, int self_idx);
 
 	// Can either broadcast or send individually

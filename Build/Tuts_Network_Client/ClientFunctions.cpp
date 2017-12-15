@@ -13,6 +13,7 @@ void PrintStatusEntries()
 	);
 }
 
+// Handle Keyboard Inputs
 void HandleKeyboardInputs(Net1_Client * c)
 {
 	uint sceneIdx = SceneManager::Instance()->GetCurrentSceneIndex();
@@ -28,9 +29,11 @@ void HandleKeyboardInputs(Net1_Client * c)
 		SceneManager::Instance()->JumpToScene(sceneIdx);
 	}
 
+	// handle client specific keyboard inputs that need to change the client's variables
 	c->HandleKeyboardInputs();
 }
 
+// Main Game Loop for the client
 int ClientLoop(Net1_Client * c)
 {
 	Window::GetWindow().GetTimer()->GetTimedMS();
@@ -63,6 +66,7 @@ int ClientLoop(Net1_Client * c)
 	return 0;
 }
 
+// Interpret a packet which has information on maze walls
 MazeStruct Recieve_maze(const ENetEvent& evnt) {
 
 	MazeStruct m;
@@ -89,7 +93,7 @@ MazeStruct Recieve_maze(const ENetEvent& evnt) {
 
 	return m;
 }
-
+// Interpret a packet which stores an index and a position
 PosStruct Recieve_pos(const ENetEvent& evnt) {
 
 	PosStruct p;
@@ -114,7 +118,7 @@ PosStruct Recieve_pos(const ENetEvent& evnt) {
 	return p;
 
 }
-
+// Interpret a packet which has multiple index-position pairs
 vector<PosStruct> Recieve_positions(const ENetEvent& evnt) {
 
 	string packet;
@@ -139,6 +143,7 @@ vector<PosStruct> Recieve_positions(const ENetEvent& evnt) {
 
 }
 
+// Interpret packet that holds path information (the indeces of the path nodes)
 vector<int> Recieve_path(const ENetEvent & evnt)
 {
 	string packet;
@@ -151,6 +156,7 @@ vector<int> Recieve_path(const ENetEvent & evnt)
 	return split_elements;
 }
 
+// Function to split a string into a vector of strings by a delimiter d
 vector<string> split_string(string s, char d) {
 	vector<string> chars;
 
@@ -166,6 +172,7 @@ vector<string> split_string(string s, char d) {
 	return chars;
 }
 
+// Function to split a string into a vector of ints by a delimiter d
 vector<int> split_string_toInt(string s, char d) {
 	vector<int> chars;
 
@@ -181,6 +188,7 @@ vector<int> split_string_toInt(string s, char d) {
 	return chars;
 }
 
+// Function to split a string into a vector of floats by a delimiter d
 vector<float> split_string_toFloat(string s, char d) {
 	vector<float> chars;
 
@@ -198,6 +206,7 @@ vector<float> split_string_toFloat(string s, char d) {
 	return chars;
 }
 
+// checks if a given char is a number. Used this because isDigit dindn't seem to work
 bool isNumber(char c) {
 	string nums = "0123456789";
 	if (nums.find_first_of(c)) {

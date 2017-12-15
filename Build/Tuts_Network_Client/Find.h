@@ -1,6 +1,9 @@
 #pragma once
 #include "Pursue.h"
 
+
+// A state in the Hiercharchical FSM which handles the Hazard moving to the last known position fo the avatar after it lost sight of it
+
 class Find : public Pursue {
 public:
 	Find(Hazard * h) : Pursue(h) {};

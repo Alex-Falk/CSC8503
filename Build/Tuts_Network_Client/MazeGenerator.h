@@ -5,6 +5,9 @@
 
 #define OUT_OF_RANGE -1
 
+//Maze Generator which is mainly taken from the tutorial but extended to handle things such as multiple start and goal nodes
+//The multiple start and end nodes are used on the server side, and the single start and end node are used on the client side
+
 class MazeGenerator
 {
 public:

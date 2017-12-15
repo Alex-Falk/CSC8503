@@ -19,6 +19,11 @@ struct WallDescriptor
 typedef std::vector<WallDescriptor> WallDescriptorVec;
 
 
+// Mazer Renderer class taken from tutorials and adapted to include the following features:
+// - Create a set of quads on the floor of the maze (one at each node) to be used for selecting start and end locations
+// - Ability to update specific items to be rendered such as the start and end nodes changing position
+// - Drawing the final path found by the pathfinding system rather than drawing the entire search history
+
 class MazeRenderer : public GameObject
 {
 public:

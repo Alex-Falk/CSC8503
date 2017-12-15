@@ -3,9 +3,16 @@
 #include <ncltech\CuboidCollisionShape.h>
 #include <ncltech\PhysicsEngine.h>
 
+//Current ID of the peer that has sent the server a packet
 #define ID evnt.peer->incomingPeerID
+
+// The number of clients connected to the server
 #define CLIENT_N server->m_pNetwork->connectedPeers
+
+// Creates a char array packet from a given string to be sent .
 #define STRING_PACKET enet_packet_create(s.c_str(), sizeof(char) * s.length(), 0)
+
+// Because Neatness/lazyness
 #define PATH_LIST std::list<const GraphNode*>
 
 Server::Server() {
@@ -27,6 +34,8 @@ Server::Server() {
 		hazards[i]->avatar_idcs = avatars;
 	}
 
+	//No Gravity or damping. Set Limits of map to allow positions to occur.
+	// Physics space here is different to render space and is done in X and Y coordinates mainly.
 	PhysicsEngine::Instance()->SetGravity(Vector3(0, 0, 0));
 	PhysicsEngine::Instance()->SetDampingFactor(1.0f);
 	PhysicsEngine::Instance()->ResetOcTree();
@@ -54,8 +63,8 @@ int Server::ServerLoop() {
 
 				InitializeArrayElements(ID);// Initalise array elements for start & end nodes, avatar positions and paths
 				SendWalls(ID);				// Send maze info to new client
-				SendAvatarPositions(ID);	// Send the avatars position to the client
-				SendHazardPosition(ID);
+				SendAvatarPositions(ID);	// Send the avatars' positions to the client
+				SendHazardPosition(ID);		// Send the hazards' positions to the client
 
 			}
 				break;
@@ -63,6 +72,7 @@ int Server::ServerLoop() {
 
 				switch (evnt.packet->data[0] - '0') {
 
+				// Client has updated start position
 				case START_POS:
 				{
 					PosStruct p = Recieve_pos(evnt);
@@ -71,7 +81,8 @@ int Server::ServerLoop() {
 					SendPath(ID);
 					break;
 				}
-					
+				
+				// client has updated ned position;
 				case END_POS:
 				{
 					PosStruct p = Recieve_pos(evnt);
@@ -83,7 +94,8 @@ int Server::ServerLoop() {
 
 					break;
 				}
-					
+				
+				// client has sent over text
 				case TEXT:
 				{
 					printf("\t Client %d says: %s\n", evnt.peer->incomingPeerID, evnt.packet->data);
@@ -91,6 +103,7 @@ int Server::ServerLoop() {
 					break;
 				}
 
+				// client requested a new maze. All avatars and hazards values are reset/re-initialized to be out of range/outside of the maze
 				case NEW_MAZE:
 				{
 					string packet;
@@ -113,6 +126,7 @@ int Server::ServerLoop() {
 					break;
 				}
 
+				// client spawned avatar at start node
 				case AVATAR_POS_UPDATE:
 				{
 					string packet;
@@ -129,6 +143,7 @@ int Server::ServerLoop() {
 						scalar * 2
 					);
 
+					// If the avatar's physics node doenst exist create a new one and add it to the physics engine
 					avatars[ID] = stoi(packet);
 					if (!avatar_obj[ID]) {
 						PhysicsNode * pnode = new PhysicsNode();
@@ -149,14 +164,15 @@ int Server::ServerLoop() {
 						PhysicsEngine::Instance()->AddPhysicsObject(pnode);
 						
 					}
-
+					// Update the avatar's physicsnode's position and velocity
 					avatar_obj[ID]->SetPosition(generator->GetNode(avatars[ID])->_pos);
 					avatar_obj[ID]->SetLinearVelocity(Vector3(0, 0, 0));
 
-					// TODO: Extend for actual physics;
+					// inform all clients and Hazards of this avatar
 					SendAvatarPositions();
 					UpdateHazards();
 
+					// Update the avatar's path and iform the client of it (for drawing)
 					UpdateAStarPreset(ID);
 					SendPath(ID);
 				}
@@ -201,6 +217,7 @@ for (int i = 0; i < HAZARD_NUM; ++i) {
 	server->Release();
 }
 
+// Send maze information that tells all clients the size of the maze and at what indeces there are walls
 void Server::SendWalls(int i)
 {
 	string * walls = new string;
@@ -216,6 +233,7 @@ void Server::SendWalls(int i)
 		enet_host_broadcast(server->m_pNetwork, 0, wall);
 }
 
+// Tells all clients that a new user connted to initialise their arrays
 void Server::NewUser(int i)
 {
 	string userInfo = to_string(NEW_USER) + ":" + to_string(i);
@@ -224,6 +242,7 @@ void Server::NewUser(int i)
 	enet_host_broadcast(server->m_pNetwork, 0, packet);
 }
 
+// Iforms client I of its avatar's path
 void Server::SendPath(int i) {
 
 	string str = to_string(PATH) + ":";
@@ -246,6 +265,7 @@ void Server::SendPath(int i) {
 
 }
 
+// Update paths using Astar
 void Server::UpdateAStarPreset(int i)
 {
 	//Example presets taken from:
@@ -287,6 +307,10 @@ void Server::UpdateAStarPreset(int i)
 	if (start && end) {
 		search_as->FindBestPath(start, end);
 		paths[i] = search_as->GetFinalPath();
+
+		// THIS BIT APPLIES STRING PULLING. HOWEVER IN ITS CURRENT STATE THE AI AND 
+		// MOVEMENT HANDLING WILL BREAK DUE TO THIS. HOWEVER THE ACTUAL STRING PULLING ITSELF
+		// STILL WORKS.
 		/*if (paths[i].size() > 2) {
 			paths[i] = StringPulling(i);
 		}*/
@@ -298,6 +322,7 @@ void Server::UpdateAStarPreset(int i)
 
 }
 
+// Send client i the position of all avatars. If i is input as OUT_OF_RANGE then it wil broadcast it instead
 void Server::SendAvatarPositions(int i) {
 	string s = to_string(AVATAR_POS_UPDATE) + ":";
 
@@ -319,6 +344,7 @@ void Server::SendAvatarPositions(int i) {
 		enet_peer_send(&server->m_pNetwork->peers[i], 0, avatar_positions);
 }
 
+// Same as for avatar positions
 void Server::SendHazardPosition(int i) {
 	string s = to_string(HAZARD_POS_UPDATE) + ":";
 
@@ -335,6 +361,7 @@ void Server::SendHazardPosition(int i) {
 		enet_peer_send(&server->m_pNetwork->peers[i], 0, avatar_positions);
 }
 
+// Make Client i's avatar follow its current path.
 void Server::FollowPath(int i) {
 
 	bool on_path = false;
@@ -345,13 +372,17 @@ void Server::FollowPath(int i) {
 				Vector3 posA = ((*it)->_pos);
 				int idxA = (*it)->_idx;
 				++it;
+				// If there's another node in the path
 				if (it != paths[i].end()) {
 					Vector3 posB = ((*it)->_pos);
 					int idxB = (*it)->_idx;
 
+					//If the avatar gets close to a node of the path, update it's velocity to be in the direction of the next node
 					if ((posA - avatar_obj[i]->GetPosition()).LengthSQ() <= 0.002f) {
 						avatar_obj[i]->SetLinearVelocity((posB - posA).Normalise());
 					}
+
+					// Left this in in case the above doesn't work.
 					
 					//if (idxA + 1 == idxB && (posA - avatar_obj[i]->GetPosition()).LengthSQ() <= 0.002f) {
 					//	avatar_obj[i]->SetLinearVelocity(Vector3(1, 0, 0));
@@ -368,10 +399,15 @@ void Server::FollowPath(int i) {
 
 					Vector3 vel = avatar_obj[i]->GetLinearVelocity();
 
+					// If the avatar has passed the halfway point bewteen the 'current' and the 'next' node of the path then set the 
+					// 'current' node to the 'next' node. These node indeces are used for the Hazards Line of sight check and therefore
+					// the string pulling will mess with the AI. In order to fix this the line of sight check could be updated to be position wise rather than index.
 					if ((posB - avatar_obj[i]->GetPosition()).LengthSQ() < (posB - posA).LengthSQ() / 4.0f) {
 						avatars[i] = idxB;
 					}
 				}
+
+				// If there's not a next node and the avatar is close to the current node then set velocity to zero and recenter the avatar onto the node
 				else if ((posA - avatar_obj[i]->GetPosition()).LengthSQ() < 0.002f) {
 					avatar_obj[i]->SetLinearVelocity(Vector3(0, 0, 0));
 					avatar_obj[i]->SetPosition(posA);
@@ -383,16 +419,13 @@ void Server::FollowPath(int i) {
 
 		}
 
-		//if (!on_path) {
-		//	UpdateAStarPreset(i);
-		//	SendPath(i);
-		//}
-
+		// Update the hazards with the new avatar informations
 		UpdateHazards();
 	}
 
 }
 
+// Start folling a path by going into the direction of the next node.
 void Server::StartFollowing(int i) {
 	auto it = paths[i].begin();
 	Vector3 pos = (*it)->_pos;
@@ -402,6 +435,11 @@ void Server::StartFollowing(int i) {
 
 	avatar_obj[i]->SetLinearVelocity(-newvel);
 }
+
+// Initialize all arrays holind client information to "OUT_OF_RANGE" or null pointers in order to either:
+// - initialise arrays when client connects
+// - remove all information when client disconnects
+// - "Kill" a client's avatar
 
 void Server::InitializeArrayElements(int id) {
 	// Initialize the stored Start and End nodes or this client
@@ -512,7 +550,10 @@ void Win32_PrintAllAdapterIPAddresses()
 
 }
 
+// Determine what happens when an Avatar collides with another object
 bool Server::ColissionCallback(PhysicsNode* self, PhysicsNode* other,int self_idx) {
+	// If it collides with another Avatar they will both currently just move to their respective nodes and stop moving or if they are both 
+	// assigned to the same node then it will set its path to lead to the previous hit node and then stop.
 	if (other->getName() == "Avatar") {
 		Vector3 pos1 = self->GetPosition();
 		Vector3 pos2 = other->GetPosition();
@@ -568,6 +609,7 @@ bool Server::ColissionCallback(PhysicsNode* self, PhysicsNode* other,int self_id
 	return false;
 }
 
+// Simple stirng pulling that works for the maze using the same line of sight check as the FSM.
 std::list<const GraphNode *> Server::StringPulling(int i) {
 	std::list<const GraphNode *> new_path;
 

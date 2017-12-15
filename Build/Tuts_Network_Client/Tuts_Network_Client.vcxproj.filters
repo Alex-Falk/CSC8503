@@ -74,9 +74,6 @@
     <ClInclude Include="SearchDepthFirst.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MessageCreator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ClientFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>

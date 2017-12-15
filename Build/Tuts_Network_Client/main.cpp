@@ -60,18 +60,6 @@ void Quit(bool error, const string &reason) {
 	}
 }
 
-//------------------------------------
-//---------Default main loop----------
-//------------------------------------
-// With GameTech, everything is put into 
-// little "Scene" class's which are self contained
-// programs with their own game objects/logic.
-//
-// So everything you want to do in renderer/main.cpp
-// should now be able to be done inside a class object.
-//
-// For an example on how to set up your test Scene's,
-// see one of the PhyX_xxxx tutorial scenes. =]
 
 int main()
 {
@@ -83,6 +71,8 @@ int main()
 	s = new Server();
 	NetworkBase * server = s->getBase();
 	//Initialize Server on Port 1234, with a possible 32 clients connected at any time
+	// If  a server already exists on this port then this will not intialise. 
+	// It then chooses to createa client instead
 	if (!server->Initialize(SERVER_PORT, 32))
 	{
 		fprintf(stderr, "An error occurred while trying to create an ENet server host.\n");
@@ -92,6 +82,7 @@ int main()
 		Initialize();
 	}
 
+	// If server run server loop, if client run client loop
 	switch (thisType) {
 	case SERVER:
 		return s->ServerLoop();
@@ -104,6 +95,3 @@ int main()
 		break;
 	}
 }
-
-//Yay Win32 code >.>
-//  - Grabs a list of all network adapters on the computer and prints out all IPv4 addresses associated with them.

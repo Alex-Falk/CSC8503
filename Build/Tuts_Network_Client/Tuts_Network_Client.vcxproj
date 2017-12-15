@@ -106,7 +106,6 @@
     <ClInclude Include="Patrol.h" />
     <ClInclude Include="MazeGenerator.h" />
     <ClInclude Include="MazeRenderer.h" />
-    <ClInclude Include="MessageCreator.h" />
     <ClInclude Include="Net1_Client.h" />
     <ClInclude Include="SearchAlgorithm.h" />
     <ClInclude Include="SearchAStar.h" />

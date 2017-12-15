@@ -11,21 +11,24 @@
 
 
 #define ID serverConnection->outgoingPeerID
-//Basic Network Example
+
+//Class that handles all the client side parts of the this coursework. It has a set of its own functions but also uses the ClientFunctions.
 
 class Net1_Client : public Scene
 {
 public:
 	Net1_Client(const std::string& friendly_name);
 
+	// Scene Methods
 	virtual void OnInitializeScene() override;
 	virtual void OnCleanupScene() override;
 	virtual void OnUpdateScene(float dt) override;
 	virtual bool foundServer() { return (serverConnection != NULL); }
 
+	// handles incoming Packets/other network events
 	void ProcessNetworkEvent(const ENetEvent& evnt);
 
-	// Recieving Packets
+	//Applying a recieved maze to the maze renderer
 	void ApplyMaze(MazeStruct m);
 
 	// Sending Packets
