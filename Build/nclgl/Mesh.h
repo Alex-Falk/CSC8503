@@ -55,6 +55,8 @@ public:
 
 	static Mesh*	GenerateMesh(int w, int h, float s);
 
+	static Mesh * GenerateMeshAlt(int w, int h, float s);
+
 	void ClearBuffers();
 
 	//Sets the Mesh's diffuse map. Takes an OpenGL texture 'name'

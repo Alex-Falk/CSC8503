@@ -13,7 +13,7 @@ public:
 		: Scene(friendly_name)
 	{
 		tex = SOIL_load_OGL_texture(
-			TEXTUREDIR"SC.png",
+			TEXTUREDIR"tileable-fabric-textures-1.jpg",
 			SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,
 			SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
 
@@ -26,7 +26,7 @@ public:
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		earth = SOIL_load_OGL_texture(
-			TEXTUREDIR"earth.png",
+			TEXTUREDIR"BeachBallColor.jpg",
 			SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,
 			SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
 
@@ -49,24 +49,32 @@ public:
 		PhysicsEngine::Instance()->SetGravity(Vector3(0,-1.0f,0));
 		PhysicsEngine::Instance()->SetOctreeMinSize(1);
 
-		//Who doesn't love finding some common ground?
-		GameObject* sphere = (CommonUtils::BuildSphereObject("Floating_sphere",
-			Vector3(0,10,0),
-			2.0f,									//Radius
-			true,									//Has Physics Object
-			0.0f,									//Inverse Mass
-			true,									//Has Collision Shape
-			true,									//Dragable by the user
-			Vector4(1,1,1,1)));	//Color
+		GameObject* sphere;
+		for (int i = 0; i < 5; ++i) {
+			for (int j = 0; j < 5; ++j) {
+				sphere = (CommonUtils::BuildSphereObject("Floating_sphere",
+					Vector3((i-2.5f), 10+2*(rand() % 11 / 10.0f), (j-2.5f)),
+					0.5f,									//Radius
+					true,									//Has Physics Object
+					0.0f,									//Inverse Mass
+					true,									//Has Collision Shape
+					true,									//Dragable by the user
+					Vector4(1, 1, 1, 1)));	//Color
 
-		sphere->Physics()->SetBoundingRadius(2.1f);
-		sphere->Render()->GetChild()->GetMesh()->SetTexture(earth);
+				sphere->Physics()->SetBoundingRadius(0.55f);
+				sphere->Physics()->SetOrientation(Quaternion(Vector3(rand() % 11 / 10.0f, rand() % 11 / 10.0f, rand() % 11 / 10.0f), 1));
+				sphere->Render()->GetChild()->GetMesh()->SetTexture(earth);
+
+				this->AddGameObject(sphere);
+			}
+		}
 		
-		this->AddGameObject(sphere);
 
-		cloth = new CudaSoftBody(100,100,.05,Vector3(-2.5,15,-2.5), tex);
 
-		this->AddGameObject(new GameObject("CudaCloth",cloth->GetRenderNode()));
+		cloth = new CudaSoftBody(120,120,.05,Vector3(-3,15,-3), tex);
+		
+		GameObject * go = new GameObject("CudaCloth", cloth->GetRenderNode());
+		this->AddGameObject(go);
 
 		Scene::OnInitializeScene();
 

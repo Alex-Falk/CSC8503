@@ -34,6 +34,8 @@ public:
 	//Follow the current path by checking when to change velocity
 	void FollowPath();
 
+	void StartFollowing();
+
 	//Checks if any of hte avatars are in its line of sight (it checks for vertical and horizontal match
 	bool Check_Los(int avatar_loc);
 

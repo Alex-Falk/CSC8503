@@ -14,7 +14,7 @@
     <ProjectGuid>{386CE988-8B96-484E-AC8D-FD2412B202CC}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Tuts_Network_Client</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
     <ProjectName>Coursework B</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

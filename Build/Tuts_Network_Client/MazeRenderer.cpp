@@ -3,7 +3,7 @@
 #include "Net1_Client.h"
 #include <ncltech\SceneManager.h>
 
-const Vector4 wall_color = Vector4(1.f, 0.8f, 0.3f, 1);
+const Vector4 wall_color = Vector4(0.0f, 0.392f, 0.0f, 1);
 
 
 
@@ -460,26 +460,30 @@ void MazeRenderer::Generate_BuildRenderNodes()
 		Vector3 halfDims = centre - start;
 
 		cube = new RenderNode(mesh, wall_color);
-		cube->SetTransform(Matrix4::Translation(centre) * Matrix4::Scale(halfDims));
+		cube->SetTransform(Matrix4::Translation(centre) * Matrix4::Scale(Vector3(halfDims.x,2.0f,halfDims.z)));
 		root->AddChild(cube);
 
 	}
 
 //Add bounding edge walls to the maze
 	cube = new RenderNode(mesh, wall_color);
-	cube->SetTransform(Matrix4::Translation(Vector3(-scalar*0.5f, 0.25f, 0.5)) * Matrix4::Scale(Vector3(scalar*0.5f, 0.25f, scalar + 0.5f)));
+	cube->SetTransform(Matrix4::Translation(Vector3(-scalar*0.5f, 0.25f, 0.5)) * Matrix4::Scale(Vector3(scalar*0.5f, 2.0f, scalar + 0.5f)));
 	root->AddChild(cube);
 
 	cube = new RenderNode(mesh, wall_color);
-	cube->SetTransform(Matrix4::Translation(Vector3(1.f + scalar*0.5f, 0.25f, 0.5)) * Matrix4::Scale(Vector3(scalar*0.5f, 0.25f, scalar + 0.5f)));
+	cube->SetTransform(Matrix4::Translation(Vector3(1.f + scalar*0.5f, 0.25f, 0.5)) * Matrix4::Scale(Vector3(scalar*0.5f, 2.0f, scalar + 0.5f)));
 	root->AddChild(cube);
 
 	cube = new RenderNode(mesh, wall_color);
-	cube->SetTransform(Matrix4::Translation(Vector3(0.5, 0.25f, -scalar*0.5f)) * Matrix4::Scale(Vector3(0.5f, 0.25f, scalar*0.5f)));
+	cube->SetTransform(Matrix4::Translation(Vector3(0.5, 0.25f, -scalar*0.5f)) * Matrix4::Scale(Vector3(0.5f, 2.0f, scalar*0.5f)));
 	root->AddChild(cube);
 
 	cube = new RenderNode(mesh, wall_color);
-	cube->SetTransform(Matrix4::Translation(Vector3(0.5, 0.25f, 1.f + scalar*0.5f)) * Matrix4::Scale(Vector3(0.5f, 0.25f, scalar*0.5f)));
+	cube->SetTransform(Matrix4::Translation(Vector3(0.5, 0.25f, 1.f + scalar*0.5f)) * Matrix4::Scale(Vector3(0.5f, 2.0f, scalar*0.5f)));
+	root->AddChild(cube);
+
+	cube = new RenderNode(mesh, Vector4(0.486f, 0.988f, 0.0f,1.0f));
+	cube->SetTransform(Matrix4::Translation(Vector3(0.5f,-0.51f,0.5f)) * Matrix4::Scale(Vector3(scalar+0.49f,0.5f,scalar+0.49f)));
 	root->AddChild(cube);
 
 //Finally - our start/end goals

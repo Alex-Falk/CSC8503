@@ -1,8 +1,10 @@
 ﻿  main.cpp
-D:\Projects\CSC8503CUDA\Build\ncltech\SceneManager.h(53): warning C4267: 'return': conversion from 'size_t' to 'uint', possible loss of data
+A:\Programming\CSC8503\Build\ncltech\SceneManager.h(53): warning C4267: 'return': conversion from 'size_t' to 'uint', possible loss of data
 LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
   Generating code
-  All 4611 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  4491 of 4611 functions (97.4%) were compiled, the rest were copied from previous compilation.
+    93 functions were new in current compilation
+    4 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
-glew32.lib(glew.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'glew32.lib(glew.obj)' or at 'D:\Projects\CSC8503CUDA\Build\x64\Release\vc120.pdb'; linking object as if no debug info
-  Tuts_Physics.vcxproj -> D:\Projects\CSC8503CUDA\Build\x64\Release\Tuts_Physics.exe
+glew32.lib(glew.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'glew32.lib(glew.obj)' or at 'A:\Programming\CSC8503\Build\x64\Release\vc120.pdb'; linking object as if no debug info
+  Tuts_Physics.vcxproj -> A:\Programming\CSC8503\Build\x64\Release\Tuts_Physics.exe

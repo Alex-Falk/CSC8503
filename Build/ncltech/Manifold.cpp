@@ -63,7 +63,8 @@ void Manifold::SolveContactPoint(ContactPoint& c)
 
 		float oldSumImpulseContact = c.sumImpulseContact;
 		c.sumImpulseContact = max(c.sumImpulseContact + jn, 0.0f);
-		jn = c.sumImpulseContact - oldSumImpulseContact;
+		jn = c.sumImpulseContact - oldSumImpulseContact;
+
 		jn = jn / constraintMass;
 
 		pnodeA->SetLinearVelocity(pnodeA->GetLinearVelocity()
@@ -102,7 +103,8 @@ void Manifold::SolveContactPoint(ContactPoint& c)
 
 			Vector3 oldImpulseFriction = c.sumImpulseFriction;
 			c.sumImpulseFriction = c.sumImpulseFriction + tangent * jt;
-			float len = c.sumImpulseFriction.Length();			
+			float len = c.sumImpulseFriction.Length();
+			
 			if (len > 0.0f && len > c.sumImpulseContact)
 			{
 				c.sumImpulseFriction =
@@ -110,7 +112,8 @@ void Manifold::SolveContactPoint(ContactPoint& c)
 			}
 
 			tangent = c.sumImpulseFriction - oldImpulseFriction;
-			jt = 1.0f;
+			jt = 1.0f;
+
 
 			jt = jt / frictionalMass;
 
@@ -132,7 +135,8 @@ void Manifold::SolveContactPoint(ContactPoint& c)
 void Manifold::PreSolverStep(float dt)
 {
 	std::random_shuffle(contactPoints.begin(),
-		contactPoints.end());
+		contactPoints.end());
+
 
 	for (ContactPoint& contact : contactPoints)
 	{
@@ -167,7 +171,8 @@ void Manifold::UpdateConstraint(ContactPoint& c)
 
 	const float elasticity =
 		pnodeA->GetElasticity() * pnodeB->GetElasticity();
-	const float elatisity_term = Vector3::Dot(c.colNormal,		pnodeA->GetLinearVelocity()
+	const float elatisity_term = Vector3::Dot(c.colNormal,
+		pnodeA->GetLinearVelocity()
 		+ Vector3::Cross(c.relPosA, pnodeA->GetAngularVelocity())
 		- pnodeB->GetLinearVelocity()
 		- Vector3::Cross(c.relPosB, pnodeB->GetAngularVelocity()));

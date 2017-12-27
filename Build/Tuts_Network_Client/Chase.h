@@ -14,6 +14,7 @@ public:
 	virtual void On_Initialize() {
 		_isActive = true;
 		UpdateAStarPreset(h->current_idx, h->avatar_idcs[h->target]);
+		StartFollowing();
 	}
 
 	virtual void Update();

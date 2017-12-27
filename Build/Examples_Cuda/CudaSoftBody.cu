@@ -40,8 +40,8 @@ __global__ void CollideParticles(float baumgarte_factor, uint num_particles, Nod
 				float3 abn = ab / len;
 
 				//Direct normal collision (no friction/shear)
-				float abnVel = dot(cpu_p.vel - cpu_p.vel, abn);
-				float jn = -(abnVel * (1.f + 0.00f));
+				float abnVel = dot(cpu_p.vel*0.1f - p.vel, abn);
+				float jn = -(abnVel * (0.9f));
 
 				//Extra energy to overcome overlap error
 				float overlap = cpu_p.radius - len;
@@ -260,8 +260,8 @@ CudaSoftBody::CudaSoftBody(int w, int h, float s, Vector3 pos, GLuint tex)
 			pnode.pos = vec_to_float((Vector3(pos.x + (s*j), pos.y, pos.z + (s*i))));
 			pnode.vel = make_float3(0.0f, 0.0f, 0.0f);
 			pnode.invmass = (60.0f);
-			if (i == 0)
-				pnode.invmass = 0.f;
+			//if (i == 0)
+			//	pnode.invmass = 0.f;
 			
 			nodes[(i*w) + j] = pnode;
 
@@ -274,13 +274,14 @@ CudaSoftBody::CudaSoftBody(int w, int h, float s, Vector3 pos, GLuint tex)
 
 	RenderNode* rnode = new RenderNode();
 
-	m = Mesh::GenerateMesh(w - 1, h - 1, s);
+	m = Mesh::GenerateMeshAlt(w, h, s);
 	m->SetTexture(tex);
 	RenderNode* dummy = new RenderNode(m, Vector4(1, 1, 1, 1));
 	rnode->AddChild(dummy);
 	dummy->SetCulling(false);
 
-	rnode->SetTransform(Matrix4::Translation(Vector3(pos.x, pos.y, pos.z)));
+	rnode->SetTransform(
+		Matrix4::Translation(Vector3(pos.x, pos.y, pos.z)));
 	rnode->SetBoundingRadius(10);
 
 	obj = rnode;
@@ -295,21 +296,21 @@ CudaSoftBody::~CudaSoftBody()
 
 void CudaSoftBody::UpdateMesh() {
 	int k = 0;
-	for (int i = 0; i < h - 1; ++i) {
-		for (int j = 0; j < w - 1; ++j) {
-			m->vertices[k] = float_to_vec(nodes[(i * w) + j].pos) - *pos;
-			m->vertices[k + 1] = float_to_vec(nodes[(i * w) + j + 1].pos) - *pos;
-			m->vertices[k + 2] = float_to_vec(nodes[((i + 1) * w) + j].pos) - *pos;
+	for (int i = 0; i < h; ++i) {
+		for (int j = 0; j < w; ++j) {
+			m->vertices[(i*w)+j] = float_to_vec(nodes[(j * w) + i].pos) - *pos;
+			//m->vertices[k + 1] = float_to_vec(nodes[(i * w) + j + 1].pos) - *pos;
+			//m->vertices[k + 2] = float_to_vec(nodes[((i + 1) * w) + j].pos) - *pos;
 
-			m->vertices[k + 3] = float_to_vec(nodes[(i * w) + j + 1].pos) - *pos;
-			m->vertices[k + 4] = float_to_vec(nodes[((i + 1) * w) + j + 1].pos) - *pos;
-			m->vertices[k + 5] = float_to_vec(nodes[((i + 1) * w) + j].pos) - *pos;
+			//m->vertices[k + 3] = float_to_vec(nodes[(i * w) + j + 1].pos) - *pos;
+			//m->vertices[k + 4] = float_to_vec(nodes[((i + 1) * w) + j + 1].pos) - *pos;
+			//m->vertices[k + 5] = float_to_vec(nodes[((i + 1) * w) + j].pos) - *pos;
 
-			k += 6;
+			//k += 6;
 		}
 	}
 	m->GenerateNormals();
-	m->GenerateTangents();
+	//m->GenerateTangents();
 	m->ClearBuffers();
 	m->BufferData();
 }
@@ -345,7 +346,7 @@ void CudaSoftBody::UpdateSoftBody(float dt, vector<PhysicsNode *> cpuparticles)
 
 	
 
-	for (int i = 0; i < 10; ++i) {
+	for (int i = 0; i < 15; ++i) {
 		CollideParticles << < w*h, 1 >> > (baumgarte_factor, w*h, cuda_nodes, cuda_cpu_particles, s, cpuparticles.size());
 
 		UpdateSpringSet << < w*h, 1 >> > (cuda_nodes, HOR1, w, h, straight_rest_length, diagonal_rest_length, dt);

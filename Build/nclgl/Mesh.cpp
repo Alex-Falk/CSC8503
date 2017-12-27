@@ -354,7 +354,7 @@ Mesh* Mesh::GenerateQuadAlt()	{
 Mesh* Mesh::GenerateMesh(int w, int h, float s) {
 	Mesh* m = new Mesh();
 	if (w == 0) { w = h; }
-	m->numVertices = 6 * w * h;//m->numVertices = 4 * w * h;
+	m->numVertices = 6 * w * h;
 	//m->type = GL_TRIANGLE_STRIP;
 
 	m->vertices = new Vector3[m->numVertices];
@@ -375,7 +375,6 @@ Mesh* Mesh::GenerateMesh(int w, int h, float s) {
 				m->vertices[c + 4] = Vector3(s*(i + 1),s*(j + 1), 0.0f);
 				m->vertices[c + 5] = Vector3(s*(i + 1), s*j, 0.0f);
 
-
 				m->textureCoords[c]		= Vector2((float)i / (float)w		, (float)j / (float)h);
 				m->textureCoords[c + 1] = Vector2((float)i / (float)w		, (float)(j + 1) / (float)h);
 				m->textureCoords[c + 2] = Vector2((float)(i + 1) / (float)w	, (float)j / (float)h);
@@ -388,21 +387,54 @@ Mesh* Mesh::GenerateMesh(int w, int h, float s) {
 			}
 		}
 
-	//for (int i = 0; i < w; ++i) {
-	//	for (int j = 0; j < h; ++j) {
-	//		m->vertices[c] = Vector3(s*i,s*j, 0.0f);
-	//		m->vertices[c + 1] = Vector3(s*i,s*(j+1), 0.0f);
-	//		m->vertices[c + 2] = Vector3(s*(i+1),s*j, 0.0f);
-	//		m->vertices[c + 3] = Vector3(s*(i+1),s*(j+1), 0.0f);
+	for (int i = 0; i < m->numVertices; ++i) {
+		m->colours[i] = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+		m->normals[i] = Vector3(0.0f, 0.0f, -1.0f);
+		m->tangents[i] = Vector3(1.0f, 0.0f, 0.0f);
+	}
 
-	//		m->textureCoords[c] = Vector2(0.0f, 1.0f);
-	//		m->textureCoords[c + 1] = Vector2(0.0f, 0.0f);
-	//		m->textureCoords[c + 2] = Vector2(1.0f, 1.0f);
-	//		m->textureCoords[c + 3] = Vector2(1.0f, 0.0f);
+	m->BufferData();
 
-	//		c += 4;
-	//	}
-	//}
+	return m;
+}
+
+Mesh* Mesh::GenerateMeshAlt(int w, int h, float s) {
+	Mesh* m = new Mesh();
+	if (w == 0) { w = h; }
+	m->numVertices = w * h;
+	m->numIndices = 6 * (w - 1) * (h - 1);
+	//m->type = GL_TRIANGLE_STRIP;
+
+	m->vertices = new Vector3[m->numVertices];
+	m->textureCoords = new Vector2[m->numVertices];
+	m->colours = new Vector4[m->numVertices];
+	m->normals = new Vector3[m->numVertices];
+	m->tangents = new Vector3[m->numVertices];
+	m->indices = new unsigned int[m->numIndices];
+
+	int c = 0;
+
+	for (int i = 0; i < h; ++i) {
+		for (int j = 0; j < w; ++j) {
+
+			m->vertices[(i*w) + j] = Vector3(s*j, s*i, 0.0f);
+			m->textureCoords[(i*w) + j] = Vector2((float)j / (float)w, (float)i / (float)h);
+
+			if (i < h - 1 && j < w - 1) {
+
+				m->indices[c] = (i*w) + j;
+				m->indices[c + 1] = (i*w) + j + 1;
+				m->indices[c + 2] = ((i + 1)*w) + j;
+
+				m->indices[c + 3] = (i*w) + j + 1;
+				m->indices[c + 4] = ((i + 1)*w) + j + 1;
+				m->indices[c + 5] = ((i + 1)*w) + j;
+
+				c += 6;
+			}
+
+		}
+	}
 
 	for (int i = 0; i < m->numVertices; ++i) {
 		m->colours[i] = Vector4(1.0f, 1.0f, 1.0f, 1.0f);

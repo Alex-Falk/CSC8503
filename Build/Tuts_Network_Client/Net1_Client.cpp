@@ -47,17 +47,17 @@ void Net1_Client::OnInitializeScene()
 	//--------------------------------------------------------------------------------------------//
 	// Ground
 	//--------------------------------------------------------------------------------------------//
-	GameObject* ground = CommonUtils::BuildCuboidObject(
-		"Ground",
-		Vector3(0.0f, -1.0f, 0.0f),
-		Vector3(20.0f, 1.0f, 20.0f),
-		true,
-		0.0f,
-		false,
-		false,
-		Vector4(0.2f, 0.5f, 1.0f, 1.0f));
+	//GameObject* ground = CommonUtils::BuildCuboidObject(
+	//	"Ground",
+	//	Vector3(0.0f, -1.0f, 0.0f),
+	//	Vector3(20.0f, 1.0f, 20.0f),
+	//	true,
+	//	0.0f,
+	//	false,
+	//	false,
+	//	Vector4(0.2f, 0.5f, 1.0f, 1.0f));
 
-	this->AddGameObject(ground);	
+	//this->AddGameObject(ground);
 
 }
 

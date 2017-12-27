@@ -76,18 +76,10 @@ void State::FollowPath() {
 					Vector3 posB = ((*it)->_pos);
 					int idxB = (*it)->_idx;
 
-					if (idxA + 1 == idxB && (posA - h->pnode->GetPosition()).LengthSQ() <= 0.002f) {
-						h->pnode->SetLinearVelocity(Vector3(1, 0, 0));
+					if ((posA - h->pnode->GetPosition()).LengthSQ() <= 0.002f) {
+						h->pnode->SetLinearVelocity((posB - posA).Normalise());
 					}
-					else if (idxA - 1 == idxB && (posA - h->pnode->GetPosition()).LengthSQ() <= 0.002f) {
-						h->pnode->SetLinearVelocity(Vector3(-1, 0, 0));
-					}
-					else if (idxA + 10 == idxB && (posA - h->pnode->GetPosition()).LengthSQ() <= 0.002f) {
-						h->pnode->SetLinearVelocity(Vector3(0, 1, 0));
-					}
-					else if (idxA - 10 == idxB && (posA - h->pnode->GetPosition()).LengthSQ() <= 0.002f) {
-						h->pnode->SetLinearVelocity(Vector3(0, -1, 0));
-					}
+
 
 					Vector3 vel = h->pnode->GetLinearVelocity();
 
@@ -106,6 +98,16 @@ void State::FollowPath() {
 			}
 		}
 	}
+}
+
+void State::StartFollowing() {
+	auto it = h->path.begin();
+	Vector3 pos = (*it)->_pos;
+	int idx = (*it)->_idx;
+
+	Vector3 newvel = (h->pnode->GetPosition() - pos).Normalise();
+
+	h->pnode->SetLinearVelocity(-newvel);
 }
 
 bool State::Check_Los(int avatar_loc) {
